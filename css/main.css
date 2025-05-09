@@ -36,8 +36,8 @@
     --container-padding: var(--spacing-md);
     
     /* Shadows */
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
     --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -78,9 +78,6 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 { 
     font-size: 2.5rem;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     margin-bottom: var(--spacing-lg);
 }
 
@@ -88,17 +85,7 @@ h2 {
     font-size: 2rem;
     position: relative;
     padding-bottom: var(--spacing-sm);
-}
-
-h2::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background: var(--gradient-primary);
-    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--spacing-lg);
 }
 
 h3 { font-size: 1.75rem; }
@@ -109,12 +96,13 @@ h6 { font-size: 1rem; }
 p {
     margin-bottom: var(--spacing-md);
     color: var(--text-color);
+    line-height: 1.8;
 }
 
 a {
     color: var(--accent-color);
     text-decoration: none;
-    transition: all var(--transition-fast);
+    transition: color var(--transition-fast);
 }
 
 a:hover {
@@ -124,8 +112,9 @@ a:hover {
 /* Header */
 .header {
     background-color: var(--white);
-    box-shadow: var(--shadow-md);
-    position: sticky;
+    box-shadow: var(--shadow-sm);
+    position: fixed;
+    width: 100%;
     top: 0;
     z-index: 1000;
     padding: var(--spacing-sm) 0;
@@ -148,19 +137,13 @@ a:hover {
 .logo img {
     height: 50px;
     width: auto;
-    transition: transform var(--transition-normal);
-}
-
-.logo:hover img {
-    transform: scale(1.05);
+    object-fit: contain;
 }
 
 .logo h1 {
     font-size: 1.5rem;
     margin: 0;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--primary-color);
 }
 
 /* Navigation */
@@ -179,26 +162,7 @@ a:hover {
     color: var(--text-color);
     font-weight: 500;
     padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--border-radius-sm);
-    transition: all var(--transition-fast);
-    position: relative;
-}
-
-.nav-list a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: var(--gradient-primary);
-    transition: all var(--transition-normal);
-    transform: translateX(-50%);
-}
-
-.nav-list a:hover::after,
-.nav-list a.active::after {
-    width: 80%;
+    transition: color var(--transition-fast);
 }
 
 .nav-list a:hover,
@@ -210,39 +174,80 @@ a:hover {
 .btn-login {
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    background-color: var(--secondary-color);
+    font-weight: 500;
     color: var(--white);
+    background-color: var(--primary-color);
     border: none;
     border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-sm);
-    transition: all var(--transition-normal);
+    transition: background-color var(--transition-fast);
 }
 
 .btn-login:hover {
-    background-color: var(--primary-color);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.btn-login:active {
-    transform: translateY(0);
-    box-shadow: var(--shadow-sm);
+    background-color: var(--secondary-color);
 }
 
 /* Main Content */
 .main-content {
-    min-height: calc(100vh - 200px);
-    padding: var(--spacing-xl) 0;
+    margin-top: 80px;
+    min-height: calc(100vh - 80px - 300px);
+    padding: var(--spacing-xl) var(--container-padding);
+    background-color: var(--white);
+}
+
+/* Images */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+}
+
+.image-container:hover img {
+    transform: scale(1.05);
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+}
+
+.image-card {
+    background: var(--white);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.image-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.image-card-content {
+    padding: var(--spacing-md);
 }
 
 /* Footer */
 .footer {
-    background: var(--gradient-primary);
+    background-color: var(--primary-color);
     color: var(--white);
-    padding: var(--spacing-xl) 0 var(--spacing-md);
+    padding: var(--spacing-xl) var(--container-padding) var(--spacing-md);
     margin-top: var(--spacing-xl);
 }
 
@@ -256,32 +261,19 @@ a:hover {
 .footer-section h3 {
     color: var(--white);
     margin-bottom: var(--spacing-md);
-    position: relative;
-    padding-bottom: var(--spacing-sm);
-}
-
-.footer-section h3::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 40px;
-    height: 2px;
-    background-color: var(--white);
-    border-radius: var(--border-radius-sm);
+    font-size: 1.25rem;
 }
 
 .footer-section a {
     color: var(--white);
     opacity: 0.8;
-    transition: all var(--transition-fast);
+    transition: opacity var(--transition-fast);
     display: inline-block;
     margin-bottom: var(--spacing-xs);
 }
 
 .footer-section a:hover {
     opacity: 1;
-    transform: translateX(5px);
 }
 
 .social-links {
@@ -290,20 +282,13 @@ a:hover {
 }
 
 .social-links a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    transition: all var(--transition-normal);
+    color: var(--white);
+    opacity: 0.8;
+    transition: opacity var(--transition-fast);
 }
 
 .social-links a:hover {
-    background-color: var(--white);
-    color: var(--primary-color);
-    transform: translateY(-3px);
+    opacity: 1;
 }
 
 .footer-bottom {
@@ -314,6 +299,10 @@ a:hover {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .header {
+        padding: var(--spacing-sm);
+    }
+
     .header .container {
         flex-direction: column;
         gap: var(--spacing-md);
@@ -325,9 +314,18 @@ a:hover {
         gap: var(--spacing-sm);
     }
 
+    .main-content {
+        margin-top: 120px;
+        padding: var(--spacing-lg);
+    }
+
     .footer-content {
         grid-template-columns: 1fr;
         gap: var(--spacing-lg);
+    }
+
+    .image-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -342,22 +340,6 @@ a:hover {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
-}
-
-/* Animations */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.animate-fadeInUp {
-    animation: fadeInUp 0.5s ease-out forwards;
 }
 
 /* Buttons */
@@ -375,23 +357,585 @@ button,
     vertical-align: middle;
     cursor: pointer;
     user-select: none;
-    border: 2px solid transparent;
+    border: none;
     border-radius: var(--border-radius-md);
-    transition: all var(--transition-normal);
-    background-color: var(--secondary-color);
+    transition: background-color var(--transition-fast);
+    background-color: var(--primary-color);
     color: var(--white);
-    box-shadow: var(--shadow-sm);
 }
 
 button:hover,
 .btn:hover {
-    background-color: var(--primary-color);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    background-color: var(--secondary-color);
 }
 
-button:active,
-.btn:active {
-    transform: translateY(0);
+/* Styling dla sekcji "O nas" */
+.about-hospital,
+.our-facilities,
+.our-achievements,
+.patient-satisfaction,
+.our-doctors,
+.our-values {
+    padding: 4rem 0;
+    margin: 2rem 0;
+    background: var(--light-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.about-hospital .container,
+.our-facilities .container,
+.our-achievements .container,
+.patient-satisfaction .container,
+.our-doctors .container,
+.our-values .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.about-hospital h2,
+.our-facilities h2,
+.our-achievements h2,
+.patient-satisfaction h2,
+.our-doctors h2,
+.our-values h2 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.about-hospital h2::after,
+.our-facilities h2::after,
+.our-achievements h2::after,
+.patient-satisfaction h2::after,
+.our-doctors h2::after,
+.our-values h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: var(--accent-color);
+}
+
+.about-content {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
     box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+}
+
+.about-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+}
+
+.hospital-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.stat-item {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(26, 35, 126, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+}
+
+.stat-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: inherit;
+}
+
+.stat-item:hover::after {
+    opacity: 0.05;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-label {
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+.facilities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.facility-card {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(26, 35, 126, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+}
+
+.facility-card:hover {
+    transform: translateY(-5px);
+}
+
+.facility-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: inherit;
+}
+
+.facility-card:hover::after {
+    opacity: 0.05;
+}
+
+.facility-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.facility-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.facility-card li {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.facility-card li:last-child {
+    border-bottom: none;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.achievement-card {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(26, 35, 126, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+}
+
+.achievement-card:hover {
+    transform: translateY(-5px);
+}
+
+.achievement-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: inherit;
+}
+
+.achievement-card:hover::after {
+    opacity: 0.05;
+}
+
+.achievement-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.achievement-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    opacity: 0.1;
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.achievement-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.achievement-card p {
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.satisfaction-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.satisfaction-item {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(26, 35, 126, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+}
+
+.satisfaction-item:hover {
+    transform: translateY(-5px);
+}
+
+.satisfaction-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: inherit;
+}
+
+.satisfaction-item:hover::after {
+    opacity: 0.05;
+}
+
+.satisfaction-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.satisfaction-label {
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+.testimonials {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.testimonial {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(26, 35, 126, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+}
+
+.testimonial:hover {
+    transform: translateY(-5px);
+}
+
+.testimonial::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: inherit;
+}
+
+.testimonial:hover::after {
+    opacity: 0.05;
+}
+
+.testimonial::before {
+    content: '"';
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: 4rem;
+    color: var(--primary-color);
+    opacity: 0.2;
+}
+
+.testimonial p {
+    font-style: italic;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.testimonial footer {
+    color: var(--text-color);
+    font-weight: bold;
+    text-align: right;
+}
+
+.values-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    list-style: none;
+    padding: 0;
+}
+
+.values-list li {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.values-list li:hover {
+    transform: translateY(-5px);
+}
+
+.values-list li::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.values-list li:hover::before {
+    opacity: 1;
+}
+
+.values-list i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.values-list span {
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .about-hospital,
+    .our-facilities,
+    .our-achievements,
+    .patient-satisfaction,
+    .our-doctors,
+    .our-values {
+        padding: 2rem 0;
+    }
+
+    .about-hospital h2,
+    .our-facilities h2,
+    .our-achievements h2,
+    .patient-satisfaction h2,
+    .our-doctors h2,
+    .our-values h2 {
+        font-size: 2rem;
+    }
+
+    .hospital-stats,
+    .facilities-grid,
+    .achievements-grid,
+    .satisfaction-stats,
+    .testimonials,
+    .values-list {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-number,
+    .satisfaction-number {
+        font-size: 2.5rem;
+    }
+
+    .facility-card,
+    .achievement-card,
+    .testimonial,
+    .values-list li {
+        padding: 1.5rem;
+    }
+
+    .achievement-icon::before {
+        width: 50px;
+        height: 50px;
+    }
+
+    .values-list li::before {
+        width: 3px;
+    }
+}
+
+/* Animacje dla sekcji */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.about-hospital,
+.our-facilities,
+.our-achievements,
+.patient-satisfaction,
+.our-doctors,
+.our-values {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.stat-item,
+.facility-card,
+.achievement-card,
+.satisfaction-item,
+.testimonial,
+.values-list li {
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.stat-item:nth-child(1) { animation-delay: 0.1s; }
+.stat-item:nth-child(2) { animation-delay: 0.2s; }
+.stat-item:nth-child(3) { animation-delay: 0.3s; }
+.stat-item:nth-child(4) { animation-delay: 0.4s; }
+
+.facility-card:nth-child(1) { animation-delay: 0.1s; }
+.facility-card:nth-child(2) { animation-delay: 0.2s; }
+.facility-card:nth-child(3) { animation-delay: 0.3s; }
+
+.achievement-card:nth-child(1) { animation-delay: 0.1s; }
+.achievement-card:nth-child(2) { animation-delay: 0.2s; }
+.achievement-card:nth-child(3) { animation-delay: 0.3s; }
+
+.doctor-image {
+    width: 100%;
+    height: 320px;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-left-radius: var(--border-radius-lg);
+    border-top-right-radius: var(--border-radius-lg);
+    overflow: hidden;
+    position: relative;
+}
+
+.doctor-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background: transparent;
+}
+
+.doctor-image img[src=""],
+.doctor-image img:not([src]) {
+    display: none;
 } 
