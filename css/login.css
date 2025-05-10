@@ -1,22 +1,26 @@
 .login-container {
     max-width: 400px;
     margin: 2rem auto;
-    padding: 2rem;
+    padding: 2.5rem;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(26, 35, 126, 0.1);
+    min-height: calc(100vh - 400px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.2rem;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
 .form-group label {
@@ -49,6 +53,7 @@
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-top: 0.5rem;
 }
 
 .login-button:hover {
@@ -85,7 +90,7 @@
 
 .login-links {
     text-align: center;
-    margin-top: 1rem;
+    margin-top: 0.8rem;
 }
 
 .login-links a {
@@ -103,7 +108,7 @@
 .back-to-home {
     display: block;
     text-align: center;
-    margin-top: 1.5rem;
+    margin-top: 1.2rem;
     color: #1a237e;
     text-decoration: none;
     font-size: 0.9rem;
