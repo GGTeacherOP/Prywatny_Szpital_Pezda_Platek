@@ -152,4 +152,137 @@
     .doctor-info .description {
         font-size: 1rem;
     }
+}
+
+/* Sekcja historii szpitala */
+.hospital-history {
+    padding: 4rem 0;
+    background-color: #fff;
+    margin-bottom: 3rem;
+}
+
+.history-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.history-text h1 {
+    color: #1a237e;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    text-align: left;
+}
+
+.history-timeline {
+    position: relative;
+}
+
+.history-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: #1a237e;
+    opacity: 0.2;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 2.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #1a237e;
+}
+
+.timeline-item h3 {
+    color: #1a237e;
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+}
+
+.timeline-item p {
+    color: #444;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.history-image {
+    position: relative;
+    height: 100%;
+    min-height: 500px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(26, 35, 126, 0.15);
+}
+
+.history-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Responsywność dla sekcji historii */
+@media (max-width: 1200px) {
+    .history-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .history-image {
+        min-height: 400px;
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .hospital-history {
+        padding: 2rem 0;
+    }
+
+    .history-content {
+        padding: 0 1rem;
+    }
+
+    .history-text h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .timeline-item {
+        padding-left: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .timeline-item h3 {
+        font-size: 1.2rem;
+    }
+
+    .timeline-item p {
+        font-size: 1rem;
+    }
+
+    .history-image {
+        min-height: 300px;
+    }
 } 
