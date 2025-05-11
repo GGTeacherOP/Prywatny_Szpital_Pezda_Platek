@@ -304,40 +304,49 @@
 
 .services-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .service-card {
-    background-color: #f8f9fa;
-    padding: 2rem;
+    background-color: #e8eaf6;
+    padding: 1.5rem;
     border-radius: 8px;
     text-align: center;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, background-color 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .service-card:hover {
     transform: translateY(-5px);
+    background-color: #c5cae9;
 }
 
 .service-icon {
-    font-size: 3rem;
+    font-size: 2.5rem;
     margin-bottom: 1rem;
 }
 
 .service-card h3 {
     color: #1a237e;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+    font-size: 1.3rem;
 }
 
 .service-card p {
+    color: #333;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+    font-size: 0.95rem;
+}
+
+.service-source {
     color: #666;
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
+    font-size: 0.8rem;
+    font-style: italic;
+    margin-bottom: 1rem;
 }
 
 .service-link {
@@ -345,10 +354,23 @@
     text-decoration: none;
     font-weight: 600;
     transition: color 0.3s ease;
+    font-size: 0.9rem;
 }
 
 .service-link:hover {
     color: #0d1642;
+}
+
+@media (max-width: 768px) {
+    .services-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .services-container {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Sekcja aktualności */
