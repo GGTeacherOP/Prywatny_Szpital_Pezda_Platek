@@ -6,7 +6,7 @@
     <title>Szpital - O nas</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='main.js'></script>
+    <link rel='stylesheet' type='text/css' media='screen' href='css/o-nas.css'>
 </head>
 <body>
     <header class="header">
@@ -27,7 +27,33 @@
     </header>
 
     <main class="main-content">
-        <!-- Tutaj będzie zawartość strony O nas -->
+        <section class="doctors-section">
+            <h1>Nasz Zespół Lekarski</h1>
+            
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-specialty="all">Wszyscy</button>
+                <button class="filter-btn" data-specialty="kardiolog">Kardiolodzy</button>
+                <button class="filter-btn" data-specialty="neurolog">Neurolodzy</button>
+                <button class="filter-btn" data-specialty="ortopeda">Ortopedzi</button>
+                <button class="filter-btn" data-specialty="pediatra">Pediatrzy</button>
+                <button class="filter-btn" data-specialty="chirurg">Chirurdzy</button>
+            </div>
+
+            <div class="doctors-grid">
+                <!-- Przykładowy lekarz - będzie generowany dynamicznie z bazy danych -->
+                <div class="doctor-card" data-specialty="kardiolog">
+                    <div class="doctor-image">
+                        <img src="img/doctors/placeholder.jpg" alt="Dr Jan Kowalski">
+                    </div>
+                    <div class="doctor-info">
+                        <h3>Dr Jan Kowalski</h3>
+                        <p class="specialty">Kardiolog</p>
+                        <p class="description">Specjalista z wieloletnim doświadczeniem w leczeniu chorób serca i układu krążenia.</p>
+                    </div>
+                </div>
+                <!-- Więcej kart lekarzy będzie dodanych dynamicznie -->
+            </div>
+        </section>
     </main>
 
     <footer class="footer">
