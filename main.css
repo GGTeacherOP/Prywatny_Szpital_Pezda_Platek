@@ -90,11 +90,11 @@ body {
 /* Główna zawartość */
 .main-content {
     min-height: calc(100vh - 300px);
-    padding: 2rem 5%;
+    padding: 0;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(26, 35, 126, 0.05);
-    margin: 1rem 0;
-    border-radius: 8px;
+    margin: 0;
+    border-radius: 0;
 }
 
 /* Footer */
@@ -169,4 +169,18 @@ body {
     .social-links {
         justify-content: center;
     }
+}
+
+.hero-image {
+    width: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.hero-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
 } 
