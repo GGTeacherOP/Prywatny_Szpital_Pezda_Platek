@@ -240,8 +240,16 @@
 }
 
 .stat-icon {
-    font-size: 3rem;
     margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stat-icon img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
 }
 
 .stat-number {
