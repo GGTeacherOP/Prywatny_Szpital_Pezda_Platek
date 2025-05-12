@@ -58,12 +58,30 @@
     text-decoration: none;
     color: #2c3e50;
     border-radius: 8px;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
 }
 
-.nav-item:hover, .nav-item.active {
+.nav-item:hover {
     background-color: #f8f9fa;
     border-left: 4px solid #3498db;
+    transform: translateX(5px);
+}
+
+.nav-item.active {
+    background-color: #f8f9fa;
+    border-left: 4px solid #3498db;
+    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.1);
+}
+
+.nav-item:hover .nav-icon,
+.nav-item.active .nav-icon {
+    color: #3498db;
+}
+
+.nav-item:hover .nav-text,
+.nav-item.active .nav-text {
+    color: #3498db;
 }
 
 .nav-icon {
