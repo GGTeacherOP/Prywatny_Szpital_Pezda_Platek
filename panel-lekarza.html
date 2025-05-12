@@ -156,13 +156,15 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="code-validity">Ważność kodu:</label>
-                                <select id="code-validity">
-                                    <option value="1">1 dzień</option>
-                                    <option value="3">3 dni</option>
-                                    <option value="7">7 dni</option>
-                                    <option value="14">14 dni</option>
-                                </select>
+                                <label for="result-file">Plik z wynikami:</label>
+                                <div class="file-upload">
+                                    <input type="file" id="result-file" accept=".pdf,.jpg,.jpeg,.png">
+                                    <label for="result-file" class="file-label">
+                                        <span class="file-icon">📎</span>
+                                        <span class="file-text">Wybierz plik</span>
+                                    </label>
+                                    <span class="file-name">Nie wybrano pliku</span>
+                                </div>
                             </div>
                             <button class="btn-generate">Wygeneruj kod</button>
                             
@@ -172,7 +174,7 @@
                                     <span class="code">XXXX-XXXX-XXXX</span>
                                     <button class="btn-copy">Kopiuj</button>
                                 </div>
-                                <p class="code-info">Kod ważny do: <span class="validity-date">01.03.2024</span></p>
+                                <p class="code-info">Plik został pomyślnie dodany</p>
                             </div>
                         </div>
                     </section>
