@@ -37,92 +37,101 @@
                 </div>
             </div>
 
-            <div class="dashboard-grid">
-                <!-- Sekcja Nadchodzące Wizyty -->
-                <section class="dashboard-section upcoming-visits">
-                    <h2>Nadchodzące Wizyty</h2>
-                    <div class="visit-card">
-                        <div class="visit-info">
-                            <h3>Wizyta u dr. Nowak</h3>
-                            <p class="visit-date">15.03.2024, 14:30</p>
-                            <p class="visit-type">Konsultacja kardiologiczna</p>
-                        </div>
-                        <div class="visit-actions">
-                            <button class="btn-cancel">Anuluj wizytę</button>
-                        </div>
-                    </div>
-                </section>
+            <div class="dashboard-container">
+                <!-- Boczny panel nawigacyjny -->
+                <nav class="side-nav">
+                    <ul>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <span class="nav-icon">📅</span>
+                                <span class="nav-text">Umów Wizytę</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <span class="nav-icon">💊</span>
+                                <span class="nav-text">Moje Recepty</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <span class="nav-icon">📋</span>
+                                <span class="nav-text">Historia Medyczna</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <span class="nav-icon">✉️</span>
+                                <span class="nav-text">Wiadomości</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
 
-                <!-- Sekcja Wyniki Badań -->
-                <section class="dashboard-section test-results">
-                    <h2>Ostatnie Wyniki Badań</h2>
-                    <div class="result-card">
-                        <div class="result-info">
-                            <h3>Morfologia krwi</h3>
-                            <p class="result-date">01.03.2024</p>
-                            <p class="result-status">Gotowy do odbioru</p>
-                        </div>
-                        <div class="result-actions">
-                            <button class="btn-download">Pobierz wynik</button>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Sekcja Historia Wizyt -->
-                <section class="dashboard-section visit-history">
-                    <h2>Historia Wizyt</h2>
-                    <div class="history-card">
-                        <div class="history-info">
-                            <h3>Wizyta kontrolna</h3>
-                            <p class="history-date">01.02.2024</p>
-                            <p class="history-doctor">dr. Anna Nowak</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Sekcja Szybkie Akcje -->
-                <section class="dashboard-section quick-actions">
-                    <h2>Szybkie Akcje</h2>
-                    <div class="actions-grid">
-                        <a href="#" class="action-card">
-                            <h3>Umów Wizytę</h3>
-                            <p>Zarezerwuj termin wizyty</p>
-                        </a>
-                        <a href="#" class="action-card">
-                            <h3>Moje Recepty</h3>
-                            <p>Przeglądaj aktywne recepty</p>
-                        </a>
-                        <a href="#" class="action-card">
-                            <h3>Historia Medyczna</h3>
-                            <p>Zobacz pełną historię</p>
-                        </a>
-                        <a href="#" class="action-card">
-                            <h3>Wiadomości</h3>
-                            <p>Sprawdź komunikaty</p>
-                        </a>
-                    </div>
-                </section>
-
-                <!-- Sekcja Wystaw Opinię -->
-                <section class="dashboard-section review-section">
-                    <h2>Wystaw Opinię</h2>
-                    <div class="review-form">
-                        <div class="rating">
-                            <h3>Oceń naszą placówkę</h3>
-                            <div class="stars">
-                                <span class="star" data-rating="1">★</span>
-                                <span class="star" data-rating="2">★</span>
-                                <span class="star" data-rating="3">★</span>
-                                <span class="star" data-rating="4">★</span>
-                                <span class="star" data-rating="5">★</span>
+                <div class="dashboard-grid">
+                    <!-- Sekcja Nadchodzące Wizyty -->
+                    <section class="dashboard-section upcoming-visits">
+                        <h2>Nadchodzące Wizyty</h2>
+                        <div class="visit-card">
+                            <div class="visit-info">
+                                <h3>Wizyta u dr. Nowak</h3>
+                                <p class="visit-date">15.03.2024, 14:30</p>
+                                <p class="visit-type">Konsultacja kardiologiczna</p>
+                            </div>
+                            <div class="visit-actions">
+                                <button class="btn-cancel">Anuluj wizytę</button>
                             </div>
                         </div>
-                        <div class="review-content">
-                            <textarea placeholder="Napisz swoją opinię..." rows="4"></textarea>
-                            <button class="btn-submit-review">Wyślij opinię</button>
+                    </section>
+
+                    <!-- Sekcja Wyniki Badań -->
+                    <section class="dashboard-section test-results">
+                        <h2>Ostatnie Wyniki Badań</h2>
+                        <div class="result-card">
+                            <div class="result-info">
+                                <h3>Morfologia krwi</h3>
+                                <p class="result-date">01.03.2024</p>
+                                <p class="result-status">Gotowy do odbioru</p>
+                            </div>
+                            <div class="result-actions">
+                                <button class="btn-download">Pobierz wynik</button>
+                            </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+
+                    <!-- Sekcja Historia Wizyt -->
+                    <section class="dashboard-section visit-history">
+                        <h2>Historia Wizyt</h2>
+                        <div class="history-card">
+                            <div class="history-info">
+                                <h3>Wizyta kontrolna</h3>
+                                <p class="history-date">01.02.2024</p>
+                                <p class="history-doctor">dr. Anna Nowak</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Sekcja Wystaw Opinię -->
+                    <section class="dashboard-section review-section">
+                        <h2>Wystaw Opinię</h2>
+                        <div class="review-form">
+                            <div class="rating">
+                                <h3>Oceń naszą placówkę</h3>
+                                <div class="stars">
+                                    <span class="star" data-rating="1">★</span>
+                                    <span class="star" data-rating="2">★</span>
+                                    <span class="star" data-rating="3">★</span>
+                                    <span class="star" data-rating="4">★</span>
+                                    <span class="star" data-rating="5">★</span>
+                                </div>
+                            </div>
+                            <div class="review-content">
+                                <textarea placeholder="Napisz swoją opinię..." rows="4"></textarea>
+                                <button class="btn-submit-review">Wyślij opinię</button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
             </div>
         </div>
     </main>
