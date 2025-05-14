@@ -138,12 +138,21 @@ body {
     transition: color 0.3s ease;
 }
 
-.social-links a:hover {
-    color: #1a237e;
-    background-color: #e8eaf6;
-    padding: 0.3rem 0.6rem;
+.social-links img {
+    height: 24px;
+    width: auto;
+    display: block;
+    transition: transform 0.2s ease-out;
     border-radius: 4px;
-    transform: translateY(-2px);
+}
+
+.social-links a:hover {
+    background-color: #e8eaf6;
+    border-radius: 4px;
+}
+
+.social-links a:hover img {
+    transform: scale(1.1) translateY(-2px);
 }
 
 .footer-bottom {
@@ -491,11 +500,6 @@ body {
 
 .slider-btn:active {
     transform: scale(0.95);
-}
-
-/* Ukrywanie przycisków jeśli jest tylko jeden slajd - można to obsłużyć w JS */
-.reviews-container[data-slides-count="1"] + .slider-controls {
-    /* display: none; */
 }
 
 /* =========== DODATKOWE EFEKTY HOVER =========== */
