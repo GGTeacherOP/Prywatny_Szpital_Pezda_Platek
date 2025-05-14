@@ -1,129 +1,241 @@
-body {
-    font-family: 'Arial', sans-serif; /* Ustawienie domyślnej czcionki dla całej strony personelu */
-    background-color: #f4f7f6; /* Jasnoszare tło dla całej strony */
-    color: #333;
+/* Ogólne ustawienia dla body strony personelu */
+body.personel-page {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Nowoczesna, czytelna czcionka systemowa */
+    background-color: #f4f7f6; /* Jaśniejszy, bardziej neutralny odcień tła strony */
+    color: #34495e; /* Główny kolor tekstu - stonowany granat */
+    line-height: 1.6;
 }
 
 .personel-section {
-    padding: 30px 15px; /* Zwiększony padding góra/dół, mniejszy boki */
-    max-width: 1200px; /* Maksymalna szerokość kontenera */
-    margin: 0 auto; /* Wycentrowanie kontenera */
+    padding: 50px 20px;
+    max-width: 1300px;
+    margin: 30px auto;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    text-align: center; /* Dodane dla centrowania H1 i podtytułu */
 }
 
-.personel-section h1 {
-    text-align: center;
-    margin-bottom: 15px; /* Zmniejszony margines pod głównym H1 */
-    color: #2c3e50; /* Ciemniejszy, bardziej stonowany kolor */
-    font-size: 2.8em;
-    font-weight: bold;
+/* Główny nagłówek strony (Nasz Zespół) */
+.personel-section > h1 {
+    display: inline-block; /* Aby ::after było względem szerokości tekstu */
+    position: relative; /* Dla pozycjonowania ::after */
+    color: #2c3e50; /* Powrót do ciemnego koloru */
+    font-size: 3.2em; /* Większa czcionka */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 15px; /* Mniejszy margines dolny przed podkreśleniem */
+    padding-bottom: 15px; /* Dodatkowy padding na dolne podkreślenie */
+    background-color: transparent; /* Usunięcie tła */
+    border-radius: 0; /* Usunięcie zaokrąglenia */
+    box-shadow: none; /* Usunięcie cienia */
+    padding-left: 0; /* Reset paddingu */
+    padding-right: 0; /* Reset paddingu */
+    padding-top: 0; /* Reset paddingu */
 }
 
+.personel-section > h1::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0; /* Na samym dole elementu h1 (uwzględniając padding-bottom) */
+    width: 100px; /* Szerokość podkreślenia */
+    height: 5px; /* Grubość podkreślenia */
+    background-color: #3498db; /* Kolor niebieski motywu */
+    border-radius: 3px; /* Zaokrąglenie linii */
+}
+
+/* Podtytuł strony */
 .personel-section .page-subtitle {
-    text-align: center;
-    margin-bottom: 50px; /* Zwiększony margines pod podtytułem */
-    font-size: 1.2em;
-    color: #555e68; /* Ciemniejszy szary */
-    max-width: 700px; /* Ograniczenie szerokości dla lepszej czytelności */
+    margin-bottom: 70px;
+    font-size: 1.3em; /* Lekko większy */
+    color: #556a7f; /* Ciemniejszy, bardziej stonowany szary */
+    max-width: 800px; /* Nieco szerszy */
     margin-left: auto;
     margin-right: auto;
+    font-style: italic; /* Dodanie kursywy */
 }
 
+/* Kontener dla kategorii personelu */
 .personel-category {
-    margin-bottom: 50px;
+    margin-bottom: 70px; /* Zwiększony odstęp między kategoriami */
+    background-color: transparent; /* Usunięcie tła, aby sekcja przejęła tło */
+    padding: 0; /* Usunięcie paddingu, bo sekcja ma swój */
+    border-radius: 0;
+    box-shadow: none; /* Usunięcie cienia, bo sekcja ma swój */
 }
 
+/* Nagłówki kategorii (Lekarze, Pielęgniarki itp.) */
 .personel-category h2 {
-    color: #007bff; /* Jaśniejszy niebieski, spójny z przyciskami */
-    border-bottom: 3px solid #007bff;
-    padding-bottom: 12px;
-    margin-bottom: 30px;
-    font-size: 2em;
-    font-weight: 600;
+    color: #3498db; /* Jasny, przyjazny niebieski */
+    border-bottom: none; /* Usunięcie poprzedniej ramki */
+    padding-bottom: 0;
+    margin-bottom: 35px; /* Zwiększony margines dolny */
+    font-size: 2.3em; /* Lekko większy */
+    font-weight: 700; /* Grubszy */
+    text-align: left;
+    position: relative;
+    padding-left: 0; /* Usunięcie poprzedniego paddingu, dekoracja inaczej */
 }
 
+/* Element dekoracyjny pod H2 kategorii */
+.personel-category h2::after { /* Zmieniono z ::before na ::after dla innego efektu */
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -10px; /* Umiejscowienie pod tekstem */
+    width: 70px; /* Dłuższa linia */
+    height: 4px;
+    background-image: linear-gradient(to right, #3498db, #2980b9); /* Gradient dla linii */
+    border-radius: 2px;
+}
+
+/* Siatka dla kart personelu */
 .staff-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Lekko szersze karty */
-    gap: 30px; /* Zwiększony odstęp */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Optymalna szerokość karty */
+    gap: 35px;
 }
 
+/* Karta pojedynczego pracownika */
 .staff-card {
-    border: none; /* Usunięcie domyślnej ramki */
-    border-radius: 10px; /* Bardziej zaokrąglone rogi */
+    border: 1px solid #dde4eb; /* Jaśniejsza ramka */
+    border-top: 4px solid #3498db; /* Akcent kolorystyczny na górze karty */
+    border-radius: 12px;
     padding: 25px;
-    text-align: center;
-    background-color: #ffffff;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* Delikatniejszy, ale wyraźniejszy cień */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex; /* Użycie flexboxa dla lepszego ułożenia treści wewnątrz karty */
+    padding-top: 20px; /* Mniejszy padding u góry ze względu na border-top */
+    background-color: #fdfdfd;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; /* Dłuższa tranzysja */
+    display: flex;
     flex-direction: column;
-    align-items: center; /* Wycentrowanie elementów wertykalnie */
+    align-items: center;
+    text-align: center;
+    overflow: hidden; /* Aby zapobiec wychodzeniu powiększonego zdjęcia poza kartę */
 }
 
 .staff-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    transform: translateY(-8px) scale(1.02); /* Dodanie lekkiego powiększenia całej karty */
+    box-shadow: 0 10px 25px rgba(44, 62, 80, 0.12); /* Cień nieco mocniejszy i rozmyty */
+    border-color: #2980b9; /* Ciemniejszy niebieski na hover */
 }
 
+/* Zdjęcie pracownika */
 .staff-card img {
-    width: 130px; /* Powiększenie zdjęcia */
+    width: 130px; /* Nieco mniejsze zdjęcie */
     height: 130px;
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 20px;
-    border: 4px solid #007bff; /* Grubsza ramka */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Cień pod zdjęciem */
+    border: 4px solid #ffffff; /* Nieco cieńsza ramka zdjęcia */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtelniejszy cień zdjęcia */
+    transition: transform 0.3s ease; /* Dodana tranzysja dla zdjęcia */
 }
 
+.staff-card:hover img {
+    transform: scale(1.08); /* Lekkie powiększenie zdjęcia na hover karty */
+}
+
+/* Imię i nazwisko pracownika */
 .staff-card h3 {
     margin-top: 0;
-    margin-bottom: 5px;
-    color: #2c3e50; /* Ciemny, profesjonalny kolor */
-    font-size: 1.4em;
+    margin-bottom: 8px;
+    color: #2c3e50; /* Ciemny grafit/granat */
+    font-size: 1.5em;
     font-weight: 600;
 }
 
+/* Stanowisko/Specjalizacja */
 .staff-card .position-specialty {
-    font-size: 1.05em; /* Lekko powiększone */
-    color: #007bff; /* Spójny niebieski */
+    font-size: 1.1em;
+    color: #3498db;
     margin-bottom: 15px;
-    font-weight: 500; /* Normalna grubość, ale kolor wyróżnia */
+    font-weight: 500;
+    min-height: 2.2em;
+    position: relative; /* Potrzebne dla pseudo-elementu */
+    padding-left: 20px; /* Miejsce na pseudo-element */
 }
 
+.staff-card .position-specialty::before {
+    content: '\25CF'; /* Małe kółko (bullet point) jako przykład ikony */
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #2980b9; /* Ciemniejszy niebieski dla akcentu */
+    font-size: 0.8em; /* Mniejszy rozmiar dla kropki */
+}
+
+/* Opis/detale */
 .staff-card .details {
-    font-size: 0.9em;
-    color: #555e68; /* Ciemniejszy szary */
-    line-height: 1.6;
-    flex-grow: 1; /* Pozwala opisowi zająć dostępną przestrzeń */
-    margin-bottom: 0; /* Usunięcie dolnego marginesu, jeśli to ostatni element */
+    font-size: 0.95em;
+    color: #52667a; /* Ciemniejszy, czytelny szary */
+    line-height: 1.7;
+    flex-grow: 1;
+    margin-bottom: 0;
 }
 
-/* Poprawki dla responsywności, jeśli potrzebne */
+/* Dodanie klasy do body w personel.html dla zastosowania tych stylów */
+/* Przykład: <body class="personel-page"> */
+
+/* Poprawki dla responsywności */
+@media (max-width: 992px) {
+    .staff-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+    }
+    .personel-section > h1 {
+        font-size: 2.6em;
+    }
+    .personel-category h2 {
+        font-size: 1.9em;
+    }
+}
+
 @media (max-width: 768px) {
-    .personel-section h1 {
+    .personel-section > h1 {
         font-size: 2.2em;
     }
     .personel-category h2 {
-        font-size: 1.6em;
+        font-size: 1.7em;
+        padding-left: 15px;
     }
-    .staff-grid {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
+    .personel-category h2::before {
+        width: 5px;
     }
     .staff-card img {
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 120px;
+    }
+    .staff-card h3 {
+        font-size: 1.3em;
+    }
+    .staff-card .position-specialty {
+        font-size: 1em;
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 576px) {
     .staff-grid {
-        grid-template-columns: 1fr; /* Jedna kolumna na małych ekranach */
+        grid-template-columns: 1fr; /* Jedna kolumna na najmniejszych ekranach */
+        gap: 20px;
     }
-    .personel-section h1 {
+    .personel-section {
+        padding: 30px 10px;
+    }
+    .personel-category {
+        padding: 20px;
+    }
+    .personel-section > h1 {
         font-size: 2em;
     }
-    .personel-section .page-subtitle {
-        font-size: 1em;
+     .personel-section .page-subtitle {
+        font-size: 1.1em;
+        margin-bottom: 40px;
+    }
+    .personel-category h2 {
+        font-size: 1.5em;
     }
 } 
