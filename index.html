@@ -9,6 +9,7 @@
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <link rel='stylesheet' type='text/css' media='screen' href='css/main.css'>
     <script src='main.js'></script>
+    <script src='js/main_animations.js' defer></script>
 </head>
 <body>
     <header class="header">
@@ -38,7 +39,7 @@
             </div>
         </div>
 
-        <div class="stats-section" id="odnosnik">
+        <div class="stats-section animated-section" id="odnosnik">
             <h2>Nasze osiągnięcia</h2>
             <div class="stats-container">
                 <div class="stat-card">
@@ -76,7 +77,7 @@
             </div>
         </div>
 
-        <div class="services-section">
+        <div class="services-section animated-section">
             <h2>Nasze usługi</h2>
             <div class="services-container">
                 <div class="service-card">
@@ -152,7 +153,7 @@
             </div>
         </div>
         
-        <div class="contact-section">
+        <div class="contact-section animated-section">
             <div class="contact-info">
                 <h2>Jak do nas trafić?</h2>
                 <p>Znajdujemy się w samym sercu Mielca, przy alei Niepodległości 6. Nasz szpital jest łatwo dostępny zarówno dla pacjentów z miasta, jak i z okolicznych miejscowości.</p>
@@ -170,7 +171,7 @@
             </div>
         </div>
 
-        <div class="reviews-section">
+        <div class="reviews-section animated-section">
             <div class="reviews-header">
                 <h2>Opinie naszych pacjentów</h2>
                 <div class="average-rating">
@@ -184,9 +185,13 @@
                     </div>
                     <span class="rating-count">(pobierane z bazy danych)</span>
                 </div>
+                <div class="slider-controls">
+                    <button class="slider-btn prev-btn" aria-label="Poprzednia opinia">&#10094;</button>
+                    <button class="slider-btn next-btn" aria-label="Następna opinia">&#10095;</button>
+                </div>
             </div>
-            <div class="reviews-container">
-                <div class="review-card">
+            <div class="reviews-container" data-current-slide="0">
+                <div class="review-card active-slide">
                     <div class="review-header">
                         <div class="reviewer-info">
                             <h3>Jan Kowalski</h3>
@@ -236,7 +241,7 @@
             </div>
         </div>
 
-        <div class="quote-section">
+        <div class="quote-section animated-section">
             <div class="quote-image">
                 <img src="img/index/szpitalgora.jpg" alt="Widok szpitala z góry">
                 <div class="quote-overlay">
@@ -248,7 +253,7 @@
             </div>
         </div>
 
-        <div class="visit-prep-section">
+        <div class="visit-prep-section animated-section">
             <h2>Jak się przygotować do wizyty?</h2>
             <div class="visit-prep-container">
                 <div class="prep-step">
