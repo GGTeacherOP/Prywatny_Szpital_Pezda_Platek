@@ -107,9 +107,9 @@ try {
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="nav-item" data-panel="historie-chorob">
+                            <a href="#" class="nav-item" data-panel="wystaw-wyniki">
                                 <span class="nav-icon">📋</span>
-                                <span class="nav-text">Historie Chorób</span>
+                                <span class="nav-text">Wystaw Wyniki</span>
                             </a>
                         </li>
                         <li>
@@ -328,13 +328,157 @@ try {
                     <!-- Lista Pacjentów -->
                     <div class="panel-content" id="lista-pacjentow" style="display: none;">
                         <h2>Lista Pacjentów</h2>
-                        <!-- Tutaj będzie lista pacjentów -->
+                        <div class="patients-container">
+                            <div class="search-filters">
+                                <div class="search-box">
+                                    <input type="text" id="patientSearch" placeholder="Szukaj pacjenta...">
+                                    <button class="search-btn">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <div class="filters">
+                                    <select id="sortBy">
+                                        <option value="name">Sortuj po imieniu</option>
+                                        <option value="surname">Sortuj po nazwisku</option>
+                                        <option value="lastVisit">Sortuj po ostatniej wizycie</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="patients-list">
+                                <?php
+                                // Pobieranie wszystkich pacjentów lekarza
+                                $stmt = $conn->prepare("SELECT DISTINCT 
+                                    p.id as pacjent_id,
+                                    u.imie,
+                                    u.nazwisko,
+                                    u.pesel,
+                                    u.data_urodzenia,
+                                    p.grupa_krwi,
+                                    MAX(v.data_wizyty) as ostatnia_wizyta,
+                                    COUNT(v.id) as liczba_wizyt
+                                    FROM patients p 
+                                    JOIN users u ON p.uzytkownik_id = u.id
+                                    JOIN visits v ON v.pacjent_id = p.id
+                                    JOIN doctors d ON v.lekarz_id = d.id
+                                    WHERE d.uzytkownik_id = :user_id
+                                    GROUP BY p.id, u.imie, u.nazwisko, u.pesel, u.data_urodzenia, p.grupa_krwi
+                                    ORDER BY u.nazwisko, u.imie");
+                                $stmt->bindParam(':user_id', $_SESSION['user_id']);
+                                $stmt->execute();
+                                $pacjenci = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                if (count($pacjenci) > 0) {
+                                    foreach ($pacjenci as $pacjent) {
+                                        $wiek = date_diff(date_create($pacjent['data_urodzenia']), date_create('today'))->y;
+                                        echo '<div class="patient-card" data-pesel="' . htmlspecialchars($pacjent['pesel']) . '">';
+                                        echo '<div class="patient-info">';
+                                        echo '<div class="patient-main-info">';
+                                        echo '<h3>' . htmlspecialchars($pacjent['imie'] . ' ' . $pacjent['nazwisko']) . '</h3>';
+                                        echo '<span class="patient-age">' . $wiek . ' lat</span>';
+                                        echo '</div>';
+                                        echo '<div class="patient-details">';
+                                        echo '<p><strong>PESEL:</strong> ' . htmlspecialchars($pacjent['pesel']) . '</p>';
+                                        echo '<p><strong>Grupa krwi:</strong> ' . htmlspecialchars($pacjent['grupa_krwi']) . '</p>';
+                                        echo '</div>';
+                                        echo '<div class="patient-visits-info">';
+                                        echo '<p><strong>Ostatnia wizyta:</strong> ' . date('d.m.Y', strtotime($pacjent['ostatnia_wizyta'])) . '</p>';
+                                        echo '<p><strong>Liczba wizyt:</strong> ' . $pacjent['liczba_wizyt'] . '</p>';
+                                        echo '</div>';
+                                        echo '</div>';
+                                        echo '<div class="patient-actions">';
+                                        echo '<button class="btn-view-history" data-patient-id="' . $pacjent['pacjent_id'] . '">Historia wizyt</button>';
+                                        echo '<button class="btn-view-results" data-patient-id="' . $pacjent['pacjent_id'] . '">Wyniki badań</button>';
+                                        echo '</div>';
+                                        echo '</div>';
+                                    }
+                                } else {
+                                    echo '<p class="no-patients">Brak pacjentów w bazie</p>';
+                                }
+                                ?>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Historie Chorób -->
-                    <div class="panel-content" id="historie-chorob" style="display: none;">
-                        <h2>Historie Chorób</h2>
-                        <!-- Tutaj będą historie chorób -->
+                    <!-- Wystaw Wyniki -->
+                    <div class="panel-content" id="wystaw-wyniki" style="display: none;">
+                        <h2>Wystaw Wyniki</h2>
+                        <div class="results-form-container">
+                            <form id="resultsForm" class="results-form" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="patientSelect">Wybierz pacjenta:</label>
+                                    <select id="patientSelect" name="patient_id" required>
+                                        <option value="">-- Wybierz pacjenta --</option>
+                                        <?php
+                                        // Pobieranie listy pacjentów
+                                        $stmt = $conn->prepare("SELECT DISTINCT 
+                                            p.id as pacjent_id,
+                                            u.imie,
+                                            u.nazwisko,
+                                            u.pesel
+                                            FROM patients p 
+                                            JOIN users u ON p.uzytkownik_id = u.id
+                                            JOIN visits v ON v.pacjent_id = p.id
+                                            JOIN doctors d ON v.lekarz_id = d.id
+                                            WHERE d.uzytkownik_id = :user_id
+                                            ORDER BY u.nazwisko, u.imie");
+                                        $stmt->bindParam(':user_id', $_SESSION['user_id']);
+                                        $stmt->execute();
+                                        $pacjenci = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                        foreach ($pacjenci as $pacjent) {
+                                            echo '<option value="' . $pacjent['pacjent_id'] . '">' . 
+                                                 htmlspecialchars($pacjent['nazwisko'] . ' ' . $pacjent['imie'] . 
+                                                 ' (PESEL: ' . $pacjent['pesel'] . ')') . 
+                                                 '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="testType">Typ badania:</label>
+                                    <select id="testType" name="typ_badania" required>
+                                        <option value="">-- Wybierz typ badania --</option>
+                                        <option value="Morfologia krwi">Morfologia krwi</option>
+                                        <option value="Badanie moczu">Badanie moczu</option>
+                                        <option value="EKG">EKG</option>
+                                        <option value="RTG">RTG</option>
+                                        <option value="USG">USG</option>
+                                        <option value="Tomografia">Tomografia</option>
+                                        <option value="Rezonans magnetyczny">Rezonans magnetyczny</option>
+                                        <option value="Inne">Inne</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="testDate">Data badania:</label>
+                                    <input type="datetime-local" id="testDate" name="data_badania" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="testDescription">Opis wyników:</label>
+                                    <textarea id="testDescription" name="opis" rows="4" required></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="testFile">Załącz plik z wynikami:</label>
+                                    <div class="file-upload">
+                                        <input type="file" id="testFile" name="plik_wyniku" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                        <label for="testFile" class="file-label">
+                                            <span class="file-icon">📎</span>
+                                            <span class="file-text">Wybierz plik</span>
+                                        </label>
+                                        <span class="file-name">Nie wybrano pliku</span>
+                                    </div>
+                                    <small class="file-info">Dozwolone formaty: PDF, DOC, DOCX, JPG, PNG (max. 10MB)</small>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-submit">Wystaw wynik</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
 
                     <!-- Recepty -->
