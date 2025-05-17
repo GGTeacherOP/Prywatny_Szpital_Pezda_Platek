@@ -23,7 +23,7 @@ try {
     $stmt = $pdo->prepare('
         SELECT r.*, 
                CONCAT(u.imie, " ", u.nazwisko) as lekarz_nazwisko,
-               u.specjalizacja as lekarz_specjalizacja
+               d.specjalizacja as lekarz_specjalizacja
         FROM results r
         JOIN doctors d ON r.lekarz_id = d.id
         JOIN users u ON d.uzytkownik_id = u.id

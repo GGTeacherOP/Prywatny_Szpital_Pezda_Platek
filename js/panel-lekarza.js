@@ -190,9 +190,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (resultsSection) {
                 resultsSection.remove();
+                this.textContent = 'Wyniki badań';
+                this.classList.remove('active');
                 return;
             }
 
+            this.textContent = 'Ładowanie...';
+            
             fetch(`get_patient_results.php?patient_id=${patientId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -233,11 +237,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
 
                     this.closest('.patient-card').insertAdjacentHTML('afterend', resultsHtml);
+                    this.textContent = 'Ukryj wyniki';
                     this.classList.add('active');
                 })
                 .catch(error => {
                     console.error('Błąd:', error);
                     alert(error.message);
+                    this.textContent = 'Wyniki badań';
                 });
         });
     });
@@ -264,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData(this);
             
             // Sprawdzenie rozmiaru pliku
-            const file = formData.get('plik_wyniku');
+            const file = formData.get('plik');
             if (file && file.size > 10 * 1024 * 1024) { // 10MB
                 alert('Plik jest za duży. Maksymalny rozmiar to 10MB.');
                 return;
@@ -286,12 +292,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.reset();
                     fileName.textContent = 'Nie wybrano pliku';
                 } else {
-                    alert('Wystąpił błąd podczas zapisywania wyniku: ' + data.error);
+                    throw new Error(data.message || 'Wystąpił błąd podczas zapisywania wyniku');
                 }
             })
             .catch(error => {
                 console.error('Błąd:', error);
-                alert('Wystąpił błąd podczas wysyłania formularza.');
+                alert(error.message || 'Wystąpił błąd podczas wysyłania formularza.');
             })
             .finally(() => {
                 submitButton.disabled = false;
