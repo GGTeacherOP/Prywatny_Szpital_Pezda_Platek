@@ -1,0 +1,466 @@
+/* Sekcja lekarzy */
+.doctors-section {
+    padding: 2rem 0;
+    background-color: #f5f5f5;
+}
+
+.doctors-section h1 {
+    text-align: center;
+    color: #1a237e;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+}
+
+/* Przyciski filtrowania */
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.filter-btn {
+    background-color: #fff;
+    border: 2px solid #1a237e;
+    color: #1a237e;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background-color: #1a237e;
+    color: #fff;
+}
+
+.filter-btn.active {
+    background-color: #1a237e;
+    color: #fff;
+}
+
+/* Siatka lekarzy */
+.doctors-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Karta lekarza */
+.doctor-card {
+    background-color: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(26, 35, 126, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(26, 35, 126, 0.1);
+}
+
+.doctor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(26, 35, 126, 0.2);
+}
+
+.doctor-image {
+    width: 100%;
+    height: 450px;
+    overflow: hidden;
+    border-bottom: 3px solid #1a237e;
+}
+
+.doctor-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.doctor-card:hover .doctor-image img {
+    transform: scale(1.05);
+}
+
+.doctor-info {
+    padding: 2.5rem;
+}
+
+.doctor-info h3 {
+    color: #1a237e;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.doctor-info .specialty {
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e8eaf6;
+}
+
+.doctor-info .description {
+    color: #444;
+    line-height: 1.8;
+    font-size: 1.2rem;
+}
+
+/* Responsywność */
+@media (max-width: 1200px) {
+    .doctors-grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .doctors-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+
+    .filter-buttons {
+        padding: 0 1rem;
+    }
+
+    .filter-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .doctor-image {
+        height: 350px;
+    }
+
+    .doctor-info {
+        padding: 1.5rem;
+    }
+
+    .doctor-info h3 {
+        font-size: 1.5rem;
+    }
+
+    .doctor-info .specialty {
+        font-size: 1.1rem;
+    }
+
+    .doctor-info .description {
+        font-size: 1rem;
+    }
+}
+
+/* Sekcja historii szpitala */
+.hospital-history {
+    padding: 4rem 0;
+    background-color: #fff;
+    margin-bottom: 3rem;
+}
+
+.history-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.history-text h1 {
+    color: #1a237e;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    text-align: left;
+}
+
+/* Timeline */
+.history-timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 4rem;
+}
+
+.history-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: #1a237e;
+    opacity: 0.2;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #1a237e;
+}
+
+.timeline-item h3 {
+    color: #1a237e;
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+}
+
+.timeline-item p {
+    color: #444;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+/* Sekcja ze zdjęciami */
+.history-images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.history-image {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(26, 35, 126, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.history-image:hover {
+    transform: translateY(-5px);
+}
+
+.history-image img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    display: block;
+}
+
+.image-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(26, 35, 126, 0.9);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Responsywność */
+@media (max-width: 992px) {
+    .history-images {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .history-image img {
+        height: 350px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hospital-history {
+        padding: 2rem 0;
+    }
+
+    .history-content {
+        padding: 0 1rem;
+    }
+
+    .history-text h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .history-timeline {
+        margin-bottom: 2.5rem;
+    }
+
+    .history-image img {
+        height: 300px;
+    }
+
+    .timeline-item {
+        padding-left: 2rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .timeline-item h3 {
+        font-size: 1.2rem;
+    }
+
+    .timeline-item p {
+        font-size: 1rem;
+    }
+}
+
+/* Sekcja wartości i misji */
+.values-section {
+    padding: 4rem 0;
+    background-color: #f5f5f5;
+    margin-bottom: 3rem;
+}
+
+.values-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.values-content h2 {
+    color: #1a237e;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.value-card {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(26, 35, 126, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.value-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(26, 35, 126, 0.15);
+}
+
+.value-icon {
+    width: 90px;
+    height: 90px;
+    background-color: #1a237e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(26, 35, 126, 0.10);
+}
+
+.value-icon img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    display: block;
+}
+
+.value-card h3 {
+    color: #1a237e;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.value-card p {
+    color: #444;
+    line-height: 1.6;
+    font-size: 1.1rem;
+}
+
+.mission-statement {
+    background-color: #1a237e;
+    color: #fff;
+    padding: 3rem;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.mission-statement h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.mission-statement p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #e8eaf6;
+}
+
+/* Responsywność dla sekcji wartości */
+@media (max-width: 992px) {
+    .values-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .values-section {
+        padding: 2rem 0;
+    }
+
+    .values-content {
+        padding: 0 1rem;
+    }
+
+    .values-content h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .value-card {
+        padding: 1.5rem;
+    }
+
+    .value-icon {
+        width: 70px;
+        height: 70px;
+    }
+
+    .value-icon img {
+        width: 80%;
+        height: 80%;
+    }
+
+    .value-card h3 {
+        font-size: 1.2rem;
+    }
+
+    .value-card p {
+        font-size: 1rem;
+    }
+
+    .mission-statement {
+        padding: 2rem 1.5rem;
+    }
+
+    .mission-statement h3 {
+        font-size: 1.5rem;
+    }
+
+    .mission-statement p {
+        font-size: 1.1rem;
+    }
+} 

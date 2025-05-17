@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Szpital - Rejestracja</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="icon" type="image/png" href="img/logo/icon.png">
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="img/logo/logo.png" alt="Logo Szpitala">
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Strona główna</a></li>
+                <li><a href="o-nas.html">O nas</a></li>
+                <li><a href="aktualnosci.html">Aktualności</a></li>
+                <li><a href="dla-pacjenta.html">Dla pacjenta</a></li>
+            </ul>
+        </nav>
+        <div class="login-button">
+            <a href="logowanie.html" class="btn-login">Zaloguj się</a>
+        </div>
+    </header>
+
+    <div class="login-container">
+        <div class="login-header">
+            <h2>Rejestracja</h2>
+            <p>Załóż nowe konto pacjenta</p>
+        </div><br>
+        <form class="login-form">
+            <div class="form-group">
+                <label for="name">Imię i nazwisko</label>
+                <input type="text" id="name" name="name" required placeholder="Wprowadź imię i nazwisko">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="Wprowadź swój email">
+            </div>
+            <div class="form-group">
+                <label for="password">Hasło</label>
+                <input type="password" id="password" name="password" required placeholder="Wprowadź hasło">
+            </div>
+            <div class="form-group">
+                <label for="password-repeat">Powtórz hasło</label>
+                <input type="password" id="password-repeat" name="password-repeat" required placeholder="Powtórz hasło">
+            </div>
+            <button type="submit" class="form-login-button">Zarejestruj się</button>
+            <div class="login-links">
+                <a href="logowanie.html">Masz już konto? Zaloguj się</a>
+            </div>
+        </form>
+        <a href="index.html" class="back-to-home">← Powrót do strony głównej</a>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Kontakt</h3>
+                <p>aleja Niepodległości 6</p>
+                <p>39-300 Mielec</p>
+                <p>tel: (+48) 451 551 819</p>
+            </div>
+            <div class="footer-section">
+                <h3>Godziny przyjęć</h3>
+                <p>Poniedziałek - Piątek: 11:00 - 17:00</p>
+                <p>Sobota: Zamknięte</p>
+                <p>Niedziela: Zamknięte</p>
+            </div>
+            <div class="footer-section">
+                <h3>Obserwuj nas</h3>
+                <div class="social-links">
+                    <a href="#">Facebook</a>
+                    <a href="#">Twitter</a>
+                    <a href="#">Instagram</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Prywatny Szpital im. Coinplex. Wszelkie prawa zastrzeżone.</p>
+        </div>
+    </footer>
+</body>
+</html> 

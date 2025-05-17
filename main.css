@@ -1,0 +1,380 @@
+/* Reset i podstawowe style */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    line-height: 1.6;
+    color: #1a237e;
+    background-color: #f5f5f5;
+}
+
+/* Header */
+.header {
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(26, 35, 126, 0.1);
+    padding: 0.5rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+    margin: 0;
+    padding: 0;
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    color: #1a237e;
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+/* Nawigacja */
+.main-nav ul {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: #333333;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s ease;
+    font-size: 1rem;
+    letter-spacing: 0.1px;
+}
+
+.main-nav a:hover {
+    color: #1a237e;
+}
+
+.main-nav a.active {
+    color: #1a237e;
+    border-bottom: 2px solid #1a237e;
+}
+
+/* Przycisk logowania */
+.btn-login {
+    background-color: #1a237e;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-login:hover {
+    background-color: #0d1642;
+}
+
+/* Główna zawartość */
+.main-content {
+    min-height: calc(100vh - 300px);
+    padding: 0;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(26, 35, 126, 0.05);
+    margin: 0;
+    border-radius: 0;
+}
+
+/* Footer */
+.footer {
+    background-color: #283593;
+    color: white;
+    padding: 3rem 5% 1rem;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-section h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: #e8eaf6;
+}
+
+.footer-section p {
+    margin-bottom: 0.5rem;
+    color: #c5cae9;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-links a {
+    color: #e8eaf6;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+    color: #1a237e;
+    background-color: #e8eaf6;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(232, 234, 246, 0.1);
+    color: #c5cae9;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+}
+
+.hero-image {
+    width: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.hero-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+.hero-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    padding: 0 20px;
+}
+
+.hero-text h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+.hero-button {
+    display: inline-block;
+    background-color: #1a237e;
+    color: white;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.hero-button:hover {
+    background-color: #0d1642;
+}
+
+.contact-section {
+    display: flex;
+    gap: 2rem;
+    padding: 4rem 5%;
+    background-color: #f8f9fa;
+}
+
+.contact-info {
+    flex: 1;
+    padding-right: 2rem;
+}
+
+.contact-info h2 {
+    color: #1a237e;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.contact-info p {
+    color: #333;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+.contact-details {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.contact-details h3 {
+    color: #1a237e;
+    margin: 1.5rem 0 1rem;
+    font-size: 1.3rem;
+}
+
+.contact-details h3:first-child {
+    margin-top: 0;
+}
+
+.contact-details p {
+    margin-bottom: 0.8rem;
+}
+
+.map-container {
+    flex: 1;
+    min-width: 0;
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 450px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .contact-section {
+        flex-direction: column;
+        padding: 2rem 5%;
+    }
+
+    .contact-info {
+        padding-right: 0;
+        margin-bottom: 2rem;
+    }
+
+    .map-container iframe {
+        min-height: 350px;
+    }
+}
+
+/* Sekcja opinii */
+.reviews-section {
+    padding: 4rem 5%;
+    background-color: #fff;
+}
+
+.reviews-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.reviews-header h2 {
+    color: #1a237e;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.average-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rating-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1a237e;
+}
+
+.stars {
+    color: #ffd700;
+    font-size: 1.5rem;
+}
+
+.rating-count {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.reviews-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.review-card {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+    margin-bottom: 1rem;
+}
+
+.reviewer-info h3 {
+    color: #1a237e;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.review-stars {
+    color: #ffd700;
+    font-size: 1.2rem;
+}
+
+.review-text {
+    color: #333;
+    line-height: 1.6;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .reviews-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .reviews-header h2 {
+        font-size: 2rem;
+    }
+} 
