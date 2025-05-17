@@ -305,4 +305,74 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // Obsługa formularza wizyt
+    const visitForm = document.getElementById('visitForm');
+    const dataWizytyInput = document.getElementById('data_wizyty');
+    const patientSelect = document.getElementById('visitPatient');
+
+    // Funkcja do aktualizacji listy pacjentów
+    function updatePatientList(selectedDate) {
+        const date = new Date(selectedDate);
+        const formattedDate = date.toISOString().split('T')[0];
+
+        fetch('get_patients_for_date.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'date=' + formattedDate
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Czyszczenie aktualnej listy
+                patientSelect.innerHTML = '<option value="">Wybierz pacjenta</option>';
+                
+                // Dodawanie nowych opcji
+                data.patients.forEach(patient => {
+                    const option = document.createElement('option');
+                    option.value = patient.id;
+                    option.textContent = `${patient.imie} ${patient.nazwisko} (PESEL: ${patient.pesel})`;
+                    patientSelect.appendChild(option);
+                });
+            } else {
+                console.error('Błąd podczas pobierania listy pacjentów:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Błąd:', error);
+        });
+    }
+
+    // Nasłuchiwanie zmiany daty wizyty
+    dataWizytyInput.addEventListener('change', function() {
+        if (this.value) {
+            updatePatientList(this.value);
+        }
+    });
+
+    // Obsługa wysyłania formularza
+    visitForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch('save_visit.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Wizyta została zapisana pomyślnie!');
+                this.reset();
+            } else {
+                alert('Wystąpił błąd podczas zapisywania wizyty: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Błąd:', error);
+            alert('Wystąpił błąd podczas zapisywania wizyty');
+        });
+    });
 }); 

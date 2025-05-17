@@ -113,15 +113,9 @@ try {
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="nav-item" data-panel="recepty">
-                                <span class="nav-icon">💊</span>
-                                <span class="nav-text">Wystaw Recepty</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item" data-panel="statystyki">
-                                <span class="nav-icon">📊</span>
-                                <span class="nav-text">Statystyki</span>
+                            <a href="#" class="nav-item" data-panel="wizyta">
+                                <span class="nav-icon">📅</span>
+                                <span class="nav-text">Wizyta</span>
                             </a>
                         </li>
                     </ul>
@@ -481,16 +475,67 @@ try {
                         </div>
                     </div>
 
-                    <!-- Recepty -->
-                    <div class="panel-content" id="recepty" style="display: none;">
-                        <h2>Wystaw Recepty</h2>
-                        <!-- Tutaj będzie formularz recept -->
-                    </div>
-
-                    <!-- Statystyki -->
-                    <div class="panel-content" id="statystyki" style="display: none;">
-                        <h2>Statystyki</h2>
-                        <!-- Tutaj będą statystyki -->
+                    <!-- Wizyta -->
+                    <div class="panel-content" id="wizyta" style="display: none;">
+                        <h2>Dodaj wizytę</h2>
+                        <div class="visit-form-container">
+                            <form id="visitForm" class="visit-form">
+                                <div class="form-group">
+                                    <label for="visitPatient">Pacjent:</label>
+                                    <select name="pacjent_id" id="visitPatient" required>
+                                        <option value="">Wybierz pacjenta</option>
+                                        <?php
+                                        $stmt = $conn->prepare("
+                                            SELECT DISTINCT p.id, u.imie, u.nazwisko, u.pesel
+                                            FROM patients p
+                                            JOIN users u ON p.uzytkownik_id = u.id
+                                            JOIN visits v ON p.id = v.pacjent_id
+                                            JOIN doctors d ON v.lekarz_id = d.id
+                                            WHERE d.uzytkownik_id = :user_id
+                                            AND DATE(v.data_wizyty) = CURDATE()
+                                            ORDER BY u.nazwisko, u.imie
+                                        ");
+                                        $stmt->bindParam(':user_id', $_SESSION['user_id']);
+                                        $stmt->execute();
+                                        while ($row = $stmt->fetch()) {
+                                            echo "<option value='{$row['id']}'>{$row['imie']} {$row['nazwisko']} (PESEL: {$row['pesel']})</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="data_wizyty">Data i godzina wizyty:</label>
+                                    <input type="datetime-local" name="data_wizyty" id="data_wizyty" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="typ_wizyty">Typ wizyty:</label>
+                                    <select name="typ_wizyty" id="typ_wizyty" required>
+                                        <option value="pierwsza">Pierwsza wizyta</option>
+                                        <option value="kontrolna">Wizyta kontrolna</option>
+                                        <option value="pogotowie">Pogotowie</option>
+                                        <option value="szczepienie">Szczepienie</option>
+                                        <option value="badanie">Badanie</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="gabinet">Gabinet:</label>
+                                    <input type="text" name="gabinet" id="gabinet" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="opis">Opis:</label>
+                                    <textarea name="opis" id="opis" rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="diagnoza">Diagnoza:</label>
+                                    <textarea name="diagnoza" id="diagnoza" rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="zalecenia">Zalecenia:</label>
+                                    <textarea name="zalecenia" id="zalecenia" rows="3"></textarea>
+                                </div>
+                                <button type="submit" class="btn-submit">Zapisz wizytę</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

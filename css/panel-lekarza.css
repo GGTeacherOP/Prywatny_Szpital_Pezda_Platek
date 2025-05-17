@@ -208,7 +208,7 @@ body {
     }
 
     .stats-grid {
-        grid-grid-template-columns: 1fr;
+        grid-template-columns: 1fr;
     }
 }
 
@@ -1350,4 +1350,89 @@ body {
 
 .btn-submit:active {
     transform: translateY(0);
+}
+
+/* Style dla formularza wizyt */
+.visit-form-container {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.visit-form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.visit-form .form-group {
+    margin-bottom: 20px;
+}
+
+.visit-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: 500;
+}
+
+.visit-form select,
+.visit-form input[type="text"],
+.visit-form input[type="datetime-local"],
+.visit-form textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.visit-form select:focus,
+.visit-form input[type="text"]:focus,
+.visit-form input[type="datetime-local"]:focus,
+.visit-form textarea:focus {
+    border-color: #4a90e2;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.visit-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.visit-form .btn-submit {
+    background-color: #4a90e2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.visit-form .btn-submit:hover {
+    background-color: #357abd;
+}
+
+.visit-form .btn-submit:active {
+    background-color: #2a5f94;
+}
+
+.visit-form .btn-submit:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+    .visit-form-container {
+        padding: 15px;
+    }
+
+    .visit-form {
+        max-width: 100%;
+    }
 } 
