@@ -508,4 +508,340 @@ body.personel-page {
     width: 100%; /* Pełna szerokość dla lepszego wyrównania */
     margin-left: auto;
     margin-right: auto;
+}
+
+/* Filtry specjalizacji */
+.specialization-filter {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.spec-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    box-shadow: 3px 3px 6px #d9d9d9, -3px -3px 6px #ffffff;
+}
+
+.spec-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.spec-btn.active {
+    background: linear-gradient(145deg, #4a90e2, #357abd);
+    color: white;
+    box-shadow: inset 3px 3px 6px #357abd, inset -3px -3px 6px #4a90e2;
+}
+
+/* Rozwijane karty personelu */
+.staff-card {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.staff-card.expanded {
+    transform: scale(1.02);
+    z-index: 10;
+}
+
+.expand-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #4a90e2, #357abd);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.staff-card:hover .expand-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.expand-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Sekcja szczegółów */
+.staff-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 0 0 10px 10px;
+    margin-top: 15px;
+}
+
+.staff-card.expanded .staff-details {
+    max-height: 500px;
+    padding: 20px;
+}
+
+/* Galeria zdjęć */
+.staff-gallery {
+    margin-bottom: 20px;
+}
+
+.gallery-main {
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.gallery-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.gallery-thumbnails {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.gallery-thumbnails img {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+.gallery-thumbnails img:hover {
+    opacity: 0.8;
+    transform: scale(1.1);
+}
+
+.gallery-thumbnails img.active {
+    opacity: 1;
+    border: 2px solid #4a90e2;
+}
+
+/* Informacje kontaktowe */
+.staff-info {
+    text-align: left;
+}
+
+.staff-info h4 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.staff-contact {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.staff-contact p {
+    margin: 5px 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* Animacje */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsywność dla nowych elementów */
+@media (max-width: 768px) {
+    .specialization-filter {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .spec-btn {
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .staff-card.expanded {
+        transform: none;
+    }
+
+    .gallery-main {
+        height: 150px;
+    }
+
+    .gallery-thumbnails img {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* Tryb ciemny */
+.dark-mode {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+.dark-mode .personel-section {
+    background-color: #2d2d2d;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .staff-card {
+    background-color: #333;
+    border-color: #444;
+}
+
+.dark-mode .staff-card h3,
+.dark-mode .staff-info h4 {
+    color: #ffffff;
+}
+
+.dark-mode .staff-card .details,
+.dark-mode .staff-contact p {
+    color: #cccccc;
+}
+
+.dark-mode .staff-search,
+.dark-mode .sort-select {
+    background-color: #333;
+    color: #ffffff;
+    border-color: #444;
+}
+
+.dark-mode .filter-btn,
+.dark-mode .spec-btn {
+    background: linear-gradient(145deg, #333, #2d2d2d);
+    color: #ffffff;
+    box-shadow: 5px 5px 10px #1a1a1a, -5px -5px 10px #404040;
+}
+
+.dark-mode .filter-btn:hover,
+.dark-mode .spec-btn:hover {
+    background: linear-gradient(145deg, #2d2d2d, #333);
+}
+
+.dark-mode .filter-btn.active,
+.dark-mode .spec-btn.active {
+    background: linear-gradient(145deg, #4a90e2, #357abd);
+}
+
+.dark-mode-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.dark-mode-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* Statystyki personelu */
+.staff-stats {
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-radius: 15px;
+    box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+    min-width: 150px;
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    font-size: 2em;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.stat-number {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #4a90e2;
+    display: block;
+    margin: 10px 0;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 1.1em;
+}
+
+/* Responsywność dla nowych elementów */
+@media (max-width: 768px) {
+    .stats-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stat-item {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .dark-mode-toggle {
+        top: 10px;
+        right: 10px;
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
 } 
