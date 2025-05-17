@@ -1,0 +1,153 @@
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('personel.js loaded');
+
+    // Elementy DOM
+    const staffCards = document.querySelectorAll('.staff-card');
+    const filterButtons = document.createElement('div');
+
+    // Tworzenie sekcji filtrowania
+    const filterSection = document.createElement('div');
+    filterSection.className = 'filter-buttons';
+    filterSection.innerHTML = `
+        <button class="filter-btn active" data-category="Wszyscy">Wszyscy</button>
+        <button class="filter-btn" data-category="Lekarze">Lekarze</button>
+    `;
+
+    // Dodanie przycisku specjalizacji dla lekarzy
+    const specializations = ['Wszystkie', 'Kardiologia', 'Neurologia', 'Chirurgia Ogólna', 'Pediatria'];
+    const specializationFilter = document.createElement('div');
+    specializationFilter.className = 'specialization-filter';
+    specializationFilter.style.display = 'none'; // Domyślnie ukryty
+
+    specializations.forEach(spec => {
+        const button = document.createElement('button');
+        button.textContent = spec;
+        button.className = 'spec-btn';
+        button.dataset.specialization = spec;
+        specializationFilter.appendChild(button);
+    });
+
+    // Dodanie elementów do strony
+    const personelSection = document.querySelector('.personel-section');
+    personelSection.insertBefore(filterSection, personelSection.firstChild);
+    filterSection.appendChild(specializationFilter);
+
+    // Funkcja filtrowania z animacją
+    function filterStaff(category) {
+        const cards = Array.from(staffCards);
+        cards.forEach((card, index) => {
+            const cardCategory = card.closest('.personel-category').querySelector('h2').textContent;
+            const isVisible = category === 'Wszyscy' || cardCategory === category;
+            
+            if (isVisible) {
+                card.style.display = 'block';
+                setTimeout(() => {
+                    card.classList.add('filter-match');
+                    setTimeout(() => card.classList.remove('filter-match'), 1000);
+                }, index * 100);
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Pokaż/ukryj filtr specjalizacji
+        specializationFilter.style.display = category === 'Lekarze' ? 'flex' : 'none';
+    }
+
+    // Funkcja filtrowania po specjalizacji
+    function filterBySpecialization(specialization) {
+        const cards = Array.from(staffCards);
+        cards.forEach(card => {
+            const specialty = card.querySelector('.position-specialty').textContent;
+            const isVisible = specialization === 'Wszystkie' || specialty.includes(specialization);
+            card.style.display = isVisible ? 'block' : 'none';
+        });
+    }
+
+    // Obsługa przycisków filtrowania
+    filterSection.addEventListener('click', (e) => {
+        if (e.target.classList.contains('filter-btn')) {
+            // Animacja przycisku
+            e.target.classList.add('btn-click');
+            setTimeout(() => e.target.classList.remove('btn-click'), 300);
+
+            // Usuń aktywną klasę ze wszystkich przycisków
+            filterSection.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Dodaj aktywną klasę do klikniętego przycisku
+            e.target.classList.add('active');
+            // Filtruj personel
+            filterStaff(e.target.dataset.category);
+        }
+    });
+
+    // Obsługa przycisków specjalizacji
+    specializationFilter.addEventListener('click', (e) => {
+        if (e.target.classList.contains('spec-btn')) {
+            document.querySelectorAll('.spec-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            e.target.classList.add('active');
+            filterBySpecialization(e.target.dataset.specialization);
+        }
+    });
+
+    // Animacje przy przewijaniu z opóźnieniem
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.classList.add('animate-in');
+                }, index * 100);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '50px'
+    });
+
+    staffCards.forEach(card => {
+        observer.observe(card);
+    });
+
+    // Zaawansowany efekt hover na kartach
+    staffCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.classList.add('hover');
+            const img = card.querySelector('img');
+            if (img) {
+                img.style.transform = 'scale(1.1) rotate(5deg)';
+            }
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.classList.remove('hover');
+            const img = card.querySelector('img');
+            if (img) {
+                img.style.transform = 'scale(1) rotate(0deg)';
+            }
+        });
+    });
+
+    // Dodanie przycisku "Powrót na górę"
+    const backToTopBtn = document.createElement('button');
+    backToTopBtn.className = 'back-to-top';
+    backToTopBtn.innerHTML = '↑';
+    document.body.appendChild(backToTopBtn);
+
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+            backToTopBtn.classList.add('show');
+        } else {
+            backToTopBtn.classList.remove('show');
+        }
+    });
+
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}); 
