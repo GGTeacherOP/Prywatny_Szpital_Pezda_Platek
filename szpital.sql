@@ -185,8 +185,30 @@ CREATE TABLE reviews (
     FOREIGN KEY (uzytkownik_id) REFERENCES users(id)
 );
 
+-- Tabela Wyniki
+CREATE TABLE results (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    pacjent_id INT NOT NULL,
+    lekarz_id INT NOT NULL,
+    typ_badania VARCHAR(100) NOT NULL,
+    data_wystawienia DATETIME DEFAULT CURRENT_TIMESTAMP,
+    pin VARCHAR(12) NOT NULL,
+    plik_wyniku VARCHAR(255),
+    status ENUM('oczekujący', 'gotowy') DEFAULT 'oczekujący',
+    FOREIGN KEY (pacjent_id) REFERENCES patients(id),
+    FOREIGN KEY (lekarz_id) REFERENCES doctors(id)
+);
+
 -- Dodanie indeksów dla optymalizacji zapytań
 CREATE INDEX idx_users_pesel ON users(pesel);
 CREATE INDEX idx_visits_data ON visits(data_wizyty);
 CREATE INDEX idx_hospitalizations_data ON hospitalizations(data_przyjecia);
-CREATE INDEX idx_news_data ON news(data_publikacji); 
+CREATE INDEX idx_news_data ON news(data_publikacji);
+
+-- Dodanie przykładowych wyników badań
+INSERT INTO results (pacjent_id, lekarz_id, typ_badania, data_wystawienia, pin, plik_wyniku, status) VALUES
+(1, 1, 'Morfologia krwi', '2025-05-17 09:30:00', '1234-5678-9012', 'wyniki/morfologia_1.pdf', 'gotowy'),
+(2, 1, 'Badanie poziomu glukozy', '2025-05-17 10:15:00', '2345-6789-0123', 'wyniki/glukoza_2.pdf', 'gotowy'),
+(3, 1, 'Badanie cholesterolu', '2025-05-17 11:00:00', '3456-7890-1234', 'wyniki/cholesterol_3.pdf', 'gotowy'),
+(4, 1, 'Badanie moczu', '2025-05-17 13:45:00', '4567-8901-2345', 'wyniki/mocz_4.pdf', 'oczekujący'),
+(5, 1, 'EKG', '2025-05-17 14:30:00', '5678-9012-3456', 'wyniki/ekg_5.pdf', 'gotowy'); 

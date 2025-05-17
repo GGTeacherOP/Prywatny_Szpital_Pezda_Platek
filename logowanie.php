@@ -1,7 +1,7 @@
 <?php
+session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-session_start();
 
 // Połączenie z bazą danych
 $servername = "localhost";
@@ -21,14 +21,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
     $error = "";
-
+    
     try {
         // Najpierw sprawdźmy czy użytkownik w ogóle istnieje
         $stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->bindParam(':email', $email);
         $stmt->execute();
         $user = $stmt->fetch();
-
+        
         if (!$user) {
             $error = "Nie znaleziono konta o podanym adresie email";
         } else {
@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['funkcja'] = $user['funkcja'];
-                header("Location: panel-lekarza.html");
+                header("Location: panel-lekarza.php");
                 exit();
             }
         }
