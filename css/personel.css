@@ -154,18 +154,23 @@ body.personel-page {
     margin-bottom: 15px;
     font-weight: 500;
     min-height: 2.2em;
-    position: relative; /* Potrzebne dla pseudo-elementu */
-    padding-left: 20px; /* Miejsce na pseudo-element */
+    position: relative;
+    padding-left: 25px; /* Zwiększony padding dla lepszego wyrównania */
+    display: flex;
+    align-items: center; /* Wycentrowanie w pionie */
 }
 
 .staff-card .position-specialty::before {
-    content: '\25CF'; /* Małe kółko (bullet point) jako przykład ikony */
+    content: '\25CF';
     position: absolute;
-    left: 0;
+    left: 8px; /* Przesunięcie kropki w lewo */
     top: 50%;
     transform: translateY(-50%);
-    color: #2980b9; /* Ciemniejszy niebieski dla akcentu */
-    font-size: 0.8em; /* Mniejszy rozmiar dla kropki */
+    color: #2980b9;
+    font-size: 0.8em;
+    line-height: 1; /* Dodane dla lepszego wyrównania */
+    display: inline-block; /* Dodane dla lepszego wyrównania */
+    vertical-align: middle; /* Dodane dla lepszego wyrównania */
 }
 
 /* Opis/detale */
@@ -466,6 +471,10 @@ body.personel-page {
     padding: 20px;
     margin: 15px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .staff-card img {
@@ -491,4 +500,12 @@ body.personel-page {
     color: #666;
     font-size: 0.9em;
     line-height: 1.4;
+}
+
+/* Wyjątek dla stanowiska - wyrównanie do lewej */
+.staff-card .position-specialty {
+    text-align: left;
+    width: 100%; /* Pełna szerokość dla lepszego wyrównania */
+    margin-left: auto;
+    margin-right: auto;
 } 
