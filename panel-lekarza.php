@@ -257,13 +257,18 @@ try {
                                     <h2>Statystyki</h2>
                                     <?php
                                     // Pobieranie statystyk
-                                    $stmt = $conn->prepare("SELECT 
-                                        COUNT(CASE WHEN DATE(v.data_wizyty) = CURDATE() THEN 1 END) as dzisiaj,
-                                        COUNT(CASE WHEN DATE(v.data_wizyty) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) THEN 1 END) as tydzien,
-                                        COUNT(CASE WHEN DATE(v.data_wizyty) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 END) as miesiac
+                                    $stmt = $conn->prepare("
+                                        SELECT 
+                                            COUNT(CASE WHEN DATE(v.data_wizyty) = CURDATE() THEN 1 END) as dzisiaj,
+                                            COUNT(CASE WHEN DATE(v.data_wizyty) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) THEN 1 END) as tydzien,
+                                            COUNT(CASE WHEN DATE(v.data_wizyty) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 END) as miesiac,
+                                            COUNT(DISTINCT v.pacjent_id) as liczba_pacjentow,
+                                            COUNT(CASE WHEN v.status = 'zakończona' AND DATE(v.data_wizyty) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 END) as wizyty_zakonczone,
+                                            COUNT(CASE WHEN v.status = 'zaplanowana' THEN 1 END) as wizyty_zaplanowane
                                         FROM visits v 
                                         JOIN doctors d ON v.lekarz_id = d.id 
-                                        WHERE d.uzytkownik_id = :user_id");
+                                        WHERE d.uzytkownik_id = :user_id
+                                    ");
                                     $stmt->bindParam(':user_id', $_SESSION['user_id']);
                                     $stmt->execute();
                                     $statystyki = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -284,7 +289,63 @@ try {
                                             <p class="stat-number"><?php echo $statystyki['miesiac']; ?></p>
                                             <p class="stat-label">Wizyt</p>
                                         </div>
+                                        <div class="stat-card">
+                                            <h3>Pacjenci</h3>
+                                            <p class="stat-number"><?php echo $statystyki['liczba_pacjentow']; ?></p>
+                                            <p class="stat-label">Łącznie</p>
+                                        </div>
+                                        <div class="stat-card">
+                                            <h3>Zakończone</h3>
+                                            <p class="stat-number"><?php echo $statystyki['wizyty_zakonczone']; ?></p>
+                                            <p class="stat-label">W tym miesiącu</p>
+                                        </div>
+                                        <div class="stat-card">
+                                            <h3>Zaplanowane</h3>
+                                            <p class="stat-number"><?php echo $statystyki['wizyty_zaplanowane']; ?></p>
+                                            <p class="stat-label">Wizyty</p>
+                                        </div>
                                     </div>
+                                    <style>
+                                        .stats-grid {
+                                            display: grid;
+                                            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                                            gap: 20px;
+                                            margin-top: 20px;
+                                        }
+                                        
+                                        .stat-card {
+                                            background: white;
+                                            border-radius: 8px;
+                                            padding: 20px;
+                                            text-align: center;
+                                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                                            transition: transform 0.2s;
+                                        }
+                                        
+                                        .stat-card:hover {
+                                            transform: translateY(-5px);
+                                            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                                        }
+                                        
+                                        .stat-card h3 {
+                                            color: #333;
+                                            margin: 0 0 10px 0;
+                                            font-size: 1.1em;
+                                        }
+                                        
+                                        .stat-number {
+                                            font-size: 2em;
+                                            font-weight: bold;
+                                            color: #2196F3;
+                                            margin: 10px 0;
+                                        }
+                                        
+                                        .stat-label {
+                                            color: #666;
+                                            font-size: 0.9em;
+                                            margin: 0;
+                                        }
+                                    </style>
                                 </section>
                             </div>
                         </div>
