@@ -2,6 +2,8 @@
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/logs/error.log');
 
 // Sprawdzenie czy użytkownik jest zalogowany i jest lekarzem
 if (!isset($_SESSION['user_id']) || $_SESSION['funkcja'] !== 'lekarz') {
@@ -128,36 +130,88 @@ try {
                             <!-- Sekcja Dzisiejsze Wizyty -->
                             <div class="grid-item">
                                 <section class="dashboard-section today-visits">
-                                    <h2>Dzisiejsze Wizyty</h2>
-                                    <?php
-                                    // Pobieranie dzisiejszych wizyt
-                                    $stmt = $conn->prepare("SELECT v.*, u.imie, u.nazwisko 
-                                                          FROM visits v 
-                                                          JOIN patients p ON v.pacjent_id = p.id 
-                                                          JOIN users u ON p.uzytkownik_id = u.id
-                                                          JOIN doctors d ON v.lekarz_id = d.id 
-                                                          WHERE d.uzytkownik_id = :user_id 
-                                                          AND DATE(v.data_wizyty) = CURDATE() 
-                                                          ORDER BY v.data_wizyty");
-                                    $stmt->bindParam(':user_id', $_SESSION['user_id']);
-                                    $stmt->execute();
-                                    $wizyty = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                    <h2>Wszystkie Wizyty</h2>
+                                    <div class="visits-scroll-container">
+                                        <?php
+                                        // Pobieranie wszystkich wizyt
+                                        $stmt = $conn->prepare("
+                                            SELECT 
+                                                v.id,
+                                                v.data_wizyty,
+                                                v.typ_wizyty,
+                                                v.status,
+                                                v.gabinet,
+                                                u.imie,
+                                                u.nazwisko
+                                            FROM visits v
+                                            JOIN patients p ON v.pacjent_id = p.id
+                                            JOIN users u ON p.uzytkownik_id = u.id
+                                            JOIN doctors d ON v.lekarz_id = d.id
+                                            WHERE d.uzytkownik_id = :user_id
+                                            ORDER BY v.data_wizyty ASC
+                                        ");
+                                        $stmt->bindParam(':user_id', $_SESSION['user_id']);
+                                        $stmt->execute();
+                                        $wizyty = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                                    if (count($wizyty) > 0) {
-                                        foreach ($wizyty as $wizyta) {
-                                            echo '<div class="visit-card">';
-                                            echo '<div class="visit-info">';
-                                            echo '<h3>' . htmlspecialchars($wizyta['imie'] . ' ' . $wizyta['nazwisko']) . '</h3>';
-                                            echo '<p class="visit-time">' . date('H:i', strtotime($wizyta['data_wizyty'])) . '</p>';
-                                            echo '<p class="visit-type ' . strtolower($wizyta['typ_wizyty']) . '">' . 
-                                                 ucfirst(htmlspecialchars($wizyta['typ_wizyty'])) . '</p>';
-                                            echo '</div>';
-                                            echo '</div>';
+                                        if (count($wizyty) > 0) {
+                                            foreach ($wizyty as $wizyta) {
+                                                echo '<div class="visit-card">';
+                                                echo '<div class="visit-info">';
+                                                echo '<h3>' . htmlspecialchars($wizyta['imie'] . ' ' . $wizyta['nazwisko']) . '</h3>';
+                                                echo '<p class="visit-time">' . date('d.m.Y H:i', strtotime($wizyta['data_wizyty'])) . '</p>';
+                                                echo '<p class="visit-type ' . strtolower($wizyta['typ_wizyty']) . '">' . 
+                                                     ucfirst(htmlspecialchars($wizyta['typ_wizyty'])) . '</p>';
+                                                echo '<p class="visit-room">Gabinet: ' . htmlspecialchars($wizyta['gabinet']) . '</p>';
+                                                echo '<p class="visit-status">Status: ' . htmlspecialchars($wizyta['status']) . '</p>';
+                                                echo '</div>';
+                                                echo '</div>';
+                                            }
+                                        } else {
+                                            echo '<p class="no-visits">Brak zaplanowanych wizyt</p>';
                                         }
-                                    } else {
-                                        echo '<p class="no-visits">Brak zaplanowanych wizyt na dzisiaj</p>';
-                                    }
-                                    ?>
+                                        ?>
+                                    </div>
+                                    <style>
+                                        .visits-scroll-container {
+                                            max-height: 600px;
+                                            overflow-y: auto;
+                                            padding-right: 10px;
+                                            margin-top: 15px;
+                                        }
+                                        
+                                        .visits-scroll-container::-webkit-scrollbar {
+                                            width: 8px;
+                                        }
+                                        
+                                        .visits-scroll-container::-webkit-scrollbar-track {
+                                            background: #f1f1f1;
+                                            border-radius: 4px;
+                                        }
+                                        
+                                        .visits-scroll-container::-webkit-scrollbar-thumb {
+                                            background: #888;
+                                            border-radius: 4px;
+                                        }
+                                        
+                                        .visits-scroll-container::-webkit-scrollbar-thumb:hover {
+                                            background: #555;
+                                        }
+                                        
+                                        .visit-card {
+                                            background: white;
+                                            border-radius: 8px;
+                                            padding: 15px;
+                                            margin-bottom: 10px;
+                                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                                            transition: transform 0.2s;
+                                        }
+                                        
+                                        .visit-card:hover {
+                                            transform: translateY(-2px);
+                                            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                                        }
+                                    </style>
                                 </section>
                             </div>
 
@@ -246,17 +300,18 @@ try {
                                         <th>Godzina</th>
                                         <?php
                                         // Pobieranie dni tygodnia
-                                        $dni = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'];
-                                        $dzisiejszy_dzien = date('N'); // 1 (poniedziałek) do 7 (niedziela)
+                                        $dni = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+                                        $dzisiejszy_dzien = date('w'); // 0 (niedziela) do 6 (sobota)
                                         
                                         // Obliczanie dat dla dni tygodnia
                                         $daty = [];
-                                        for ($i = 1; $i <= 7; $i++) {
+                                        for ($i = 0; $i <= 6; $i++) {
                                             $roznica = $i - $dzisiejszy_dzien;
                                             $data = date('Y-m-d', strtotime("$roznica days"));
                                             $daty[] = $data;
-                                            $klasa_dnia = ($i >= 6) ? 'weekend' : '';
-                                            echo "<th class='$klasa_dnia'>" . $dni[$i-1] . "<br><span class='date'>" . date('d.m', strtotime($data)) . "</span></th>";
+                                            error_log("Generowana data: $data");
+                                            $klasa_dnia = ($i == 0 || $i == 6) ? 'weekend' : '';
+                                            echo "<th class='$klasa_dnia'>" . $dni[$i] . "<br><span class='date'>" . date('d.m', strtotime($data)) . "</span></th>";
                                         }
                                         ?>
                                     </tr>
@@ -264,49 +319,54 @@ try {
                                 <tbody>
                                     <?php
                                     // Godziny przyjęć
-                                    $godziny = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+                                    $godziny = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
                                     
+                                    // Pobieranie wszystkich wizyt
+                                    $stmt = $conn->prepare("SELECT 
+                                        v.*,
+                                        d.specjalizacja,
+                                        u.imie,
+                                        u.nazwisko
+                                        FROM visits v 
+                                        JOIN doctors d ON v.lekarz_id = d.id 
+                                        JOIN users u ON d.uzytkownik_id = u.id
+                                        JOIN patients p ON v.pacjent_id = p.id
+                                        JOIN users u2 ON p.uzytkownik_id = u2.id
+                                        WHERE d.uzytkownik_id = :user_id 
+                                        AND DATE(v.data_wizyty) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 DAY)
+                                        ORDER BY v.data_wizyty ASC");
+                                    $stmt->bindParam(':user_id', $_SESSION['user_id']);
+                                    $stmt->execute();
+                                    $wizyty = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
                                     foreach ($godziny as $godzina) {
                                         echo "<tr>";
                                         echo "<td class='time-cell'>$godzina</td>";
                                         
-                                        // Dla każdego dnia tygodnia
                                         foreach ($daty as $data) {
                                             echo "<td class='visit-cell'>";
                                             
-                                            // Pobieranie wizyt dla danego dnia i godziny
-                                            $user_id = $_SESSION['user_id'];
-                                            $data_wizyty = $data;
-                                            $godzina_start = $godzina . ':00';
-                                            $godzina_end = date('H:i:s', strtotime($godzina . ':00 + 1 hour'));
+                                            // Sprawdzanie czy są wizyty na ten dzień i godzinę
+                                            $wizyty_na_dzien = array_filter($wizyty, function($wizyta) use ($data, $godzina) {
+                                                $wizyta_data = date('Y-m-d', strtotime($wizyta['data_wizyty']));
+                                                $wizyta_godzina = date('H:i', strtotime($wizyta['data_wizyty']));
+                                                return $wizyta_data === $data && $wizyta_godzina === $godzina;
+                                            });
                                             
-                                            $stmt = $conn->prepare("SELECT v.*, u.imie, u.nazwisko, v.typ_wizyty, TIME(v.data_wizyty) as dokladna_godzina
-                                                                  FROM visits v 
-                                                                  JOIN patients p ON v.pacjent_id = p.id 
-                                                                  JOIN users u ON p.uzytkownik_id = u.id
-                                                                  JOIN doctors d ON v.lekarz_id = d.id 
-                                                                  WHERE d.uzytkownik_id = :user_id 
-                                                                  AND DATE(v.data_wizyty) = :data 
-                                                                  AND TIME(v.data_wizyty) >= :godzina_start
-                                                                  AND TIME(v.data_wizyty) < :godzina_end");
-                                            $stmt->bindParam(':user_id', $user_id);
-                                            $stmt->bindParam(':data', $data_wizyty);
-                                            $stmt->bindParam(':godzina_start', $godzina_start);
-                                            $stmt->bindParam(':godzina_end', $godzina_end);
-                                            $stmt->execute();
-                                            $wizyty = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                            
-                                            if (count($wizyty) > 0) {
-                                                foreach ($wizyty as $wizyta) {
-                                                    $dokladna_godzina = date('H:i', strtotime($wizyta['dokladna_godzina']));
-                                                    echo "<div class='visit-slot " . strtolower($wizyta['typ_wizyty']) . "'>";
-                                                    echo "<span class='visit-time'>" . $dokladna_godzina . "</span>";
-                                                    echo "<span class='patient-name'>" . htmlspecialchars($wizyta['imie'] . ' ' . $wizyta['nazwisko']) . "</span>";
-                                                    echo "<span class='visit-type'>" . htmlspecialchars($wizyta['typ_wizyty']) . "</span>";
-                                                    echo "</div>";
+                                            if (!empty($wizyty_na_dzien)) {
+                                                foreach ($wizyty_na_dzien as $wizyta) {
+                                                    $status_class = strtolower($wizyta['status']);
+                                                    echo '<div class="visit-slot ' . strtolower($wizyta['typ_wizyty']) . ' ' . $status_class . '">';
+                                                    echo '<span class="visit-time">' . date('H:i', strtotime($wizyta['data_wizyty'])) . '</span>';
+                                                    echo '<span class="patient-name">' . htmlspecialchars($wizyta['imie'] . ' ' . $wizyta['nazwisko']) . '</span>';
+                                                    echo '<span class="visit-type">' . htmlspecialchars($wizyta['typ_wizyty']) . '</span>';
+                                                    if ($wizyta['gabinet']) {
+                                                        echo '<span class="visit-room">Gabinet: ' . htmlspecialchars($wizyta['gabinet']) . '</span>';
+                                                    }
+                                                    echo '</div>';
                                                 }
                                             } else {
-                                                echo "<div class='empty-slot'>Wolne</div>";
+                                                echo '<div class="empty-slot">Wolne</div>';
                                             }
                                             
                                             echo "</td>";
@@ -317,6 +377,103 @@ try {
                                 </tbody>
                             </table>
                         </div>
+                        <style>
+                            .schedule-container {
+                                overflow-x: auto;
+                                margin-top: 20px;
+                                background: white;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                            }
+                            
+                            .schedule-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                min-width: 1000px;
+                            }
+                            
+                            .schedule-table th,
+                            .schedule-table td {
+                                border: 1px solid #e0e0e0;
+                                padding: 10px;
+                                text-align: center;
+                            }
+                            
+                            .schedule-table th {
+                                background: #f5f5f5;
+                                font-weight: bold;
+                                position: sticky;
+                                top: 0;
+                                z-index: 1;
+                            }
+                            
+                            .schedule-table th.weekend {
+                                background: #fff0f0;
+                            }
+                            
+                            .time-cell {
+                                background: #f5f5f5;
+                                font-weight: bold;
+                                position: sticky;
+                                left: 0;
+                                z-index: 1;
+                            }
+                            
+                            .visit-cell {
+                                min-width: 150px;
+                                height: 80px;
+                                vertical-align: top;
+                            }
+                            
+                            .visit-slot {
+                                background: #e3f2fd;
+                                border-radius: 4px;
+                                padding: 8px;
+                                margin: 2px;
+                                font-size: 0.9em;
+                                display: flex;
+                                flex-direction: column;
+                                gap: 4px;
+                            }
+                            
+                            .visit-slot.pierwsza { background: #e8f5e9; }
+                            .visit-slot.kontrolna { background: #fff3e0; }
+                            .visit-slot.pogotowie { background: #ffebee; }
+                            .visit-slot.szczepienie { background: #e8eaf6; }
+                            .visit-slot.badanie { background: #f3e5f5; }
+                            
+                            .empty-slot {
+                                color: #9e9e9e;
+                                font-style: italic;
+                                font-size: 0.9em;
+                            }
+                            
+                            .visit-time {
+                                font-weight: bold;
+                                color: #333;
+                            }
+                            
+                            .patient-name {
+                                font-weight: 500;
+                            }
+                            
+                            .visit-type {
+                                font-size: 0.85em;
+                                color: #666;
+                            }
+                            
+                            .visit-room {
+                                font-size: 0.85em;
+                                color: #666;
+                            }
+                            
+                            .date {
+                                font-size: 0.85em;
+                                color: #666;
+                                display: block;
+                                margin-top: 4px;
+                            }
+                        </style>
                     </div>
 
                     <!-- Lista Pacjentów -->
@@ -486,13 +643,16 @@ try {
                                         <option value="">Wybierz pacjenta</option>
                                         <?php
                                         $stmt = $conn->prepare("
-                                            SELECT DISTINCT p.id, u.imie, u.nazwisko, u.pesel
+                                            SELECT DISTINCT 
+                                                p.id, 
+                                                u.imie, 
+                                                u.nazwisko, 
+                                                u.pesel
                                             FROM patients p
                                             JOIN users u ON p.uzytkownik_id = u.id
                                             JOIN visits v ON p.id = v.pacjent_id
                                             JOIN doctors d ON v.lekarz_id = d.id
                                             WHERE d.uzytkownik_id = :user_id
-                                            AND DATE(v.data_wizyty) = CURDATE()
                                             ORDER BY u.nazwisko, u.imie
                                         ");
                                         $stmt->bindParam(':user_id', $_SESSION['user_id']);
