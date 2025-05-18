@@ -32,24 +32,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!$user) {
             $error = "Nie znaleziono konta o podanym adresie email";
         } else {
-            // Sprawdźmy czy użytkownik jest lekarzem
-            if ($user['funkcja'] !== 'lekarz') {
-                $error = "To konto nie należy do lekarza";
-            }
             // Sprawdźmy czy konto jest aktywne
-            else if ($user['status'] !== 'aktywny') {
+            if ($user['status'] !== 'aktywny') {
                 $error = "To konto jest nieaktywne";
             }
             // Sprawdźmy hasło
             else if ($password !== $user['haslo']) {
                 $error = "Nieprawidłowe hasło";
             }
-            // Jeśli wszystko OK, zaloguj
+            // Jeśli wszystko OK, zaloguj i przekieruj do odpowiedniego panelu
             else {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['funkcja'] = $user['funkcja'];
-                header("Location: panel-lekarza.php");
+                
+                // Przekierowanie w zależności od funkcji użytkownika
+                if ($user['funkcja'] === 'lekarz') {
+                    header("Location: panel-lekarza.php");
+                } else if ($user['funkcja'] === 'pacjent') {
+                    header("Location: panel-pacjenta.php");
+                } else {
+                    $error = "Nieznany typ konta";
+                }
                 exit();
             }
         }
