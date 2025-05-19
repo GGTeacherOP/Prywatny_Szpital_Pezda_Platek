@@ -325,14 +325,155 @@ try {
 
             <!-- Sekcja Wizyty -->
             <div id="wizyty" class="dashboard-section" style="display: none;">
-                <h2>Wizyty</h2>
-                <!-- Tutaj będzie zawartość sekcji wizyt -->
+                <h2>Harmonogram Wizyt</h2>
+                <div class="schedule-container">
+                    <?php
+                    // Pobieranie daty rozpoczęcia tygodnia (poniedziałek)
+                    $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+                    $endOfWeek = date('Y-m-d', strtotime('sunday this week'));
+
+                    // Pobieranie wizyt na aktualny tydzień
+                    $stmt = $conn->prepare("
+                        SELECT 
+                            v.*,
+                            u.imie,
+                            u.nazwisko,
+                            p.grupa_krwi
+                        FROM visits v
+                        JOIN patients p ON v.pacjent_id = p.id
+                        JOIN users u ON p.uzytkownik_id = u.id
+                        WHERE v.lekarz_id = (
+                            SELECT id FROM doctors WHERE uzytkownik_id = :user_id
+                        )
+                        AND DATE(v.data_wizyty) BETWEEN :start_date AND :end_date
+                        ORDER BY v.data_wizyty ASC
+                    ");
+                    $stmt->bindParam(':user_id', $_SESSION['user_id']);
+                    $stmt->bindParam(':start_date', $startOfWeek);
+                    $stmt->bindParam(':end_date', $endOfWeek);
+                    $stmt->execute();
+                    $wizyty = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    if (count($wizyty) > 0) {
+                        echo '<div class="visits-list">';
+                        foreach ($wizyty as $wizyta) {
+                            echo '<div class="visit-card">';
+                            echo '<div class="visit-info">';
+                            echo '<h4>' . htmlspecialchars($wizyta['imie'] . ' ' . $wizyta['nazwisko']) . '</h4>';
+                            echo '<p class="visit-time">' . date('d.m.Y H:i', strtotime($wizyta['data_wizyty'])) . '</p>';
+                            echo '<p class="visit-type ' . strtolower($wizyta['typ_wizyty']) . '">' . 
+                                 ucfirst(htmlspecialchars($wizyta['typ_wizyty'])) . '</p>';
+                            echo '<p class="visit-room">Gabinet: ' . htmlspecialchars($wizyta['gabinet']) . '</p>';
+                            echo '</div>';
+                            echo '<div class="visit-actions">';
+                            if ($wizyta['status'] === 'zaplanowana') {
+                                echo '<a href="edytuj-wizyte.php?id=' . $wizyta['id'] . '" class="btn-start">Rozpocznij wizytę</a>';
+                            } else {
+                                echo '<span class="visit-status ' . strtolower($wizyta['status']) . '">' . 
+                                     ucfirst(htmlspecialchars($wizyta['status'])) . '</span>';
+                            }
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                        echo '</div>';
+                    } else {
+                        echo '<p class="no-visits">Brak zaplanowanych wizyt na ten tydzień</p>';
+                    }
+                    ?>
+                </div>
             </div>
 
             <!-- Sekcja Statystyki -->
             <div id="statystyki" class="dashboard-section" style="display: none;">
                 <h2>Statystyki</h2>
-                <!-- Tutaj będzie zawartość sekcji statystyk -->
+                <div class="stats-container">
+                    <?php
+                    if ($lekarz_id) {
+                        // Pobieranie statystyk
+                        $stmt = $conn->prepare("
+                            SELECT 
+                                COUNT(DISTINCT v.id) as liczba_wizyt,
+                                COUNT(DISTINCT v.pacjent_id) as liczba_pacjentow,
+                                COUNT(DISTINCT CASE WHEN v.status = 'zakończona' THEN v.id END) as wizyty_zakonczone,
+                                COUNT(DISTINCT CASE WHEN v.status = 'zaplanowana' THEN v.id END) as wizyty_zaplanowane,
+                                COUNT(DISTINCT CASE WHEN v.typ_wizyty = 'konsultacja' THEN v.id END) as liczba_konsultacji,
+                                COUNT(DISTINCT CASE WHEN v.typ_wizyty = 'badanie' THEN v.id END) as liczba_badan,
+                                COUNT(DISTINCT CASE WHEN v.typ_wizyty = 'zabieg' THEN v.id END) as liczba_zabiegow,
+                                COUNT(DISTINCT r.id) as liczba_wynikow
+                            FROM visits v
+                            LEFT JOIN results r ON v.lekarz_id = r.lekarz_id
+                            WHERE v.lekarz_id = :lekarz_id
+                        ");
+                        $stmt->bindParam(':lekarz_id', $lekarz_id['id']);
+                        $stmt->execute();
+                        $statystyki = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                        // Pobieranie statystyk z ostatnich 30 dni
+                        $stmt = $conn->prepare("
+                            SELECT 
+                                COUNT(DISTINCT v.id) as wizyty_ostatnie_30_dni,
+                                COUNT(DISTINCT CASE WHEN v.status = 'zakończona' THEN v.id END) as zakonczone_ostatnie_30_dni
+                            FROM visits v
+                            WHERE v.lekarz_id = :lekarz_id
+                            AND v.data_wizyty >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                        ");
+                        $stmt->bindParam(':lekarz_id', $lekarz_id['id']);
+                        $stmt->execute();
+                        $statystyki_30_dni = $stmt->fetch(PDO::FETCH_ASSOC);
+                        ?>
+
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3>Wizyty</h3>
+                                <div class="stat-number"><?php echo $statystyki['liczba_wizyt']; ?></div>
+                                <div class="stat-details">
+                                    <p>Zakończone: <?php echo $statystyki['wizyty_zakonczone']; ?></p>
+                                    <p>Zaplanowane: <?php echo $statystyki['wizyty_zaplanowane']; ?></p>
+                                    <p>Ostatnie 30 dni: <?php echo $statystyki_30_dni['wizyty_ostatnie_30_dni']; ?></p>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <h3>Pacjenci</h3>
+                                <div class="stat-number"><?php echo $statystyki['liczba_pacjentow']; ?></div>
+                                <div class="stat-details">
+                                    <p>Unikalni pacjenci</p>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <h3>Typy Wizyt</h3>
+                                <div class="stat-details">
+                                    <p>Konsultacje: <?php echo $statystyki['liczba_konsultacji']; ?></p>
+                                    <p>Badania: <?php echo $statystyki['liczba_badan']; ?></p>
+                                    <p>Zabiegi: <?php echo $statystyki['liczba_zabiegow']; ?></p>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <h3>Wyniki Badań</h3>
+                                <div class="stat-number"><?php echo $statystyki['liczba_wynikow']; ?></div>
+                                <div class="stat-details">
+                                    <p>Wystawione wyniki</p>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <h3>Efektywność</h3>
+                                <div class="stat-details">
+                                    <p>Zakończone wizyty (30 dni): <?php echo $statystyki_30_dni['zakonczone_ostatnie_30_dni']; ?></p>
+                                    <p>Wszystkie wizyty (30 dni): <?php echo $statystyki_30_dni['wizyty_ostatnie_30_dni']; ?></p>
+                                    <?php 
+                                    $efektywnosc = $statystyki_30_dni['wizyty_ostatnie_30_dni'] > 0 
+                                        ? round(($statystyki_30_dni['zakonczone_ostatnie_30_dni'] / $statystyki_30_dni['wizyty_ostatnie_30_dni']) * 100, 1) 
+                                        : 0;
+                                    ?>
+                                    <p>Efektywność: <?php echo $efektywnosc; ?>%</p>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
             </div>
         </div>
     </main>

@@ -161,20 +161,23 @@ body {
 }
 
 /* Statystyki */
+.stats-container {
+    padding: 20px;
+}
+
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
-    width: 100%;
+    margin-top: 20px;
 }
 
 .stat-card {
     background: white;
+    border-radius: 10px;
     padding: 20px;
-    border-radius: 8px;
-    text-align: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .stat-card:hover {
@@ -183,32 +186,53 @@ body {
 }
 
 .stat-card h3 {
-    color: #333;
-    margin: 0 0 10px 0;
+    color: #2c3e50;
+    margin: 0 0 15px 0;
     font-size: 1.2em;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
 }
 
 .stat-number {
     font-size: 2.5em;
     font-weight: bold;
     color: #2196F3;
-    margin: 10px 0;
+    margin: 15px 0;
+    text-align: center;
 }
 
-.stat-label {
+.stat-details {
     color: #666;
-    font-size: 0.9em;
-    margin: 0;
+    font-size: 0.95em;
 }
 
-/* Responsywność */
+.stat-details p {
+    margin: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-details p:last-child {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Responsywność dla statystyk */
 @media (max-width: 768px) {
-    .dashboard-grid {
+    .stats-grid {
         grid-template-columns: 1fr;
     }
 
-    .stats-grid {
-        grid-template-columns: 1fr;
+    .stat-card {
+        padding: 15px;
+    }
+
+    .stat-number {
+        font-size: 2em;
     }
 }
 
@@ -540,233 +564,140 @@ body {
     border: 1px solid #e2e8f0;
 }
 
-/* Style dla harmonogramu */
+/* Style dla harmonogramu wizyt */
 .schedule-container {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-top: 20px;
     overflow-x: auto;
-    margin: 20px 0;
 }
 
 .schedule-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    min-width: 1000px;
+    border-collapse: collapse;
+    min-width: 800px;
 }
 
 .schedule-table th {
     background: #f8f9fa;
-    padding: 20px 15px;
+    padding: 15px;
     text-align: center;
-    border: none;
-    color: #2c3e50;
-    font-weight: 600;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: 1px solid #dee2e6;
+    position: relative;
 }
 
 .schedule-table th.weekend {
-    background: #fff5f5;
-    color: #e53e3e;
+    background: #fff3cd;
 }
 
 .schedule-table th .date {
     display: block;
-    font-size: 0.85em;
-    color: #718096;
-    margin-top: 8px;
-    font-weight: normal;
+    font-size: 0.8em;
+    color: #6c757d;
+    margin-top: 5px;
 }
 
 .schedule-table td {
-    border: none;
-    padding: 12px;
+    border: 1px solid #dee2e6;
+    padding: 10px;
     vertical-align: top;
-    height: 90px;
-    position: relative;
-    transition: all 0.3s ease;
+    height: 80px;
 }
 
-.schedule-table td:hover {
-    background: #f8fafc;
-}
-
-.time-cell {
+.schedule-table .time-cell {
     background: #f8f9fa;
-    font-weight: 600;
-    color: #2c3e50;
+    font-weight: bold;
     text-align: center;
     width: 80px;
-    position: sticky;
-    left: 0;
-    z-index: 5;
-    box-shadow: 2px 0 4px rgba(0,0,0,0.05);
 }
 
 .visit-cell {
     position: relative;
-    border: 1px solid #edf2f7;
-    padding: 5px !important;
 }
 
 .visit-slot {
     background: #e3f2fd;
-    border-radius: 10px;
-    padding: 12px;
-    margin: -5px;
-    height: calc(100% - 14px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    transition: all 0.3s ease;
-    border: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    position: relative;
-}
-
-.visit-slot:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.visit-slot .visit-time {
-    position: absolute;
-    top: 5px;
-    right: 8px;
-    font-size: 0.8em;
-    color: #4a5568;
-    background: rgba(255,255,255,0.9);
-    padding: 2px 6px;
-    border-radius: 12px;
-    font-weight: 500;
-}
-
-.visit-slot .patient-name {
-    font-weight: 600;
-    color: #2c3e50;
-    margin: 15px 0 8px 0;
-    font-size: 0.95em;
-    padding: 0 5px;
-}
-
-.visit-slot .visit-type {
-    font-size: 0.85em;
-    color: #4a5568;
-    background: rgba(255,255,255,0.8);
-    padding: 4px 8px;
-    border-radius: 15px;
-    display: inline-block;
-    margin-top: 5px;
-}
-
-.empty-slot {
-    color: #a0aec0;
-    text-align: center;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 5px;
     font-size: 0.9em;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f7fafc;
-    border-radius: 8px;
-    transition: all 0.3s ease;
 }
 
-.empty-slot:hover {
-    background: #edf2f7;
-    color: #718096;
-}
-
-/* Style dla różnych typów wizyt */
-.visit-slot.pierwsza {
-    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-    border-left: 4px solid #1976d2;
-}
-
-.visit-slot.kontrolna {
-    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-    border-left: 4px solid #2e7d32;
+.visit-slot.konsultacja {
+    background: #e8f5e9;
 }
 
 .visit-slot.badanie {
-    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-    border-left: 4px solid #f57c00;
+    background: #fff3e0;
 }
 
-.visit-slot.szczepienie {
-    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
-    border-left: 4px solid #7b1fa2;
+.visit-slot.zabieg {
+    background: #fce4ec;
 }
 
-.visit-slot.pogotowie {
-    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-    border-left: 4px solid #c62828;
+.visit-slot .visit-time {
+    display: block;
+    font-weight: bold;
+    color: #1976d2;
+    margin-bottom: 5px;
 }
 
-/* Style dla wielu wizyt w jednej komórce */
-.visit-slot + .visit-slot {
-    margin-top: 5px;
+.visit-slot .patient-name {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 3px;
 }
 
-.visit-slot:last-child {
-    margin-bottom: 0;
+.visit-slot .visit-type {
+    display: block;
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 5px;
 }
 
-/* Dostosowanie wysokości komórki dla wielu wizyt */
-.visit-cell:has(.visit-slot + .visit-slot) {
-    height: auto !important;
-    min-height: 90px;
+.visit-slot .btn-start {
+    display: inline-block;
+    background: #4caf50;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    text-decoration: none;
+    font-size: 0.8em;
+    transition: background 0.3s;
 }
 
-/* Responsywność dla harmonogramu */
+.visit-slot .btn-start:hover {
+    background: #388e3c;
+}
+
+.empty-slot {
+    color: #6c757d;
+    font-size: 0.9em;
+    text-align: center;
+    padding: 10px;
+}
+
+/* Responsywność */
 @media (max-width: 1200px) {
     .schedule-container {
-        margin: 0 -20px;
+        margin: 20px -20px;
         border-radius: 0;
-        padding: 15px;
     }
-    
-    .schedule-table {
-        font-size: 0.9em;
-    }
-    
+}
+
+@media (max-width: 768px) {
     .schedule-table th {
-        padding: 15px 10px;
+        padding: 10px 5px;
     }
     
     .schedule-table td {
-        padding: 8px;
-        height: 70px;
-    }
-    
-    .time-cell {
-        width: 60px;
+        padding: 5px;
     }
     
     .visit-slot {
-        padding: 8px;
-    }
-    
-    .visit-slot .visit-time {
-        font-size: 0.75em;
-        padding: 1px 4px;
-    }
-    
-    .visit-slot .patient-name {
-        font-size: 0.85em;
-        margin: 12px 0 6px 0;
-    }
-    
-    .visit-slot .visit-type {
-        font-size: 0.8em;
-        padding: 3px 6px;
+        padding: 5px;
     }
 }
 
@@ -1987,5 +1918,405 @@ body {
     .btn-view-history,
     .btn-view-results {
         width: 100%;
+    }
+}
+
+/* Style dla historii pacjenta */
+.patient-history-container,
+.patient-results-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.patient-info {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border-left: 5px solid #4CAF50;
+}
+
+.patient-info h1 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.patient-info h2 {
+    color: #34495e;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.patient-info p {
+    color: #666;
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+/* Style dla tabeli historii */
+.history-table-container {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.history-table th {
+    background: #4CAF50;
+    color: white;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 500;
+}
+
+.history-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    color: #666;
+}
+
+.history-table tr:hover {
+    background: #f8f9fa;
+}
+
+.visit-status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.visit-status.zaplanowana {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.visit-status.w_trakcie {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.visit-status.zakończona {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.visit-status.anulowana {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* Style dla wyników badań */
+.results-list {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.result-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-left: 5px solid #2196F3;
+    transition: transform 0.3s ease;
+}
+
+.result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.result-header h3 {
+    color: #2c3e50;
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.result-date {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.result-details {
+    color: #666;
+}
+
+.result-doctor {
+    font-weight: 500;
+    color: #34495e;
+    margin-bottom: 0.5rem;
+}
+
+.result-specialization {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.result-description {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+/* Przyciski */
+.btn-start,
+.btn-download,
+.btn-back {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-start {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-start:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+}
+
+.btn-download {
+    background: #2196F3;
+    color: white;
+    margin-top: 1rem;
+}
+
+.btn-download:hover {
+    background: #1976d2;
+    transform: translateY(-2px);
+}
+
+.btn-back {
+    background: #f8f9fa;
+    color: #666;
+    border: 1px solid #ddd;
+}
+
+.btn-back:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+}
+
+.back-button {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+/* Komunikaty o braku danych */
+.no-history,
+.no-results {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+    font-size: 1.2rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+    .patient-history-container,
+    .patient-results-container {
+        padding: 1rem;
+        margin: 1rem;
+    }
+
+    .patient-info {
+        padding: 1.5rem;
+    }
+
+    .patient-info h1 {
+        font-size: 1.5rem;
+    }
+
+    .patient-info h2 {
+        font-size: 1.2rem;
+    }
+
+    .history-table th,
+    .history-table td {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .result-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .result-date {
+        font-size: 0.8rem;
+    }
+}
+
+/* Style dla listy wizyt */
+.visits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+}
+
+.visit-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.visit-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.visit-info {
+    flex: 1;
+}
+
+.visit-info h4 {
+    color: #2c3e50;
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+}
+
+.visit-time {
+    color: #666;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.visit-type {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.visit-type.konsultacja {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.visit-type.badanie {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.visit-type.zabieg {
+    background: #fce4ec;
+    color: #c2185b;
+}
+
+.visit-room {
+    color: #666;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.visit-actions {
+    margin-left: 20px;
+}
+
+.visit-status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+}
+
+.visit-status.zaplanowana {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.visit-status.w_trakcie {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.visit-status.zakończona {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.visit-status.anulowana {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.btn-start {
+    display: inline-block;
+    background: #4caf50;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background 0.3s;
+}
+
+.btn-start:hover {
+    background: #388e3c;
+}
+
+.no-visits {
+    text-align: center;
+    color: #666;
+    padding: 40px;
+    font-size: 1.1em;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+/* Responsywność dla listy wizyt */
+@media (max-width: 768px) {
+    .visit-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .visit-actions {
+        margin: 15px 0 0 0;
+        width: 100%;
+    }
+
+    .btn-start {
+        width: 100%;
+        text-align: center;
     }
 } 
