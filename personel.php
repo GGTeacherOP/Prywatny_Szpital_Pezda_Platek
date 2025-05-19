@@ -76,23 +76,6 @@ try {
                     <?php endforeach; ?>
                 </div>
             </div>
-
-            <!-- Pozostałe sekcje personelu pozostają bez zmian -->
-            <div class="personel-category">
-                <h2>Pielęgniarki i Pielęgniarze</h2>
-                <div class="staff-grid">
-                    <!-- Przykładowa karta pielęgniarki -->
-                    <div class="staff-card">
-                        <img src="img/about-us/placeholder-user.png" alt="Pielęgniarka">
-                        <h3>Maria Wiśniewska</h3>
-                        <p class="position-specialty">Pielęgniarka Oddziałowa</p>
-                        <p class="details">Doświadczona pielęgniarka z pasją do opieki nad pacjentami. Dba o komfort i bezpieczeństwo na oddziale wewnętrznym.</p>
-                    </div>
-                    <!-- Pozostałe karty personelu -->
-                </div>
-            </div>
-
-            <!-- Pozostałe sekcje personelu -->
         </section>
     </main>
 

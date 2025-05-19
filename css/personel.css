@@ -13,26 +13,26 @@ body.personel-page {
     background-color: #ffffff;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    text-align: center; /* Dodane dla centrowania H1 i podtytułu */
+    text-align: center;
 }
 
 /* Główny nagłówek strony (Nasz Zespół) */
 .personel-section > h1 {
-    display: inline-block; /* Aby ::after było względem szerokości tekstu */
-    position: relative; /* Dla pozycjonowania ::after */
-    color: #2c3e50; /* Powrót do ciemnego koloru */
-    font-size: 3.2em; /* Większa czcionka */
+    display: inline-block;
+    position: relative;
+    color: #2c3e50;
+    font-size: 3.2em;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    margin-bottom: 15px; /* Mniejszy margines dolny przed podkreśleniem */
-    padding-bottom: 15px; /* Dodatkowy padding na dolne podkreślenie */
-    background-color: transparent; /* Usunięcie tła */
-    border-radius: 0; /* Usunięcie zaokrąglenia */
-    box-shadow: none; /* Usunięcie cienia */
-    padding-left: 0; /* Reset paddingu */
-    padding-right: 0; /* Reset paddingu */
-    padding-top: 0; /* Reset paddingu */
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
 }
 
 .personel-section > h1::after {
@@ -40,62 +40,61 @@ body.personel-page {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 0; /* Na samym dole elementu h1 (uwzględniając padding-bottom) */
-    width: 100px; /* Szerokość podkreślenia */
-    height: 5px; /* Grubość podkreślenia */
-    background-color: #3498db; /* Kolor niebieski motywu */
-    border-radius: 3px; /* Zaokrąglenie linii */
+    bottom: 0;
+    width: 100px;
+    height: 5px;
+    background-color: #3498db;
+    border-radius: 3px;
 }
 
 /* Podtytuł strony */
 .personel-section .page-subtitle {
     margin-bottom: 70px;
-    font-size: 1.3em; /* Lekko większy */
-    color: #556a7f; /* Ciemniejszy, bardziej stonowany szary */
-    max-width: 800px; /* Nieco szerszy */
+    font-size: 1.3em;
+    color: #556a7f;
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
-    font-style: italic; /* Dodanie kursywy */
+    font-style: italic;
 }
 
 /* Kontener dla kategorii personelu */
 .personel-category {
-    margin-bottom: 70px; /* Zwiększony odstęp między kategoriami */
-    background-color: transparent; /* Usunięcie tła, aby sekcja przejęła tło */
-    padding: 0; /* Usunięcie paddingu, bo sekcja ma swój */
+    margin-bottom: 70px;
+    background-color: transparent;
+    padding: 0;
     border-radius: 0;
-    box-shadow: none; /* Usunięcie cienia, bo sekcja ma swój */
+    box-shadow: none;
 }
 
-/* Nagłówki kategorii (Lekarze, Pielęgniarki itp.) */
+/* Nagłówki kategorii */
 .personel-category h2 {
-    color: #3498db; /* Jasny, przyjazny niebieski */
-    border-bottom: none; /* Usunięcie poprzedniej ramki */
+    color: #3498db;
+    border-bottom: none;
     padding-bottom: 0;
-    margin-bottom: 35px; /* Zwiększony margines dolny */
-    font-size: 2.3em; /* Lekko większy */
-    font-weight: 700; /* Grubszy */
+    margin-bottom: 35px;
+    font-size: 2.3em;
+    font-weight: 700;
     text-align: left;
     position: relative;
-    padding-left: 0; /* Usunięcie poprzedniego paddingu, dekoracja inaczej */
+    padding-left: 0;
 }
 
-/* Element dekoracyjny pod H2 kategorii */
-.personel-category h2::after { /* Zmieniono z ::before na ::after dla innego efektu */
+.personel-category h2::after {
     content: '';
     position: absolute;
     left: 0;
-    bottom: -10px; /* Umiejscowienie pod tekstem */
-    width: 70px; /* Dłuższa linia */
+    bottom: -10px;
+    width: 70px;
     height: 4px;
-    background-image: linear-gradient(to right, #3498db, #2980b9); /* Gradient dla linii */
+    background-image: linear-gradient(to right, #3498db, #2980b9);
     border-radius: 2px;
 }
 
 /* Siatka dla kart personelu */
 .staff-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Optymalna szerokość karty */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 35px;
 }
 
@@ -182,109 +181,6 @@ body.personel-page {
     margin-bottom: 0;
 }
 
-/* Style dla filtrów */
-.filter-buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin: 30px 0;
-    padding: 0 20px;
-}
-
-.filter-btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 25px;
-    background: linear-gradient(145deg, #ffffff, #f0f0f0);
-    color: #333;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 600;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
-    position: relative;
-    overflow: hidden;
-}
-
-.filter-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255, 255, 255, 0.3),
-        transparent
-    );
-    transition: 0.5s;
-}
-
-.filter-btn:hover::before {
-    left: 100%;
-}
-
-.filter-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1);
-    background: linear-gradient(145deg, #f0f0f0, #ffffff);
-}
-
-.filter-btn.active {
-    background: linear-gradient(145deg, #4a90e2, #357abd);
-    color: white;
-    box-shadow: inset 5px 5px 10px #357abd, inset -5px -5px 10px #4a90e2;
-}
-
-.filter-btn.btn-click {
-    transform: scale(0.95);
-    box-shadow: inset 5px 5px 10px #d9d9d9, inset -5px -5px 10px #ffffff;
-}
-
-/* Filtry specjalizacji */
-.specialization-filter {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    width: 100%;
-    max-width: 600px;
-}
-
-.spec-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 20px;
-    background: linear-gradient(145deg, #ffffff, #f0f0f0);
-    color: #333;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
-    box-shadow: 3px 3px 6px #d9d9d9, -3px -3px 6px #ffffff;
-}
-
-.spec-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-}
-
-.spec-btn.active {
-    background: linear-gradient(145deg, #4a90e2, #357abd);
-    color: white;
-    box-shadow: inset 3px 3px 6px #357abd, inset -3px -3px 6px #4a90e2;
-}
-
 /* Animacje dla kart personelu */
 .staff-card {
     opacity: 0;
@@ -295,15 +191,6 @@ body.personel-page {
 .staff-card.animate-in {
     opacity: 1;
     transform: translateY(0);
-}
-
-.staff-card.filter-match {
-    animation: filterPulse 1s ease;
-}
-
-@keyframes filterPulse {
-    0% { transform: translateX(-20px); opacity: 0; }
-    100% { transform: translateX(0); opacity: 1; }
 }
 
 /* Przycisk powrotu na górę */
@@ -362,27 +249,6 @@ body.personel-page {
 
     .staff-card {
         max-width: 100%;
-    }
-
-    .filter-buttons {
-        padding: 0 10px;
-    }
-
-    .filter-btn {
-        width: 100%;
-        max-width: 300px;
-        justify-content: center;
-    }
-
-    .specialization-filter {
-        flex-direction: column;
-        align-items: center;
-        padding: 10px;
-    }
-
-    .spec-btn {
-        width: 100%;
-        max-width: 250px;
     }
 
     .back-to-top {
