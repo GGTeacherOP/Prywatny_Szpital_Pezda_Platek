@@ -1435,4 +1435,43 @@ body {
     .visit-form {
         max-width: 100%;
     }
+}
+
+.doctor-nav {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding: 0.5rem 0;
+    margin-bottom: 2rem;
+}
+
+.doctor-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.doctor-nav a {
+    text-decoration: none;
+    color: #495057;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.doctor-nav a:hover {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+.doctor-nav a.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.doctor-nav a.active:hover {
+    background-color: #0056b3;
 } 
