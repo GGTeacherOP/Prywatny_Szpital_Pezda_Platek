@@ -74,24 +74,52 @@
             <div class="achievements-content">
                 <h2>Nasze Osiągnięcia</h2>
                 <div class="achievements-grid">
+                    <?php
+                    require_once 'config.php';
+                    try {
+                        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        $pdo->exec("SET NAMES utf8");
+
+                        // Pobieranie liczby zadowolonych pacjentów (ocena > 3)
+                        $stmt = $pdo->query("
+                            SELECT COUNT(*) as total 
+                            FROM reviews 
+                            WHERE ocena > 3 AND status = 'zatwierdzona'
+                        ");
+                        $satisfiedPatients = (int)$stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+                        // Pobieranie liczby specjalistów (lekarzy)
+                        $stmt = $pdo->query("SELECT COUNT(*) as total FROM doctors");
+                        $specialists = (int)$stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+                        // Pobieranie liczby oddziałów
+                        $stmt = $pdo->query("SELECT COUNT(*) as total FROM departments");
+                        $departments = (int)$stmt->fetch(PDO::FETCH_ASSOC)['total'];
+                    } catch(PDOException $e) {
+                        $satisfiedPatients = 0;
+                        $specialists = 0;
+                        $departments = 0;
+                    }
+                    ?>
                     <div class="achievement-card">
                         <div class="achievement-icon">🏆</div>
-                        <div class="achievement-number" data-value="3">0</div>
+                        <div class="achievement-number"><?php echo number_format($satisfiedPatients, 0, ',', ' '); ?></div>
                         <div class="achievement-label">Zadowolonych Pacjentów</div>
                     </div>
                     <div class="achievement-card">
                         <div class="achievement-icon">👨‍⚕️</div>
-                        <div class="achievement-number" data-value="5">0</div>
+                        <div class="achievement-number"><?php echo number_format($specialists, 0, ',', ' '); ?></div>
                         <div class="achievement-label">Specjalistów</div>
                     </div>
                     <div class="achievement-card">
                         <div class="achievement-icon">🏥</div>
-                        <div class="achievement-number" data-value="2">0</div>
+                        <div class="achievement-number"><?php echo number_format($departments, 0, ',', ' '); ?></div>
                         <div class="achievement-label">Oddziałów</div>
                     </div>
                     <div class="achievement-card">
                         <div class="achievement-icon">⭐</div>
-                        <div class="achievement-number" data-value="30">0</div>
+                        <div class="achievement-number">30</div>
                         <div class="achievement-label">Lat Doświadczenia</div>
                     </div>
                 </div>
