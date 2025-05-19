@@ -150,4 +150,91 @@ document.addEventListener('DOMContentLoaded', () => {
             behavior: 'smooth'
         });
     });
-}); 
+
+    loadDoctors();
+});
+
+function loadDoctors() {
+    const doctorsGrid = document.querySelector('.personel-category:first-child .staff-grid');
+    if (!doctorsGrid) {
+        console.error('Nie znaleziono kontenera na karty lekarzy');
+        return;
+    }
+
+    // Pokaż stan ładowania
+    doctorsGrid.innerHTML = '<div class="loading">Ładowanie danych lekarzy...</div>';
+
+    fetch('get_doctors.php')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Otrzymano dane:', data);
+
+            if (!data.success) {
+                throw new Error(data.message || 'Wystąpił błąd podczas pobierania danych');
+            }
+
+            // Wyczyść kontener
+            doctorsGrid.innerHTML = '';
+
+            if (data.count === 0) {
+                doctorsGrid.innerHTML = '<p class="info">Brak dostępnych lekarzy w bazie danych.</p>';
+                return;
+            }
+
+            // Grupowanie lekarzy według specjalizacji
+            const doctorsBySpecialization = {};
+            data.doctors.forEach(doctor => {
+                if (!doctorsBySpecialization[doctor.specjalizacja]) {
+                    doctorsBySpecialization[doctor.specjalizacja] = [];
+                }
+                doctorsBySpecialization[doctor.specjalizacja].push(doctor);
+            });
+
+            // Tworzenie kart dla każdego lekarza
+            Object.entries(doctorsBySpecialization).forEach(([specialization, doctors]) => {
+                doctors.forEach(doctor => {
+                    const card = createDoctorCard(doctor);
+                    doctorsGrid.appendChild(card);
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Błąd podczas ładowania lekarzy:', error);
+            doctorsGrid.innerHTML = `
+                <div class="error">
+                    <p>Nie udało się załadować danych lekarzy.</p>
+                    <p>Szczegóły błędu: ${error.message}</p>
+                    <button onclick="loadDoctors()" class="retry-button">Spróbuj ponownie</button>
+                </div>
+            `;
+        });
+}
+
+function createDoctorCard(doctor) {
+    const card = document.createElement('div');
+    card.className = 'staff-card';
+
+    const title = doctor.tytul_naukowy ? `${doctor.tytul_naukowy} ` : '';
+    const fullName = `${title}${doctor.imie} ${doctor.nazwisko}`;
+
+    // Sprawdź czy zdjęcie jest poprawnym URL lub base64
+    let imageSrc = doctor.zdjecie;
+    if (!imageSrc.startsWith('data:image/') && !imageSrc.startsWith('http') && !imageSrc.startsWith('/')) {
+        console.warn('Nieprawidłowy format zdjęcia dla lekarza:', fullName);
+        imageSrc = 'img/about-us/placeholder-user.png';
+    }
+
+    card.innerHTML = `
+        <img src="${imageSrc}" alt="${fullName}" onerror="this.src='img/about-us/placeholder-user.png'">
+        <h3>${fullName}</h3>
+        <p class="position-specialty">${doctor.specjalizacja}</p>
+        <p class="details">${doctor.opis || 'Brak opisu.'}</p>
+    `;
+
+    return card;
+} 

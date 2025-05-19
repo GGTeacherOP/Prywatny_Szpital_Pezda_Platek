@@ -124,7 +124,7 @@ try {
                 <li><a href="index.html">Strona główna</a></li>
                 <li><a href="o-nas.html">O nas</a></li>
                 <li><a href="personel.html">Nasz Personel</a></li>
-                <li><a href="aktualnosci.html">Aktualności</a></li>
+                <li><a href="aktualnosci.php">Aktualności</a></li>
                 <li><a href="dla-pacjenta.html">Dla pacjenta</a></li>
             </ul>
         </nav>
