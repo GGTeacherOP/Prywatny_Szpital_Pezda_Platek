@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'panel-glowny': document.getElementById('panel-glowny'),
         'pacjenci': document.getElementById('pacjenci'),
         'wizyty': document.getElementById('wizyty'),
+        'wyniki': document.getElementById('wyniki'),
         'statystyki': document.getElementById('statystyki')
     };
 
@@ -70,6 +71,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     card.style.display = 'none';
                 }
+            });
+        });
+    }
+
+    // Obsługa formularza wyników
+    const resultsForm = document.getElementById('resultsForm');
+    if (resultsForm) {
+        resultsForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('save_result.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Wynik został pomyślnie zapisany');
+                    resultsForm.reset();
+                } else {
+                    alert('Błąd: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Wystąpił błąd podczas zapisywania wyniku');
             });
         });
     }

@@ -68,6 +68,7 @@ try {
             <li><a href="#panel-glowny" class="active">Panel główny</a></li>
             <li><a href="#pacjenci">Pacjenci</a></li>
             <li><a href="#wizyty">Wizyty</a></li>
+            <li><a href="#wyniki">Wystaw wyniki</a></li>
             <li><a href="#statystyki">Statystyki</a></li>
         </ul>
     </nav>
@@ -473,6 +474,77 @@ try {
                             </div>
                         </div>
                     <?php } ?>
+                </div>
+            </div>
+
+            <!-- Sekcja Wystawianie Wyników -->
+            <div id="wyniki" class="dashboard-section" style="display: none;">
+                <h2>Wystaw Wyniki Badań</h2>
+                <div class="results-form-container">
+                    <form id="resultsForm" class="results-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="patient_id">Pacjent:</label>
+                            <select id="patient_id" name="patient_id" required>
+                                <option value="">Wybierz pacjenta</option>
+                                <?php
+                                if ($lekarz_id) {
+                                    $stmt = $conn->prepare("
+                                        SELECT DISTINCT
+                                            p.id,
+                                            u.imie,
+                                            u.nazwisko,
+                                            u.pesel
+                                        FROM patients p
+                                        JOIN users u ON p.uzytkownik_id = u.id
+                                        JOIN visits v ON p.id = v.pacjent_id
+                                        WHERE v.lekarz_id = :lekarz_id
+                                        ORDER BY u.nazwisko, u.imie
+                                    ");
+                                    $stmt->bindParam(':lekarz_id', $lekarz_id['id']);
+                                    $stmt->execute();
+                                    $pacjenci = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                    foreach ($pacjenci as $pacjent) {
+                                        echo '<option value="' . $pacjent['id'] . '">' . 
+                                             htmlspecialchars($pacjent['imie'] . ' ' . $pacjent['nazwisko'] . ' (PESEL: ' . $pacjent['pesel'] . ')') . 
+                                             '</option>';
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="typ_badania">Typ badania:</label>
+                            <select id="typ_badania" name="typ_badania" required>
+                                <option value="">Wybierz typ badania</option>
+                                <option value="Morfologia krwi">Morfologia krwi</option>
+                                <option value="Badanie poziomu glukozy">Badanie poziomu glukozy</option>
+                                <option value="Badanie cholesterolu">Badanie cholesterolu</option>
+                                <option value="Badanie moczu">Badanie moczu</option>
+                                <option value="EKG">EKG</option>
+                                <option value="RTG">RTG</option>
+                                <option value="USG">USG</option>
+                                <option value="Tomografia komputerowa">Tomografia komputerowa</option>
+                                <option value="Rezonans magnetyczny">Rezonans magnetyczny</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="data_badania">Data badania:</label>
+                            <input type="datetime-local" id="data_badania" name="data_badania" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="plik">Plik z wynikami:</label>
+                            <input type="file" id="plik" name="plik" accept=".pdf,.jpg,.jpeg,.png" required>
+                            <small>Dozwolone formaty: PDF, JPG, PNG. Maksymalny rozmiar: 10MB</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit">Wystaw wynik</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

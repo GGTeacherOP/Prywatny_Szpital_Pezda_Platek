@@ -4,71 +4,110 @@ session_start();
 // Sprawdzenie czy użytkownik jest zalogowany i jest lekarzem
 if (!isset($_SESSION['user_id']) || $_SESSION['funkcja'] !== 'lekarz') {
     echo json_encode(['success' => false, 'message' => 'Brak uprawnień']);
-    exit;
+    exit();
 }
 
 // Sprawdzenie czy wszystkie wymagane pola są wypełnione
-if (!isset($_POST['patient_id']) || !isset($_POST['typ_badania']) || !isset($_POST['data_badania']) || !isset($_POST['opis'])) {
+if (!isset($_POST['patient_id']) || !isset($_POST['typ_badania']) || !isset($_POST['data_badania']) || !isset($_FILES['plik'])) {
     echo json_encode(['success' => false, 'message' => 'Wszystkie pola są wymagane']);
-    exit;
+    exit();
 }
 
+// Połączenie z bazą danych
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "szpital";
+
 try {
-    // Połączenie z bazą danych
-    $pdo = new PDO('mysql:host=localhost;dbname=szpital;charset=utf8mb4', 'root', '');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Przygotowanie do obsługi pliku
-    $filePath = null;
-    if (isset($_FILES['plik']) && $_FILES['plik']['error'] === UPLOAD_ERR_OK) {
-        $allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
-        $maxFileSize = 10 * 1024 * 1024; // 10MB
+    // Pobieranie ID lekarza
+    $stmt = $conn->prepare("SELECT id FROM doctors WHERE uzytkownik_id = :user_id");
+    $stmt->bindParam(':user_id', $_SESSION['user_id']);
+    $stmt->execute();
+    $lekarz = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!in_array($_FILES['plik']['type'], $allowedTypes)) {
-            echo json_encode(['success' => false, 'message' => 'Niedozwolony typ pliku. Dozwolone formaty: PDF, DOC, DOCX, JPG, PNG']);
-            exit;
-        }
-
-        if ($_FILES['plik']['size'] > $maxFileSize) {
-            echo json_encode(['success' => false, 'message' => 'Plik jest za duży. Maksymalny rozmiar to 10MB']);
-            exit;
-        }
-
-        $uploadDir = 'uploads/wyniki/';
-        if (!file_exists($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-
-        $fileName = uniqid() . '_' . basename($_FILES['plik']['name']);
-        $filePath = $uploadDir . $fileName;
-
-        if (!move_uploaded_file($_FILES['plik']['tmp_name'], $filePath)) {
-            echo json_encode(['success' => false, 'message' => 'Błąd podczas przesyłania pliku']);
-            exit;
-        }
+    if (!$lekarz) {
+        echo json_encode(['success' => false, 'message' => 'Nie znaleziono ID lekarza']);
+        exit();
     }
 
-    // Generowanie unikalnego PIN
-    $pin = sprintf('%04d-%04d-%04d', rand(0, 9999), rand(0, 9999), rand(0, 9999));
+    // Generowanie unikalnego PIN-u
+    $pin = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
-    // Wstawienie wyniku do bazy danych
-    $stmt = $pdo->prepare('INSERT INTO results (pacjent_id, lekarz_id, typ_badania, data_wystawienia, pin, plik_wyniku, status) VALUES (?, ?, ?, ?, ?, ?, ?)');
-    
-    $stmt->execute([
-        $_POST['patient_id'],
-        $_SESSION['user_id'],
-        $_POST['typ_badania'],
-        $_POST['data_badania'],
-        $pin,
-        $filePath,
-        'gotowy'
-    ]);
+    // Obsługa pliku
+    $file = $_FILES['plik'];
+    $fileName = $file['name'];
+    $fileTmpName = $file['tmp_name'];
+    $fileSize = $file['size'];
+    $fileError = $file['error'];
 
-    echo json_encode(['success' => true, 'message' => 'Wynik został zapisany pomyślnie']);
+    // Sprawdzenie rozszerzenia pliku
+    $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    $allowedExt = ['pdf', 'jpg', 'jpeg', 'png'];
 
-} catch (PDOException $e) {
+    if (!in_array($fileExt, $allowedExt)) {
+        echo json_encode(['success' => false, 'message' => 'Niedozwolony format pliku']);
+        exit();
+    }
+
+    // Sprawdzenie rozmiaru pliku (max 10MB)
+    if ($fileSize > 10485760) {
+        echo json_encode(['success' => false, 'message' => 'Plik jest za duży (max 10MB)']);
+        exit();
+    }
+
+    // Generowanie unikalnej nazwy pliku
+    $newFileName = uniqid('wynik_') . '.' . $fileExt;
+    $uploadPath = 'uploads/wyniki/' . $newFileName;
+
+    // Tworzenie katalogu jeśli nie istnieje
+    if (!file_exists('uploads/wyniki')) {
+        mkdir('uploads/wyniki', 0777, true);
+    }
+
+    // Przeniesienie pliku
+    if (move_uploaded_file($fileTmpName, $uploadPath)) {
+        // Zapisywanie wyniku do bazy danych
+        $stmt = $conn->prepare("
+            INSERT INTO results (
+                pacjent_id, 
+                lekarz_id, 
+                typ_badania, 
+                data_wystawienia, 
+                pin, 
+                plik_wyniku, 
+                status
+            ) VALUES (
+                :pacjent_id,
+                :lekarz_id,
+                :typ_badania,
+                :data_wystawienia,
+                :pin,
+                :plik_wyniku,
+                'oczekujący'
+            )
+        ");
+
+        $stmt->bindParam(':pacjent_id', $_POST['patient_id']);
+        $stmt->bindParam(':lekarz_id', $lekarz['id']);
+        $stmt->bindParam(':typ_badania', $_POST['typ_badania']);
+        $stmt->bindParam(':data_wystawienia', $_POST['data_badania']);
+        $stmt->bindParam(':pin', $pin);
+        $stmt->bindParam(':plik_wyniku', $newFileName);
+
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Wynik został pomyślnie zapisany']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Błąd podczas zapisywania do bazy danych']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Błąd podczas przesyłania pliku']);
+    }
+
+} catch(PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Błąd bazy danych: ' . $e->getMessage()]);
-} catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Wystąpił nieoczekiwany błąd: ' . $e->getMessage()]);
 }
 ?> 
