@@ -12,27 +12,19 @@ $dbname = "szpital";
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $conn->exec("SET NAMES utf8");
-
-    // Pobieranie danych lekarzy wraz z informacjami o użytkownikach
-    $stmt = $conn->prepare("
-        SELECT 
-            d.id,
-            d.specjalizacja,
-            d.tytul_naukowy,
-            d.opis,
-            d.zdjecie,
-            u.imie,
-            u.nazwisko
-        FROM doctors d
-        JOIN users u ON d.uzytkownik_id = u.id
-        WHERE u.status = 'aktywny'
-        ORDER BY d.specjalizacja, u.nazwisko
-    ");
     
+    // Zapytanie SQL łączące tabele users i doctors
+    $sql = "SELECT u.imie, u.nazwisko, d.specjalizacja, d.tytul_naukowy, d.opis 
+            FROM users u 
+            INNER JOIN doctors d ON u.id = d.uzytkownik_id 
+            WHERE u.funkcja = 'lekarz' AND u.status = 'aktywny'";
+    
+    $stmt = $conn->prepare($sql);
     $stmt->execute();
+    
+    // Pobieranie wyników
     $doctors = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+    
     // Konwersja zdjęć na base64 jeśli istnieją
     foreach ($doctors as &$doctor) {
         if ($doctor['zdjecie']) {

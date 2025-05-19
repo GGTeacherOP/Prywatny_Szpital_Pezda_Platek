@@ -85,7 +85,7 @@ $otherNews = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <article class="featured-news-main">
                     <div class="news-image">
                         <?php if ($mainNews['zdjecie']): ?>
-                            <img src="data:image/jpeg;base64,<?php echo base64_encode($mainNews['zdjecie']); ?>" alt="<?php echo htmlspecialchars($mainNews['tytul']); ?>">
+                            <img src="<?php echo htmlspecialchars($mainNews['zdjecie']); ?>" alt="<?php echo htmlspecialchars($mainNews['tytul']); ?>">
                         <?php else: ?>
                             <img src="img/news/placeholder.png" alt="Brak zdjęcia">
                         <?php endif; ?>
@@ -104,7 +104,7 @@ $otherNews = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <article class="featured-news-secondary">
                     <div class="news-image">
                         <?php if ($news['zdjecie']): ?>
-                            <img src="data:image/jpeg;base64,<?php echo base64_encode($news['zdjecie']); ?>" alt="<?php echo htmlspecialchars($news['tytul']); ?>">
+                            <img src="<?php echo htmlspecialchars($news['zdjecie']); ?>" alt="<?php echo htmlspecialchars($news['tytul']); ?>">
                         <?php else: ?>
                             <img src="img/news/placeholder.png" alt="Brak zdjęcia">
                         <?php endif; ?>
@@ -126,7 +126,7 @@ $otherNews = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <article class="news-item">
                 <div class="news-image">
                     <?php if ($news['zdjecie']): ?>
-                        <img src="data:image/jpeg;base64,<?php echo base64_encode($news['zdjecie']); ?>" alt="<?php echo htmlspecialchars($news['tytul']); ?>">
+                        <img src="<?php echo htmlspecialchars($news['zdjecie']); ?>" alt="<?php echo htmlspecialchars($news['tytul']); ?>">
                     <?php else: ?>
                         <img src="img/news/placeholder.png" alt="Brak zdjęcia">
                     <?php endif; ?>

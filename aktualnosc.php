@@ -79,7 +79,7 @@ if (!$news) {
 
             <?php if ($news['zdjecie']): ?>
             <div class="news-image">
-                <img src="data:image/jpeg;base64,<?php echo base64_encode($news['zdjecie']); ?>" 
+                <img src="<?php echo htmlspecialchars($news['zdjecie']); ?>" 
                      alt="<?php echo htmlspecialchars($news['tytul']); ?>">
             </div>
             <?php endif; ?>

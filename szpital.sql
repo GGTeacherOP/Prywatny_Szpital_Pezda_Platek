@@ -170,7 +170,7 @@ CREATE TABLE news (
     data_publikacji DATETIME NOT NULL,
     autor_id INT NOT NULL,
     status ENUM('szkic', 'opublikowany', 'archiwalny') DEFAULT 'szkic',
-    zdjecie LONGBLOB,
+    zdjecie VARCHAR(255),
     FOREIGN KEY (autor_id) REFERENCES users(id)
 );
 
