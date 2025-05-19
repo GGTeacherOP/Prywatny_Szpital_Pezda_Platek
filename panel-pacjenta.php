@@ -72,6 +72,7 @@ try {
     <nav class="patient-nav">
         <ul>
             <li><a href="#panel-glowny" class="active">Panel główny</a></li>
+            <li><a href="#umow-wizyte">Umów Wizytę</a></li>
             <li><a href="#historia-wizyt">Historia wizyt</a></li>
             <li><a href="#historia-wynikow">Historia wyników</a></li>
             <li><a href="#wystaw-opinie">Wystaw opinię</a></li>
@@ -336,6 +337,84 @@ try {
                         <div class="form-actions">
                             <button type="submit" class="btn-submit">Wyślij opinię</button>
                         </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sekcja Umów Wizytę -->
+            <div id="umow-wizyte" class="dashboard-section" style="display: none;">
+                <h2>Umów Wizytę</h2>
+                <div class="appointment-form-container">
+                    <form id="appointmentForm" class="appointment-form">
+                        <div class="form-group">
+                            <label for="lekarz">Wybierz lekarza:</label>
+                            <select id="lekarz" name="lekarz_id" required>
+                                <option value="">Wybierz lekarza</option>
+                                <?php
+                                // Pobieranie listy lekarzy
+                                $stmt = $conn->prepare("
+                                    SELECT 
+                                        d.id,
+                                        u.imie,
+                                        u.nazwisko,
+                                        d.specjalizacja
+                                    FROM doctors d
+                                    JOIN users u ON d.uzytkownik_id = u.id
+                                    WHERE u.status = 'aktywny'
+                                    ORDER BY d.specjalizacja, u.nazwisko, u.imie
+                                ");
+                                $stmt->execute();
+                                $lekarze = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                foreach ($lekarze as $lekarz) {
+                                    echo '<option value="' . $lekarz['id'] . '">' . 
+                                         'Dr ' . htmlspecialchars($lekarz['imie'] . ' ' . $lekarz['nazwisko']) . 
+                                         ' - ' . htmlspecialchars($lekarz['specjalizacja']) . 
+                                         '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="data_wizyty">Data wizyty:</label>
+                            <input type="date" id="data_wizyty" name="data_wizyty" required min="<?php echo date('Y-m-d'); ?>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="godzina_wizyty">Godzina wizyty:</label>
+                            <select id="godzina_wizyty" name="godzina_wizyty" required>
+                                <option value="">Wybierz godzinę</option>
+                                <?php
+                                // Generowanie godzin wizyt (8:00 - 16:00)
+                                for ($hour = 8; $hour <= 16; $hour++) {
+                                    $time = sprintf("%02d:00", $hour);
+                                    echo '<option value="' . $time . '">' . $time . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="typ_wizyty">Typ wizyty:</label>
+                            <select id="typ_wizyty" name="typ_wizyty" required>
+                                <option value="">Wybierz typ wizyty</option>
+                                <option value="pierwsza">Pierwsza wizyta</option>
+                                <option value="kontrolna">Wizyta kontrolna</option>
+                                <option value="badanie">Badanie</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="opis">Opis problemu (opcjonalnie):</label>
+                            <textarea id="opis" name="opis" rows="4"></textarea>
+                        </div>
+
+                        <input type="hidden" name="pacjent_id" value="<?php echo $pacjent['pacjent_id']; ?>">
+                        <input type="hidden" name="status" value="zaplanowana">
+                        <input type="hidden" name="gabinet" value="1">
+
+                        <button type="submit" class="btn-submit">Umów wizytę</button>
                     </form>
                 </div>
             </div>

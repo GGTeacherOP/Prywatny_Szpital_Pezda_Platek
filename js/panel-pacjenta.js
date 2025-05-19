@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelectorAll('.patient-nav a');
     const sections = {
         'panel-glowny': document.getElementById('panel-glowny'),
+        'umow-wizyte': document.getElementById('umow-wizyte'),
         'historia-wizyt': document.getElementById('historia-wizyt'),
         'historia-wynikow': document.getElementById('historia-wynikow'),
         'wystaw-opinie': document.getElementById('wystaw-opinie')
@@ -61,6 +62,34 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Obsługa formularza umawiania wizyt
+    const appointmentForm = document.getElementById('appointmentForm');
+    if (appointmentForm) {
+        appointmentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('save_visit.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Wizyta została pomyślnie umówiona!');
+                    window.location.reload();
+                } else {
+                    alert('Błąd: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+                alert('Wystąpił błąd podczas umawiania wizyty. Spróbuj ponownie później.');
+            });
+        });
+    }
+
     // Obsługa oceny gwiazdkowej
     const ratingInputs = document.querySelectorAll('.rating input');
     ratingInputs.forEach(input => {
@@ -69,4 +98,36 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Wybrana ocena:', rating);
         });
     });
+
+    // Aktualizacja dostępnych godzin w zależności od wybranej daty i lekarza
+    const dataWizytyInput = document.getElementById('data_wizyty');
+    const godzinaWizytySelect = document.getElementById('godzina_wizyty');
+    const lekarzSelect = document.getElementById('lekarz');
+
+    if (dataWizytyInput && godzinaWizytySelect && lekarzSelect) {
+        function updateAvailableHours() {
+            const data = dataWizytyInput.value;
+            const lekarzId = lekarzSelect.value;
+            
+            if (data && lekarzId) {
+                fetch(`get_available_hours.php?data=${data}&lekarz_id=${lekarzId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        godzinaWizytySelect.innerHTML = '<option value="">Wybierz godzinę</option>';
+                        data.forEach(hour => {
+                            const option = document.createElement('option');
+                            option.value = hour;
+                            option.textContent = hour;
+                            godzinaWizytySelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Błąd:', error);
+                    });
+            }
+        }
+
+        dataWizytyInput.addEventListener('change', updateAvailableHours);
+        lekarzSelect.addEventListener('change', updateAvailableHours);
+    }
 }); 
