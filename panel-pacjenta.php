@@ -1,9 +1,5 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/logs/error.log');
 
 // Sprawdzenie czy użytkownik jest zalogowany i jest pacjentem
 if (!isset($_SESSION['user_id']) || $_SESSION['funkcja'] !== 'pacjent') {
@@ -20,18 +16,26 @@ $dbname = "szpital";
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
+
     // Pobieranie danych pacjenta
-    $stmt = $conn->prepare("SELECT u.*, p.grupa_krwi 
-                           FROM users u 
-                           JOIN patients p ON u.id = p.uzytkownik_id 
-                           WHERE u.id = :user_id");
+    $stmt = $conn->prepare("
+        SELECT 
+            u.imie, 
+            u.nazwisko, 
+            u.pesel,
+            u.data_urodzenia,
+            p.grupa_krwi,
+            p.id as pacjent_id
+        FROM users u 
+        JOIN patients p ON u.id = p.uzytkownik_id 
+        WHERE u.id = :user_id
+    ");
     $stmt->bindParam(':user_id', $_SESSION['user_id']);
     $stmt->execute();
     $pacjent = $stmt->fetch(PDO::FETCH_ASSOC);
 
 } catch(PDOException $e) {
-    echo "Błąd połączenia: " . $e->getMessage();
+    die("Błąd połączenia z bazą danych: " . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -61,307 +65,278 @@ try {
             </ul>
         </nav>
         <div class="login-button">
-            <a href="logowanie.php" class="btn-login">Wyloguj się</a>
+            <a href="wyloguj.php" class="btn-login">Wyloguj się</a>
         </div>
     </header>
+
+    <nav class="patient-nav">
+        <ul>
+            <li><a href="#panel-glowny" class="active">Panel główny</a></li>
+            <li><a href="#historia-wizyt">Historia wizyt</a></li>
+            <li><a href="#historia-wynikow">Historia wyników</a></li>
+            <li><a href="#wystaw-opinie">Wystaw opinię</a></li>
+        </ul>
+    </nav>
 
     <main class="main-content">
         <div class="patient-dashboard">
             <div class="dashboard-header">
                 <h1>Panel Pacjenta</h1>
                 <div class="patient-info">
-                    <p>Witaj, <span class="patient-name"><?php echo htmlspecialchars($pacjent['imie'] . ' ' . $pacjent['nazwisko']); ?></span></p>
-                    <p>PESEL: <span class="patient-pesel"><?php echo htmlspecialchars($pacjent['pesel']); ?></span></p>
+                    <p>Witaj, <span class="patient-name"><?php echo $pacjent['imie'] . ' ' . $pacjent['nazwisko']; ?></span></p>
+                    <p>PESEL: <span class="patient-pesel"><?php echo $pacjent['pesel']; ?></span></p>
                 </div>
             </div>
 
-            <div class="dashboard-container">
-                <!-- Boczny panel nawigacyjny -->
-                <nav class="side-nav">
-                    <ul>
-                        <li>
-                            <a href="#" class="nav-item active" data-panel="panel-glowny">
-                                <span class="nav-icon">🏠</span>
-                                <span class="nav-text">Panel główny</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item" data-panel="historia-wynikow">
-                                <span class="nav-icon">📋</span>
-                                <span class="nav-text">Historia wyników</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item" data-panel="umow-wizyte">
-                                <span class="nav-icon">📅</span>
-                                <span class="nav-text">Umów się na wizytę</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+            <!-- Sekcja Panel Główny -->
+            <div id="panel-glowny" class="dashboard-section">
+                <h2>Panel Główny</h2>
+                
+                <!-- Sekcja Nadchodzące Wizyty -->
+                <div class="upcoming-visits-section">
+                    <h3>Nadchodzące Wizyty</h3>
+                    <div class="visits-container">
+                        <?php
+                        // Pobieranie nadchodzących wizyt
+                        $stmt = $conn->prepare("
+                            SELECT 
+                                v.id,
+                                v.data_wizyty,
+                                v.typ_wizyty,
+                                v.status,
+                                v.gabinet,
+                                u.imie,
+                                u.nazwisko,
+                                d.specjalizacja
+                            FROM visits v
+                            JOIN doctors d ON v.lekarz_id = d.id
+                            JOIN users u ON d.uzytkownik_id = u.id
+                            WHERE v.pacjent_id = :pacjent_id
+                            AND v.data_wizyty >= NOW()
+                            ORDER BY v.data_wizyty ASC
+                        ");
+                        $stmt->bindParam(':pacjent_id', $pacjent['pacjent_id']);
+                        $stmt->execute();
+                        $nadchodzace_wizyty = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                <div class="dashboard-grid">
-                    <!-- Panel Główny -->
-                    <div class="panel-content" id="panel-glowny">
-                        <div class="main-grid">
-                            <!-- Sekcja Nadchodzące Wizyty -->
-                            <div class="grid-item">
-                                <section class="dashboard-section upcoming-visits">
-                                    <h2>Nadchodzące Wizyty</h2>
-                                    <div class="visits-scroll-container">
-                                        <?php
-                                        // Pobieranie nadchodzących wizyt
-                                        $stmt = $conn->prepare("
-                                            SELECT 
-                                                v.id,
-                                                v.data_wizyty,
-                                                v.typ_wizyty,
-                                                v.status,
-                                                v.gabinet,
-                                                u.imie,
-                                                u.nazwisko,
-                                                d.specjalizacja
-                                            FROM visits v
-                                            JOIN doctors d ON v.lekarz_id = d.id
-                                            JOIN users u ON d.uzytkownik_id = u.id
-                                            JOIN patients p ON v.pacjent_id = p.id
-                                            WHERE p.uzytkownik_id = :user_id
-                                            AND v.data_wizyty >= CURDATE()
-                                            ORDER BY v.data_wizyty ASC
-                                        ");
-                                        $stmt->bindParam(':user_id', $_SESSION['user_id']);
-                                        $stmt->execute();
-                                        $wizyty = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        if (count($nadchodzace_wizyty) > 0) {
+                            foreach ($nadchodzace_wizyty as $wizyta) {
+                                echo '<div class="visit-card">';
+                                echo '<div class="visit-info">';
+                                echo '<h4>Dr ' . htmlspecialchars($wizyta['imie'] . ' ' . $wizyta['nazwisko']) . '</h4>';
+                                echo '<p class="doctor-specialization">' . htmlspecialchars($wizyta['specjalizacja']) . '</p>';
+                                echo '<p class="visit-time">' . date('d.m.Y H:i', strtotime($wizyta['data_wizyty'])) . '</p>';
+                                echo '<p class="visit-type ' . strtolower($wizyta['typ_wizyty']) . '">' . 
+                                     ucfirst(htmlspecialchars($wizyta['typ_wizyty'])) . '</p>';
+                                echo '<p class="visit-room">Gabinet: ' . htmlspecialchars($wizyta['gabinet']) . '</p>';
+                                echo '</div>';
+                                echo '<div class="visit-actions">';
+                                echo '<span class="visit-status ' . strtolower($wizyta['status']) . '">' . 
+                                     ucfirst(htmlspecialchars($wizyta['status'])) . '</span>';
+                                echo '</div>';
+                                echo '</div>';
+                            }
+                        } else {
+                            echo '<p class="no-visits">Brak zaplanowanych wizyt</p>';
+                        }
+                        ?>
+                    </div>
+                </div>
 
-                                        if (count($wizyty) > 0) {
-                                            foreach ($wizyty as $wizyta) {
-                                                echo '<div class="visit-card">';
-                                                echo '<div class="visit-info">';
-                                                echo '<h3>Dr ' . htmlspecialchars($wizyta['imie'] . ' ' . $wizyta['nazwisko']) . '</h3>';
-                                                echo '<p class="visit-specialization">' . htmlspecialchars($wizyta['specjalizacja']) . '</p>';
-                                                echo '<p class="visit-time">' . date('d.m.Y H:i', strtotime($wizyta['data_wizyty'])) . '</p>';
-                                                echo '<p class="visit-type ' . strtolower($wizyta['typ_wizyty']) . '">' . 
-                                                     ucfirst(htmlspecialchars($wizyta['typ_wizyty'])) . '</p>';
-                                                echo '<p class="visit-room">Gabinet: ' . htmlspecialchars($wizyta['gabinet']) . '</p>';
-                                                echo '<p class="visit-status">Status: ' . htmlspecialchars($wizyta['status']) . '</p>';
-                                                echo '</div>';
-                                                echo '</div>';
-                                            }
-                                        } else {
-                                            echo '<p class="no-visits">Brak zaplanowanych wizyt</p>';
-                                        }
-                                        ?>
-                                    </div>
-                                </section>
-                            </div>
+                <!-- Sekcja Ostatnie Wyniki -->
+                <div class="recent-results-section">
+                    <h3>Ostatnie Wyniki Badań</h3>
+                    <div class="results-container">
+                        <?php
+                        // Pobieranie ostatnich wyników
+                        $stmt = $conn->prepare("
+                            SELECT 
+                                r.id,
+                                r.typ_badania,
+                                r.data_wystawienia,
+                                r.status,
+                                r.pin,
+                                u.imie,
+                                u.nazwisko,
+                                d.specjalizacja
+                            FROM results r
+                            JOIN doctors d ON r.lekarz_id = d.id
+                            JOIN users u ON d.uzytkownik_id = u.id
+                            WHERE r.pacjent_id = :pacjent_id
+                            ORDER BY r.data_wystawienia DESC
+                            LIMIT 5
+                        ");
+                        $stmt->bindParam(':pacjent_id', $pacjent['pacjent_id']);
+                        $stmt->execute();
+                        $ostatnie_wyniki = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                            <!-- Sekcja Ostatnie Wyniki -->
-                            <div class="grid-item">
-                                <section class="dashboard-section recent-results">
-                                    <h2>Ostatnie Wyniki</h2>
-                                    <?php
-                                    // Pobieranie ostatnich wyników
-                                    $stmt = $conn->prepare("
-                                        SELECT r.*, u.imie, u.nazwisko 
-                                        FROM results r 
-                                        JOIN doctors d ON r.lekarz_id = d.id 
-                                        JOIN users u ON d.uzytkownik_id = u.id
-                                        JOIN patients p ON r.pacjent_id = p.id 
-                                        WHERE p.uzytkownik_id = :user_id 
-                                        ORDER BY r.data_wystawienia DESC 
-                                        LIMIT 5
-                                    ");
-                                    $stmt->bindParam(':user_id', $_SESSION['user_id']);
-                                    $stmt->execute();
-                                    $wyniki = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        if (count($ostatnie_wyniki) > 0) {
+                            foreach ($ostatnie_wyniki as $wynik) {
+                                echo '<div class="result-card">';
+                                echo '<div class="result-info">';
+                                echo '<h4>' . htmlspecialchars($wynik['typ_badania']) . '</h4>';
+                                echo '<p class="result-date">' . date('d.m.Y H:i', strtotime($wynik['data_wystawienia'])) . '</p>';
+                                echo '<p class="result-doctor">Dr ' . htmlspecialchars($wynik['imie'] . ' ' . $wynik['nazwisko']) . '</p>';
+                                echo '<p class="result-specialization">' . htmlspecialchars($wynik['specjalizacja']) . '</p>';
+                                echo '<p class="result-pin">PIN: ' . htmlspecialchars($wynik['pin']) . '</p>';
+                                echo '<p class="result-status ' . strtolower($wynik['status']) . '">' . 
+                                     ucfirst(htmlspecialchars($wynik['status'])) . '</p>';
+                                echo '</div>';
+                                echo '</div>';
+                            }
+                        } else {
+                            echo '<p class="no-results">Brak wyników badań</p>';
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
 
-                                    if (count($wyniki) > 0) {
-                                        foreach ($wyniki as $wynik) {
-                                            echo '<div class="result-card">';
-                                            echo '<div class="result-info">';
-                                            echo '<h3>' . htmlspecialchars($wynik['typ_badania']) . '</h3>';
-                                            echo '<p class="result-date">' . date('d.m.Y H:i', strtotime($wynik['data_wystawienia'])) . '</p>';
-                                            echo '<p class="result-doctor">Dr ' . htmlspecialchars($wynik['imie'] . ' ' . $wynik['nazwisko']) . '</p>';
-                                            echo '<p class="result-pin">PIN: ' . htmlspecialchars($wynik['pin']) . '</p>';
-                                            echo '</div>';
-                                            echo '</div>';
-                                        }
-                                    } else {
-                                        echo '<p class="no-results">Brak wyników badań</p>';
-                                    }
-                                    ?>
-                                </section>
-                            </div>
+            <!-- Sekcja Historia Wizyt -->
+            <div id="historia-wizyt" class="dashboard-section" style="display: none;">
+                <h2>Historia Wizyt</h2>
+                <div class="visits-history-container">
+                    <?php
+                    // Pobieranie historii wizyt
+                    $stmt = $conn->prepare("
+                        SELECT 
+                            v.id,
+                            v.data_wizyty,
+                            v.typ_wizyty,
+                            v.status,
+                            v.gabinet,
+                            v.diagnoza,
+                            v.zalecenia,
+                            u.imie,
+                            u.nazwisko,
+                            d.specjalizacja
+                        FROM visits v
+                        JOIN doctors d ON v.lekarz_id = d.id
+                        JOIN users u ON d.uzytkownik_id = u.id
+                        WHERE v.pacjent_id = :pacjent_id
+                        ORDER BY v.data_wizyty DESC
+                    ");
+                    $stmt->bindParam(':pacjent_id', $pacjent['pacjent_id']);
+                    $stmt->execute();
+                    $historia_wizyt = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                            <!-- Sekcja Historia Wizyt -->
-                            <div class="grid-item full-width">
-                                <section class="dashboard-section visit-history">
-                                    <h2>Historia Wizyt</h2>
-                                    <div class="history-container">
-                                        <?php
-                                        // Pobieranie historii wizyt
-                                        $stmt = $conn->prepare("
-                                            SELECT 
-                                                v.*,
-                                                u.imie,
-                                                u.nazwisko,
-                                                d.specjalizacja
-                                            FROM visits v
-                                            JOIN doctors d ON v.lekarz_id = d.id
-                                            JOIN users u ON d.uzytkownik_id = u.id
-                                            JOIN patients p ON v.pacjent_id = p.id
-                                            WHERE p.uzytkownik_id = :user_id
-                                            AND v.data_wizyty < CURDATE()
-                                            ORDER BY v.data_wizyty DESC
-                                            LIMIT 10
-                                        ");
-                                        $stmt->bindParam(':user_id', $_SESSION['user_id']);
-                                        $stmt->execute();
-                                        $historia = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if (count($historia_wizyt) > 0) {
+                        foreach ($historia_wizyt as $wizyta) {
+                            echo '<div class="visit-history-card">';
+                            echo '<div class="visit-history-info">';
+                            echo '<h4>Dr ' . htmlspecialchars($wizyta['imie'] . ' ' . $wizyta['nazwisko']) . '</h4>';
+                            echo '<p class="doctor-specialization">' . htmlspecialchars($wizyta['specjalizacja']) . '</p>';
+                            echo '<p class="visit-time">' . date('d.m.Y H:i', strtotime($wizyta['data_wizyty'])) . '</p>';
+                            echo '<p class="visit-type ' . strtolower($wizyta['typ_wizyty']) . '">' . 
+                                 ucfirst(htmlspecialchars($wizyta['typ_wizyty'])) . '</p>';
+                            echo '<p class="visit-room">Gabinet: ' . htmlspecialchars($wizyta['gabinet']) . '</p>';
+                            if ($wizyta['diagnoza']) {
+                                echo '<div class="visit-details">';
+                                echo '<h5>Diagnoza:</h5>';
+                                echo '<p>' . nl2br(htmlspecialchars($wizyta['diagnoza'])) . '</p>';
+                                echo '</div>';
+                            }
+                            if ($wizyta['zalecenia']) {
+                                echo '<div class="visit-details">';
+                                echo '<h5>Zalecenia:</h5>';
+                                echo '<p>' . nl2br(htmlspecialchars($wizyta['zalecenia'])) . '</p>';
+                                echo '</div>';
+                            }
+                            echo '</div>';
+                            echo '<div class="visit-actions">';
+                            echo '<span class="visit-status ' . strtolower($wizyta['status']) . '">' . 
+                                 ucfirst(htmlspecialchars($wizyta['status'])) . '</span>';
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                    } else {
+                        echo '<p class="no-visits">Brak historii wizyt</p>';
+                    }
+                    ?>
+                </div>
+            </div>
 
-                                        if (count($historia) > 0) {
-                                            echo '<table class="history-table">';
-                                            echo '<thead><tr>';
-                                            echo '<th>Data</th>';
-                                            echo '<th>Lekarz</th>';
-                                            echo '<th>Specjalizacja</th>';
-                                            echo '<th>Typ wizyty</th>';
-                                            echo '<th>Status</th>';
-                                            echo '<th>Gabinet</th>';
-                                            echo '</tr></thead><tbody>';
-                                            
-                                            foreach ($historia as $wizyta) {
-                                                echo '<tr>';
-                                                echo '<td>' . date('d.m.Y H:i', strtotime($wizyta['data_wizyty'])) . '</td>';
-                                                echo '<td>Dr ' . htmlspecialchars($wizyta['imie'] . ' ' . $wizyta['nazwisko']) . '</td>';
-                                                echo '<td>' . htmlspecialchars($wizyta['specjalizacja']) . '</td>';
-                                                echo '<td>' . htmlspecialchars($wizyta['typ_wizyty']) . '</td>';
-                                                echo '<td>' . htmlspecialchars($wizyta['status']) . '</td>';
-                                                echo '<td>' . htmlspecialchars($wizyta['gabinet']) . '</td>';
-                                                echo '</tr>';
-                                            }
-                                            
-                                            echo '</tbody></table>';
-                                        } else {
-                                            echo '<p class="no-history">Brak historii wizyt</p>';
-                                        }
-                                        ?>
-                                    </div>
-                                </section>
+            <!-- Sekcja Historia Wyników -->
+            <div id="historia-wynikow" class="dashboard-section" style="display: none;">
+                <h2>Historia Wyników Badań</h2>
+                <div class="results-history-container">
+                    <?php
+                    // Pobieranie historii wyników
+                    $stmt = $conn->prepare("
+                        SELECT 
+                            r.id,
+                            r.typ_badania,
+                            r.data_wystawienia,
+                            r.status,
+                            r.pin,
+                            r.plik_wyniku,
+                            u.imie,
+                            u.nazwisko,
+                            d.specjalizacja
+                        FROM results r
+                        JOIN doctors d ON r.lekarz_id = d.id
+                        JOIN users u ON d.uzytkownik_id = u.id
+                        WHERE r.pacjent_id = :pacjent_id
+                        ORDER BY r.data_wystawienia DESC
+                    ");
+                    $stmt->bindParam(':pacjent_id', $pacjent['pacjent_id']);
+                    $stmt->execute();
+                    $historia_wynikow = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    if (count($historia_wynikow) > 0) {
+                        foreach ($historia_wynikow as $wynik) {
+                            echo '<div class="result-history-card">';
+                            echo '<div class="result-history-info">';
+                            echo '<h4>' . htmlspecialchars($wynik['typ_badania']) . '</h4>';
+                            echo '<p class="result-date">' . date('d.m.Y H:i', strtotime($wynik['data_wystawienia'])) . '</p>';
+                            echo '<p class="result-doctor">Dr ' . htmlspecialchars($wynik['imie'] . ' ' . $wynik['nazwisko']) . '</p>';
+                            echo '<p class="result-specialization">' . htmlspecialchars($wynik['specjalizacja']) . '</p>';
+                            echo '<p class="result-pin">PIN: ' . htmlspecialchars($wynik['pin']) . '</p>';
+                            if ($wynik['plik_wyniku']) {
+                                echo '<a href="uploads/wyniki/' . htmlspecialchars($wynik['plik_wyniku']) . '" class="btn-download" target="_blank">Pobierz wynik</a>';
+                            }
+                            echo '<p class="result-status ' . strtolower($wynik['status']) . '">' . 
+                                 ucfirst(htmlspecialchars($wynik['status'])) . '</p>';
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                    } else {
+                        echo '<p class="no-results">Brak historii wyników badań</p>';
+                    }
+                    ?>
+                </div>
+            </div>
+
+            <!-- Sekcja Wystaw Opinię -->
+            <div id="wystaw-opinie" class="dashboard-section" style="display: none;">
+                <h2>Wystaw Opinię</h2>
+                <div class="opinion-form-container">
+                    <form id="opinionForm" class="opinion-form">
+                        <div class="form-group">
+                            <label for="ocena">Ocena:</label>
+                            <div class="rating">
+                                <input type="radio" id="star5" name="ocena" value="5" required>
+                                <label for="star5">★</label>
+                                <input type="radio" id="star4" name="ocena" value="4">
+                                <label for="star4">★</label>
+                                <input type="radio" id="star3" name="ocena" value="3">
+                                <label for="star3">★</label>
+                                <input type="radio" id="star2" name="ocena" value="2">
+                                <label for="star2">★</label>
+                                <input type="radio" id="star1" name="ocena" value="1">
+                                <label for="star1">★</label>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Historia Wyników -->
-                    <div class="panel-content" id="historia-wynikow" style="display: none;">
-                        <h2>Historia Wyników</h2>
-                        <div class="results-container">
-                            <div class="results-list">
-                                <?php
-                                // Pobieranie wszystkich wyników
-                                $stmt = $conn->prepare("
-                                    SELECT r.*, u.imie, u.nazwisko 
-                                    FROM results r 
-                                    JOIN doctors d ON r.lekarz_id = d.id 
-                                    JOIN users u ON d.uzytkownik_id = u.id
-                                    JOIN patients p ON r.pacjent_id = p.id 
-                                    WHERE p.uzytkownik_id = :user_id 
-                                    ORDER BY r.data_wystawienia DESC
-                                ");
-                                $stmt->bindParam(':user_id', $_SESSION['user_id']);
-                                $stmt->execute();
-                                $wyniki = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                                if (count($wyniki) > 0) {
-                                    foreach ($wyniki as $wynik) {
-                                        echo '<div class="result-card" data-result-id="' . $wynik['id'] . '">';
-                                        echo '<div class="result-header">';
-                                        echo '<h3>' . htmlspecialchars($wynik['typ_badania']) . '</h3>';
-                                        echo '<span class="result-date">' . date('d.m.Y H:i', strtotime($wynik['data_wystawienia'])) . '</span>';
-                                        echo '</div>';
-                                        echo '<div class="result-details">';
-                                        echo '<p class="result-doctor">Dr ' . htmlspecialchars($wynik['imie'] . ' ' . $wynik['nazwisko']) . '</p>';
-                                        echo '<p class="result-pin">PIN: ' . htmlspecialchars($wynik['pin']) . '</p>';
-                                        if (isset($wynik['opis']) && !empty($wynik['opis'])) {
-                                            echo '<p class="result-description">' . htmlspecialchars($wynik['opis']) . '</p>';
-                                        }
-                                        if (isset($wynik['plik_wyniku']) && !empty($wynik['plik_wyniku'])) {
-                                            echo '<a href="uploads/results/' . htmlspecialchars($wynik['plik_wyniku']) . '" class="result-file" target="_blank">Pobierz wynik</a>';
-                                        }
-                                        echo '</div>';
-                                        echo '</div>';
-                                    }
-                                } else {
-                                    echo '<p class="no-results">Brak wyników badań</p>';
-                                }
-                                ?>
-                            </div>
+                        <div class="form-group">
+                            <label for="komentarz">Komentarz:</label>
+                            <textarea id="komentarz" name="komentarz" rows="4" required></textarea>
                         </div>
-                    </div>
 
-                    <!-- Umów się na wizytę -->
-                    <div class="panel-content" id="umow-wizyte" style="display: none;">
-                        <h2>Umów się na wizytę</h2>
-                        <div class="visit-form-container">
-                            <form action="save_visit.php" method="POST" class="visit-form">
-                                <div class="form-group">
-                                    <label for="lekarz_id">Wybierz lekarza:</label>
-                                    <select name="lekarz_id" id="lekarz_id" required>
-                                        <option value="">-- Wybierz lekarza --</option>
-                                        <?php
-                                        $stmt = $conn->prepare("
-                                            SELECT d.id, u.imie, u.nazwisko, d.specjalizacja 
-                                            FROM doctors d 
-                                            JOIN users u ON d.uzytkownik_id = u.id 
-                                            WHERE u.aktywny = 1 
-                                            ORDER BY d.specjalizacja, u.nazwisko, u.imie
-                                        ");
-                                        $stmt->execute();
-                                        while ($row = $stmt->fetch()) {
-                                            echo "<option value='{$row['id']}'>Dr {$row['imie']} {$row['nazwisko']} - {$row['specjalizacja']}</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="data_wizyty">Data wizyty:</label>
-                                    <input type="date" name="data_wizyty" id="data_wizyty" required min="<?php echo date('Y-m-d'); ?>">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="godzina_wizyty">Godzina wizyty:</label>
-                                    <input type="time" name="godzina_wizyty" id="godzina_wizyty" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="typ_wizyty">Typ wizyty:</label>
-                                    <select name="typ_wizyty" id="typ_wizyty" required>
-                                        <option value="pierwsza">Pierwsza wizyta</option>
-                                        <option value="kontrolna">Wizyta kontrolna</option>
-                                        <option value="pogotowie">Pogotowie</option>
-                                        <option value="szczepienie">Szczepienie</option>
-                                        <option value="badanie">Badanie</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="gabinet">Numer gabinetu:</label>
-                                    <input type="text" name="gabinet" id="gabinet" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="opis">Opis problemu:</label>
-                                    <textarea name="opis" id="opis" rows="3"></textarea>
-                                </div>
-
-                                <input type="hidden" name="pacjent_id" value="<?php echo $pacjent['id']; ?>">
-                                <input type="hidden" name="status" value="zaplanowana">
-
-                                <button type="submit" class="btn-submit">Umów wizytę</button>
-                            </form>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit">Wyślij opinię</button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

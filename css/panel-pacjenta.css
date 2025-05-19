@@ -13,336 +13,320 @@ body {
 }
 
 .dashboard-header {
-    background: white;
+    margin-bottom: 30px;
     padding: 20px;
+    background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .dashboard-header h1 {
-    margin: 0;
     color: #333;
+    margin-bottom: 15px;
 }
 
 .patient-info {
     display: flex;
-    align-items: center;
     gap: 20px;
 }
 
-.patient-info .patient-name {
-    color: #2c3e50;
+.patient-info p {
+    margin: 0;
+    color: #666;
+}
+
+.patient-name {
     font-weight: bold;
-}
-
-.dashboard-container {
-    display: flex;
-    gap: 20px;
-}
-
-.sidebar {
-    width: 250px;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.nav-item {
-    display: block;
-    padding: 10px 15px;
     color: #333;
-    text-decoration: none;
-    border-radius: 4px;
-    margin-bottom: 5px;
-    transition: background-color 0.3s;
 }
 
-.nav-item:hover {
-    background-color: #f0f0f0;
+/* Style dla nawigacji */
+.patient-nav {
+    background-color: #fff;
+    padding: 15px 0;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.nav-item.active {
-    background-color: #007bff;
-    color: white;
-}
-
-.dashboard-grid {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+.patient-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
     gap: 20px;
 }
 
-.result-card {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    cursor: pointer;
-    transition: transform 0.3s;
+.patient-nav a {
+    text-decoration: none;
+    color: #666;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
 }
 
-.result-card:hover {
-    transform: translateY(-5px);
+.patient-nav a:hover {
+    color: #007bff;
+    background-color: #f8f9fa;
 }
 
+.patient-nav a.active {
+    color: #007bff;
+    background-color: #e9ecef;
+}
+
+/* Style dla sekcji dashboard */
 .dashboard-section {
-    background: #fff;
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .dashboard-section h2 {
-    color: #2c3e50;
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #3498db;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
 }
 
-/* Karty wizyt */
-.visit-card, .result-card, .history-card {
-    background: #f8f9fa;
-    padding: 1rem;
+/* Style dla kart wizyt */
+.visit-card {
+    background-color: #fff;
     border-radius: 8px;
-    margin-bottom: 1rem;
-}
-
-.visit-info h3, .result-info h3, .history-info h3 {
-    color: #2c3e50;
-    margin-bottom: 0.5rem;
-    font-size: 1.2rem;
-}
-
-.visit-date, .result-date, .history-date {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-
-.visit-type, .result-status, .history-doctor {
-    color: #34495e;
-    font-size: 0.95rem;
-}
-
-/* Przyciski akcji */
-.visit-actions, .result-actions {
-    margin-top: 1rem;
-    text-align: right;
-}
-
-.btn-cancel, .btn-download {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.3s;
-}
-
-.btn-cancel {
-    background-color: #e74c3c;
-    color: white;
-}
-
-.btn-cancel:hover {
-    background-color: #c0392b;
-}
-
-.btn-download {
-    background-color: #3498db;
-    color: white;
-}
-
-.btn-download:hover {
-    background-color: #2980b9;
-}
-
-/* Szybkie akcje */
-.actions-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-}
-
-.action-card {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
-    color: #2c3e50;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.action-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.action-card h3 {
-    color: #3498db;
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
-}
-
-.action-card p {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
-
-/* Sekcja opinii */
-.review-form {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 8px;
-}
-
-.rating {
-    margin-bottom: 1.5rem;
-}
-
-.rating h3 {
-    color: #2c3e50;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-}
-
-.stars {
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
-    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.star {
-    font-size: 2rem;
-    color: #ddd;
-    cursor: pointer;
-    transition: color 0.3s;
+.visit-info h4 {
+    margin: 0 0 10px 0;
+    color: #333;
 }
 
-.star:hover,
-.star.active {
-    color: #f1c40f;
+.visit-info p {
+    margin: 5px 0;
+    color: #666;
 }
 
-.review-content textarea {
-    width: 100%;
-    padding: 1rem;
-    border: 1px solid #ddd;
+.visit-type {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.visit-type.konsultacja {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.visit-type.badanie {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.visit-type.zabieg {
+    background-color: #fce4ec;
+    color: #c2185b;
+}
+
+.visit-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.visit-status.zaplanowana {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.visit-status.w_trakcie {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.visit-status.zakonczona {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.visit-status.anulowana {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+/* Style dla kart wyników */
+.result-card {
+    background-color: #fff;
     border-radius: 8px;
-    resize: vertical;
-    margin-bottom: 1rem;
-    font-family: inherit;
-    font-size: 0.95rem;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.review-content textarea:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+.result-info h4 {
+    margin: 0 0 10px 0;
+    color: #333;
 }
 
-.btn-submit-review {
-    background-color: #2ecc71;
-    color: white;
-    padding: 0.8rem 1.5rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s;
-    width: 100%;
+.result-info p {
+    margin: 5px 0;
+    color: #666;
 }
 
-.btn-submit-review:hover {
-    background-color: #27ae60;
+.result-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 500;
 }
 
-.upcoming-visits {
-    grid-column: 1;
-    grid-row: 1;
+.result-status.oczekujacy {
+    background-color: #fff3e0;
+    color: #f57c00;
 }
 
-.test-results {
-    grid-column: 2;
-    grid-row: 1;
+.result-status.gotowy {
+    background-color: #e8f5e9;
+    color: #2e7d32;
 }
 
-.visit-history {
-    grid-column: 1;
-    grid-row: 2;
+/* Style dla formularza opinii */
+.opinion-form-container {
+    max-width: 600px;
+    margin: 0 auto;
 }
 
-.review-section {
-    grid-column: 1 / -1;
-    grid-row: 3;
-}
-
-/* Style dla formularza umawiania wizyt */
-.visit-form-container {
-    max-width: 800px;
-    margin: 20px auto;
+.opinion-form {
+    background-color: #fff;
     padding: 20px;
-    background: white;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.visit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
 }
 
-.form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 8px;
+    padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    font-size: 1em;
 }
 
 .form-group textarea {
-    height: 100px;
+    resize: vertical;
+    min-height: 100px;
 }
 
-button[type="submit"] {
-    background: #007bff;
-    color: white;
-    padding: 10px 20px;
+/* Style dla oceny gwiazdkowej */
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    cursor: pointer;
+    font-size: 30px;
+    color: #ddd;
+    padding: 5px;
+}
+
+.rating label:hover,
+.rating label:hover ~ label,
+.rating input:checked ~ label {
+    color: #ffd700;
+}
+
+/* Style dla przycisków */
+.btn-submit {
+    background-color: #007bff;
+    color: #fff;
     border: none;
+    padding: 10px 20px;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
 }
 
-button[type="submit"]:hover {
-    background: #0056b3;
+.btn-submit:hover {
+    background-color: #0056b3;
+}
+
+.btn-download {
+    display: inline-block;
+    background-color: #28a745;
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-download:hover {
+    background-color: #218838;
+}
+
+/* Style dla komunikatów o braku danych */
+.no-visits,
+.no-results {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
 }
 
 /* Responsywność */
 @media (max-width: 768px) {
-    .visit-form-container {
-        margin: 10px;
-        padding: 15px;
+    .patient-nav ul {
+        flex-direction: column;
+        align-items: center;
     }
-    
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        font-size: 14px;
+
+    .patient-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .visit-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .visit-actions {
+        margin-top: 10px;
+        align-self: flex-start;
+    }
+
+    .rating label {
+        font-size: 24px;
     }
 }
 
@@ -387,5 +371,120 @@ button[type="submit"]:hover {
 
     .actions-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Style dla historii wizyt */
+.visits-history-container {
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+}
+
+.visit-history-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.visit-history-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.visit-history-info {
+    flex: 1;
+}
+
+.visit-history-info h4 {
+    color: #1a237e;
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+}
+
+.visit-details {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.visit-details h5 {
+    color: #333;
+    margin: 0 0 5px 0;
+    font-size: 1em;
+}
+
+.visit-details p {
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Style dla historii wyników */
+.results-history-container {
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+}
+
+.result-history-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.result-history-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.result-history-info h4 {
+    color: #1a237e;
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+}
+
+.result-history-info p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.btn-download {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-download:hover {
+    background-color: #45a049;
+}
+
+/* Responsywność dla historii */
+@media (max-width: 768px) {
+    .visit-history-card,
+    .result-history-card {
+        flex-direction: column;
+    }
+
+    .visit-actions {
+        margin-top: 15px;
+        align-self: flex-start;
+    }
+
+    .visit-details {
+        margin-top: 10px;
+        padding-top: 10px;
     }
 } 
