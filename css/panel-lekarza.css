@@ -1474,4 +1474,370 @@ body {
 
 .doctor-nav a.active:hover {
     background-color: #0056b3;
+}
+
+/* Style dla sekcji dzisiejszych wizyt i ostatnich wyników */
+.today-visits-section,
+.recent-results-section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.today-visits-section h3,
+.recent-results-section h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.visits-container,
+.results-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.visit-card,
+.result-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.visit-card:hover,
+.result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.visit-info,
+.result-info {
+    flex: 1;
+}
+
+.visit-info h4,
+.result-info h4 {
+    color: #2c3e50;
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+}
+
+.visit-time,
+.result-date {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.visit-type,
+.result-type {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.visit-room {
+    color: #495057;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.visit-actions {
+    margin-left: 20px;
+}
+
+.btn-start {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.2s;
+}
+
+.btn-start:hover {
+    background-color: #218838;
+}
+
+.visit-status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.visit-status.zakończona {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.visit-status.anulowana {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.result-pin {
+    font-family: monospace;
+    background: #e9ecef;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.result-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.result-status.oczekujący {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.result-status.gotowy {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* Style dla formularza edycji wizyty */
+.visit-edit-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.patient-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.patient-info h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.patient-info p {
+    margin: 8px 0;
+    color: #495057;
+}
+
+.visit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+    font-size: 1em;
+}
+
+.form-group textarea:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-submit,
+.btn-cancel {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.btn-submit {
+    background-color: #28a745;
+    color: white;
+    flex: 1;
+}
+
+.btn-submit:hover {
+    background-color: #218838;
+}
+
+.btn-cancel {
+    background-color: #dc3545;
+    color: white;
+    flex: 1;
+}
+
+.btn-cancel:hover {
+    background-color: #c82333;
+}
+
+/* Komunikaty */
+.no-visits,
+.no-results {
+    text-align: center;
+    color: #6c757d;
+    padding: 20px;
+    font-style: italic;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+    .visit-card,
+    .result-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .visit-actions {
+        margin: 15px 0 0 0;
+        width: 100%;
+    }
+
+    .btn-start {
+        width: 100%;
+        text-align: center;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+        width: 100%;
+    }
+}
+
+/* Style dla sekcji ostatnich wizyt */
+.recent-visits-section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.recent-visits-section h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.recent-visits-section .visit-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.recent-visits-section .visit-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.recent-visits-section .visit-info h4 {
+    color: #2c3e50;
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+}
+
+.recent-visits-section .visit-time {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.recent-visits-section .visit-type {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.recent-visits-section .visit-room {
+    color: #495057;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.recent-visits-section .visit-status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.recent-visits-section .visit-status.zakończona {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.recent-visits-section .visit-status.anulowana {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+/* Responsywność dla sekcji ostatnich wizyt */
+@media (max-width: 768px) {
+    .recent-visits-section .visit-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .recent-visits-section .visit-actions {
+        margin-top: 15px;
+        width: 100%;
+    }
 } 

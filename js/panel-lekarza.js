@@ -10,14 +10,25 @@ document.addEventListener('DOMContentLoaded', function() {
         'statystyki': document.getElementById('statystyki')
     };
 
-    // Funkcja do zmiany widoczności sekcji
+    // Na początku ukryj wszystkie sekcje oprócz panelu głównego
+    for (let key in sections) {
+        if (sections[key]) {
+            if (key === 'panel-glowny') {
+                sections[key].style.display = 'block';
+            } else {
+                sections[key].style.display = 'none';
+            }
+        }
+    }
+
+    // Funkcja do pokazywania sekcji
     function showSection(sectionId) {
         // Ukryj wszystkie sekcje
-        Object.values(sections).forEach(section => {
-            if (section) {
-                section.style.display = 'none';
+        for (let key in sections) {
+            if (sections[key]) {
+                sections[key].style.display = 'none';
             }
-        });
+        }
 
         // Pokaż wybraną sekcję
         if (sections[sectionId]) {
@@ -27,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Aktualizuj klasę active w menu
         menuLinks.forEach(link => {
             link.classList.remove('active');
-            if (link.getAttribute('href').includes(sectionId)) {
+            if (link.getAttribute('href') === '#' + sectionId) {
                 link.classList.add('active');
             }
         });
@@ -37,28 +48,8 @@ document.addEventListener('DOMContentLoaded', function() {
     menuLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            const sectionId = this.getAttribute('href').replace('.php', '');
+            const sectionId = this.getAttribute('href').substring(1); // Usuń # z początku
             showSection(sectionId);
-            
-            // Aktualizuj URL bez przeładowania strony
-            history.pushState(null, '', this.getAttribute('href'));
         });
     });
-
-    // Obsługa przycisków wstecz/dalej w przeglądarce
-    window.addEventListener('popstate', function() {
-        const currentPath = window.location.pathname;
-        const sectionId = currentPath.split('/').pop().replace('.php', '');
-        showSection(sectionId);
-    });
-
-    // Sprawdź URL przy załadowaniu strony
-    const currentPath = window.location.pathname;
-    const sectionId = currentPath.split('/').pop().replace('.php', '');
-    if (sectionId && sections[sectionId]) {
-        showSection(sectionId);
-    } else {
-        // Domyślnie pokaż panel główny
-        showSection('panel-glowny');
-    }
 }); 
