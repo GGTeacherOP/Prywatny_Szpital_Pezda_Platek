@@ -185,6 +185,20 @@ CREATE TABLE reviews (
     FOREIGN KEY (uzytkownik_id) REFERENCES users(id)
 );
 
+-- Tabela Wyniki
+CREATE TABLE results (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    pacjent_id INT NOT NULL,
+    lekarz_id INT NOT NULL,
+    typ_badania VARCHAR(100) NOT NULL,
+    data_wystawienia DATETIME DEFAULT CURRENT_TIMESTAMP,
+    pin VARCHAR(12) NOT NULL,
+    plik_wyniku LONGBLOB,
+    status ENUM('oczekujący', 'gotowy') DEFAULT 'oczekujący',
+    FOREIGN KEY (pacjent_id) REFERENCES patients(id),
+    FOREIGN KEY (lekarz_id) REFERENCES doctors(id)
+);
+
 -- Dodanie indeksów dla optymalizacji zapytań
 CREATE INDEX idx_users_pesel ON users(pesel);
 CREATE INDEX idx_visits_data ON visits(data_wizyty);
