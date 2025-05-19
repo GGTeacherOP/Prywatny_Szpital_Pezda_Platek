@@ -28,11 +28,16 @@ try {
     $stmt = $pdo->query("SELECT COUNT(DISTINCT specjalizacja) as total FROM doctors");
     $totalDepartments = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
+    // Pobieranie listy wszystkich specjalizacji
+    $stmt = $pdo->query("SELECT DISTINCT specjalizacja FROM doctors ORDER BY specjalizacja");
+    $specializations = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
     $stats = [
         'patients' => $totalPatients,
         'results' => $totalResults,
         'doctors' => $totalDoctors,
-        'departments' => $totalDepartments
+        'departments' => $totalDepartments,
+        'specializations' => $specializations
     ];
 
     header('Content-Type: application/json; charset=utf-8');

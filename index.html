@@ -79,77 +79,8 @@
 
         <div class="services-section animated-section">
             <h2>Nasze usługi</h2>
-            <div class="services-container">
-                <div class="service-card">
-                    <div class="service-icon">❤️</div>
-                    <h3>Kardiologia</h3>
-                    <p>Kompleksowa diagnostyka i leczenie chorób serca</p>
-                    <div class="service-source">(pobierane z bazy danych)</div>
-                    <a href="#" class="service-link">Dowiedz się więcej</a>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🧠</div>
-                    <h3>Neurologia</h3>
-                    <p>Diagnostyka i leczenie chorób układu nerwowego</p>
-                    <div class="service-source">(pobierane z bazy danych)</div>
-                    <a href="#" class="service-link">Dowiedz się więcej</a>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">👶</div>
-                    <h3>Pediatria</h3>
-                    <p>Kompleksowa opieka nad dziećmi w każdym wieku</p>
-                    <div class="service-source">(pobierane z bazy danych)</div>
-                    <a href="#" class="service-link">Dowiedz się więcej</a>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🦴</div>
-                    <h3>Ortopedia</h3>
-                    <p>Leczenie urazów i chorób układu ruchu</p>
-                    <div class="service-source">(pobierane z bazy danych)</div>
-                    <a href="#" class="service-link">Dowiedz się więcej</a>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">👁️</div>
-                    <h3>Okulistyka</h3>
-                    <p>Diagnostyka i leczenie chorób oczu</p>
-                    <div class="service-source">(pobierane z bazy danych)</div>
-                    <a href="#" class="service-link">Dowiedz się więcej</a>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🦷</div>
-                    <h3>Stomatologia</h3>
-                    <p>Kompleksowa opieka stomatologiczna</p>
-                    <div class="service-source">(pobierane z bazy danych)</div>
-                    <a href="#" class="service-link">Dowiedz się więcej</a>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">👂</div>
-                    <h3>Laryngologia</h3>
-                    <p>Diagnostyka i leczenie chorób uszu, nosa i gardła</p>
-                    <div class="service-source">(pobierane z bazy danych)</div>
-                    <a href="#" class="service-link">Dowiedz się więcej</a>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🔬</div>
-                    <h3>Laboratorium</h3>
-                    <p>Kompleksowa diagnostyka laboratoryjna</p>
-                    <div class="service-source">(pobierane z bazy danych)</div>
-                    <a href="#" class="service-link">Dowiedz się więcej</a>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">📷</div>
-                    <h3>Diagnostyka obrazowa</h3>
-                    <p>RTG, USG, tomografia komputerowa</p>
-                    <div class="service-source">(pobierane z bazy danych)</div>
-                    <a href="#" class="service-link">Dowiedz się więcej</a>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🏥</div>
-                    <h3>Szpitalny oddział ratunkowy</h3>
-                    <p>Całodobowa opieka medyczna</p>
-                    <div class="service-source">(pobierane z bazy danych)</div>
-                    <a href="#" class="service-link">Dowiedz się więcej</a>
-                </div>
+            <div class="services-container" id="specializations-container">
+                <!-- Specjalizacje będą dodane dynamicznie przez JavaScript -->
             </div>
         </div>
         
@@ -336,6 +267,17 @@
                     document.getElementById('total-results').textContent = data.results.toLocaleString('pl-PL');
                     document.getElementById('total-doctors').textContent = data.doctors.toLocaleString('pl-PL');
                     document.getElementById('total-departments').textContent = data.departments.toLocaleString('pl-PL');
+
+                    // Dodawanie specjalizacji do kontenera
+                    const container = document.getElementById('specializations-container');
+                    container.innerHTML = ''; // Czyszczenie kontenera
+                    
+                    data.specializations.forEach(specialization => {
+                        const card = document.createElement('div');
+                        card.className = 'service-card';
+                        card.innerHTML = `<h3>${specialization}</h3>`;
+                        container.appendChild(card);
+                    });
                 })
                 .catch(error => {
                     console.error('Błąd podczas ładowania statystyk:', error);
@@ -344,6 +286,7 @@
                     document.getElementById('total-results').textContent = errorMessage;
                     document.getElementById('total-doctors').textContent = errorMessage;
                     document.getElementById('total-departments').textContent = errorMessage;
+                    document.getElementById('specializations-container').innerHTML = '<p class="error-message">Nie można załadować listy specjalizacji</p>';
                 });
         }
 
