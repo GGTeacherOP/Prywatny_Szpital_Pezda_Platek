@@ -51,6 +51,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     header("Location: panel-lekarza.php");
                 } else if ($user['funkcja'] === 'pacjent') {
                     header("Location: panel-pacjenta.php");
+                } else if ($user['funkcja'] === 'administrator') {
+                    header("Location: panel-admina.php");
                 } else {
                     $error = "Nieznany typ konta";
                 }
@@ -126,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php } ?>
             <button type="submit" class="form-login-button">Zaloguj się</button>
             <div class="login-links">
-                <a href="rejestracja.html">Nie masz konta? Zarejestruj się</a>
+                <a href="rejestracja.php">Nie masz konta? Zarejestruj się</a>
             </div>
         </form>
         <a href="index.html" class="back-to-home">← Powrót do strony głównej</a>
