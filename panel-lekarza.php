@@ -255,7 +255,72 @@ try {
             <!-- Sekcja Pacjenci -->
             <div id="pacjenci" class="dashboard-section" style="display: none;">
                 <h2>Pacjenci</h2>
-                <!-- Tutaj będzie zawartość sekcji pacjentów -->
+                
+                <!-- Wyszukiwarka -->
+                <div class="search-container">
+                    <input type="text" id="patientSearch" placeholder="Wyszukaj pacjenta po imieniu lub nazwisku..." class="search-input">
+                </div>
+
+                <!-- Lista pacjentów -->
+                <div class="patients-list">
+                    <?php
+                    if ($lekarz_id) {
+                        // Pobieranie pacjentów lekarza
+                        $stmt = $conn->prepare("
+                            SELECT DISTINCT
+                                p.id as pacjent_id,
+                                u.imie,
+                                u.nazwisko,
+                                u.email,
+                                u.data_urodzenia,
+                                u.pesel,
+                                p.grupa_krwi,
+                                COUNT(DISTINCT v.id) as liczba_wizyt,
+                                MAX(v.data_wizyty) as ostatnia_wizyta
+                            FROM patients p
+                            JOIN users u ON p.uzytkownik_id = u.id
+                            JOIN visits v ON p.id = v.pacjent_id
+                            WHERE v.lekarz_id = :lekarz_id
+                            GROUP BY p.id, u.imie, u.nazwisko, u.email, u.data_urodzenia, u.pesel, p.grupa_krwi
+                            ORDER BY u.nazwisko, u.imie
+                        ");
+                        $stmt->bindParam(':lekarz_id', $lekarz_id['id']);
+                        $stmt->execute();
+                        $pacjenci = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                        if (count($pacjenci) > 0) {
+                            foreach ($pacjenci as $pacjent) {
+                                echo '<div class="patient-card" data-name="' . strtolower($pacjent['imie'] . ' ' . $pacjent['nazwisko']) . '">';
+                                echo '<div class="patient-header">';
+                                echo '<h3>' . htmlspecialchars($pacjent['imie'] . ' ' . $pacjent['nazwisko']) . '</h3>';
+                                echo '<span class="patient-age">' . date_diff(date_create($pacjent['data_urodzenia']), date_create('today'))->y . ' lat</span>';
+                                echo '</div>';
+                                
+                                echo '<div class="patient-details">';
+                                echo '<p><strong>PESEL:</strong> ' . htmlspecialchars($pacjent['pesel']) . '</p>';
+                                echo '<p><strong>Grupa krwi:</strong> ' . htmlspecialchars($pacjent['grupa_krwi']) . '</p>';
+                                echo '<p><strong>Email:</strong> ' . htmlspecialchars($pacjent['email']) . '</p>';
+                                echo '</div>';
+                                
+                                echo '<div class="patient-stats">';
+                                echo '<p><strong>Liczba wizyt:</strong> ' . $pacjent['liczba_wizyt'] . '</p>';
+                                if ($pacjent['ostatnia_wizyta']) {
+                                    echo '<p><strong>Ostatnia wizyta:</strong> ' . date('d.m.Y', strtotime($pacjent['ostatnia_wizyta'])) . '</p>';
+                                }
+                                echo '</div>';
+                                
+                                echo '<div class="patient-actions">';
+                                echo '<a href="historia-pacjenta.php?id=' . $pacjent['pacjent_id'] . '" class="btn-view-history">Historia wizyt</a>';
+                                echo '<a href="wyniki-pacjenta.php?id=' . $pacjent['pacjent_id'] . '" class="btn-view-results">Wyniki badań</a>';
+                                echo '</div>';
+                                echo '</div>';
+                            }
+                        } else {
+                            echo '<p class="no-patients">Brak pacjentów w bazie</p>';
+                        }
+                    }
+                    ?>
+                </div>
             </div>
 
             <!-- Sekcja Wizyty -->

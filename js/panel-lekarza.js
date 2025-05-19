@@ -52,4 +52,25 @@ document.addEventListener('DOMContentLoaded', function() {
             showSection(sectionId);
         });
     });
+
+    // Pokaż sekcję panelu głównego domyślnie
+    showSection('panel-glowny');
+
+    // Obsługa wyszukiwarki pacjentów
+    const searchInput = document.getElementById('patientSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const patientCards = document.querySelectorAll('.patient-card');
+            
+            patientCards.forEach(card => {
+                const patientName = card.getAttribute('data-name');
+                if (patientName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
 }); 
