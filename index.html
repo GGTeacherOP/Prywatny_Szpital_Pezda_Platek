@@ -46,7 +46,7 @@
                     <div class="stat-icon">
                         <img src="img/index/zespol.png" alt="Ikona zespołu">
                     </div>
-                    <div class="stat-number">15,742</div>
+                    <div class="stat-number" id="total-patients">Ładowanie...</div>
                     <div class="stat-label">Obsłużonych pacjentów</div>
                     <div class="stat-source">(pobierane z bazy danych)</div>
                 </div>
@@ -54,7 +54,7 @@
                     <div class="stat-icon">
                         <img src="img/index/clipboard.png" alt="Ikona clipboard">
                     </div>
-                    <div class="stat-number">23,891</div>
+                    <div class="stat-number" id="total-results">Ładowanie...</div>
                     <div class="stat-label">Wystawionych wyników</div>
                     <div class="stat-source">(pobierane z bazy danych)</div>
                 </div>
@@ -62,7 +62,7 @@
                     <div class="stat-icon">
                         <img src="img/index/doktor.png" alt="Ikona doktora">
                     </div>
-                    <div class="stat-number">127</div>
+                    <div class="stat-number" id="total-doctors">Ładowanie...</div>
                     <div class="stat-label">Lekarzy specjalistów</div>
                     <div class="stat-source">(pobierane z bazy danych)</div>
                 </div>
@@ -70,7 +70,7 @@
                     <div class="stat-icon">
                         <img src="img/index/szpital.png" alt="Ikona szpitala">
                     </div>
-                    <div class="stat-number">45</div>
+                    <div class="stat-number" id="total-departments">Ładowanie...</div>
                     <div class="stat-label">Oddziałów</div>
                     <div class="stat-source">(pobierane z bazy danych)</div>
                 </div>
@@ -318,5 +318,37 @@
     <button id="backToTopBtn" title="Wróć na górę">&#8679;</button>
 
     <script src="js/main_animations.js" defer></script>
+    <script>
+        // Funkcja do ładowania statystyk
+        function loadStats() {
+            fetch('get_stats.php')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Problem z połączeniem serwera');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.message || data.error);
+                    }
+                    document.getElementById('total-patients').textContent = data.patients.toLocaleString('pl-PL');
+                    document.getElementById('total-results').textContent = data.results.toLocaleString('pl-PL');
+                    document.getElementById('total-doctors').textContent = data.doctors.toLocaleString('pl-PL');
+                    document.getElementById('total-departments').textContent = data.departments.toLocaleString('pl-PL');
+                })
+                .catch(error => {
+                    console.error('Błąd podczas ładowania statystyk:', error);
+                    const errorMessage = 'Nie można załadować danych';
+                    document.getElementById('total-patients').textContent = errorMessage;
+                    document.getElementById('total-results').textContent = errorMessage;
+                    document.getElementById('total-doctors').textContent = errorMessage;
+                    document.getElementById('total-departments').textContent = errorMessage;
+                });
+        }
+
+        // Ładowanie statystyk po załadowaniu strony
+        document.addEventListener('DOMContentLoaded', loadStats);
+    </script>
 </body>
 </html>
