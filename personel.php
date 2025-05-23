@@ -19,6 +19,12 @@ try {
     $stmt->execute();
     $doctors = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
+    // Pobieranie unikalnych specjalizacji
+    $sql_spec = "SELECT DISTINCT specjalizacja FROM doctors WHERE specjalizacja IS NOT NULL AND specjalizacja != '' ORDER BY specjalizacja";
+    $stmt_spec = $conn->prepare($sql_spec);
+    $stmt_spec->execute();
+    $specializations = $stmt_spec->fetchAll(PDO::FETCH_COLUMN);
+    
 } catch(PDOException $e) {
     echo "Błąd połączenia z bazą danych: " . $e->getMessage();
     $doctors = [];
@@ -34,6 +40,37 @@ try {
     <link rel="icon" type="image/png" href="img/logo/icon.png">
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <link rel='stylesheet' type='text/css' media='screen' href='css/personel.css'>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const staffCards = document.querySelectorAll('.staff-card');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Usuń klasę active ze wszystkich przycisków
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Dodaj klasę active do klikniętego przycisku
+                    this.classList.add('active');
+
+                    const specialization = this.getAttribute('data-specialization');
+
+                    staffCards.forEach(card => {
+                        const cardSpecialization = card.querySelector('.position-specialty').textContent.trim();
+                        
+                        if (specialization === 'all' || cardSpecialization === specialization) {
+                            card.style.display = 'block';
+                            card.classList.remove('hidden');
+                        } else {
+                            card.classList.add('hidden');
+                            setTimeout(() => {
+                                card.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </head>
 <body class="personel-page">
     <header class="header">
@@ -61,6 +98,14 @@ try {
 
             <div class="personel-category">
                 <h2>Lekarze</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-specialization="all"><span>Wszyscy</span></button>
+                    <?php foreach($specializations as $spec): ?>
+                        <button class="filter-btn" data-specialization="<?php echo htmlspecialchars($spec); ?>">
+                            <span><?php echo htmlspecialchars($spec); ?></span>
+                        </button>
+                    <?php endforeach; ?>
+                </div>
                 <div class="staff-grid">
                     <?php foreach($doctors as $doctor): ?>
                     <div class="staff-card">
@@ -106,6 +151,5 @@ try {
             <p>&copy; 2025 Prywatny Szpital im. Coinplex. Wszelkie prawa zastrzeżone.</p>
         </div>
     </footer>
-    <script src="js/personel.js"></script>
 </body>
 </html> 

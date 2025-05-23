@@ -91,34 +91,66 @@ body.personel-page {
     border-radius: 2px;
 }
 
+/* Przyciski filtrowania */
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    padding: 0 1rem;
+}
+
+.filter-btn {
+    background-color: #f8f9fa;
+    border: none;
+    color: #2c3e50;
+    padding: 0.8rem 1.8rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: #3498db;
+    color: #fff;
+}
+
+.filter-btn.active {
+    background-color: #3498db;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+}
+
 /* Siatka dla kart personelu */
 .staff-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 35px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
 }
 
 /* Karta pojedynczego pracownika */
 .staff-card {
-    border: 1px solid #dde4eb;
-    border-top: 4px solid #3498db;
-    border-radius: 12px;
-    padding: 25px;
-    padding-top: 20px;
-    background-color: #fdfdfd;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    background-color: #fff;
+    border-radius: 10px;
     overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    opacity: 1;
+    transform: scale(1);
 }
 
-.staff-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 10px 25px rgba(44, 62, 80, 0.12);
-    border-color: #2980b9;
+.staff-card.hidden {
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+    display: none;
 }
 
 /* Zdjęcie pracownika */
@@ -179,18 +211,6 @@ body.personel-page {
     line-height: 1.7;
     flex-grow: 1;
     margin-bottom: 0;
-}
-
-/* Animacje dla kart personelu */
-.staff-card {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.staff-card.animate-in {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 /* Przycisk powrotu na górę */
@@ -329,13 +349,6 @@ body.personel-page {
     background: #f8f9fa;
     border-radius: 8px;
     margin: 1rem 0;
-}
-
-.staff-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
-    padding: 2rem 0;
 }
 
 .staff-card {
