@@ -8,7 +8,6 @@
     <link rel="icon" type="image/png" href="img/logo/icon.png">
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <link rel='stylesheet' type='text/css' media='screen' href='css/main.css'>
-    <script src='main.js'></script>
     <script src='js/main_animations.js' defer></script>
 </head>
 <body>
@@ -193,7 +192,6 @@
 
     <button id="backToTopBtn" title="Wróć na górę">&#8679;</button>
 
-    <script src="js/main_animations.js" defer></script>
     <script>
         // Funkcja do generowania gwiazdek
         function generateStars(rating) {
@@ -257,7 +255,7 @@
         // Funkcja do ładowania statystyk
         function loadStats() {
             console.log('Rozpoczynam ładowanie danych...');
-            fetch('get_stats.php')
+            fetch('php/get_home_stats.php')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Problem z połączeniem serwera');
@@ -287,8 +285,7 @@
                     });
 
                     // Aktualizacja średniej oceny
-                    const averageRating = parseFloat(data.averageRating) || 0;
-                    document.getElementById('average-rating').textContent = averageRating.toFixed(1);
+                    document.getElementById('average-rating').textContent = data.averageRating.toFixed(1);
 
                     // Aktualizacja opinii
                     const reviewsContainer = document.getElementById('reviews-container');
@@ -307,9 +304,11 @@
                                     <div class="reviewer-info">
                                         <h3>${review.imie} ${review.nazwisko}</h3>
                                         <div class="review-rating">
+                                            ${generateStars(review.ocena)}
                                             <span class="rating-number">${review.ocena}</span>
                                         </div>
                                     </div>
+                                    <div class="review-date">${review.data}</div>
                                 </div>
                                 <p class="review-text">${review.tresc}</p>
                             `;
@@ -335,19 +334,10 @@
                 });
         }
 
-        // Funkcja do odświeżania danych
-        function refreshData() {
-            console.log('Odświeżanie danych...');
-            loadStats();
-        }
-
         // Ładowanie statystyk po załadowaniu strony
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Strona załadowana, rozpoczynam ładowanie danych...');
             loadStats();
-            
-            // Odświeżaj dane co 10 sekund
-            setInterval(refreshData, 10000);
         });
     </script>
 
