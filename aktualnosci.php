@@ -93,7 +93,7 @@ $totalPages = ceil($totalNews / $newsPerPage);
             <ul>
                 <li><a href="index.html">Strona główna</a></li>
                 <li><a href="o-nas.html">O nas</a></li>
-                <li><a href="personel.html">Nasz Personel</a></li>
+                <li><a href="personel.php">Nasz Personel</a></li>
                 <li><a href="aktualnosci.php" class="active">Aktualności</a></li>
                 <li><a href="dla-pacjenta.html">Dla pacjenta</a></li>
             </ul>
