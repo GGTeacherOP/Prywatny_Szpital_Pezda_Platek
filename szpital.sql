@@ -199,6 +199,15 @@ CREATE TABLE results (
     FOREIGN KEY (lekarz_id) REFERENCES doctors(id)
 );
 
+-- Tabela Ceny Wizyt
+CREATE TABLE doctor_visit_prices (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    lekarz_id INT NOT NULL,
+    typ_wizyty ENUM('pierwsza', 'kontrolna', 'pogotowie', 'szczepienie', 'badanie') NOT NULL,
+    cena DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (lekarz_id) REFERENCES doctors(id)
+);
+
 -- Dodanie indeksów dla optymalizacji zapytań
 CREATE INDEX idx_users_pesel ON users(pesel);
 CREATE INDEX idx_visits_data ON visits(data_wizyty);
