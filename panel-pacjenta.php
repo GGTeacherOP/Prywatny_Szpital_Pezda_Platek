@@ -184,6 +184,11 @@ try {
                                 echo '<p class="result-status ' . strtolower($wynik['status']) . '">' . 
                                      ucfirst(htmlspecialchars($wynik['status'])) . '</p>';
                                 echo '</div>';
+                                if (!empty($wynik['plik_wyniku'])) {
+                                    echo '<div class="result-actions">';
+                                    echo '<a href="uploads/wyniki/' . htmlspecialchars($wynik['plik_wyniku']) . '" class="btn-download" target="_blank">Pobierz wynik</a>';
+                                    echo '</div>';
+                                }
                                 echo '</div>';
                             }
                         } else {
@@ -384,16 +389,12 @@ try {
 
                         <div class="form-group">
                             <label for="godzina_wizyty">Godzina wizyty:</label>
-                            <select id="godzina_wizyty" name="godzina_wizyty" required>
-                                <option value="">Wybierz godzinę</option>
-                                <?php
-                                // Generowanie godzin wizyt (8:00 - 16:00)
-                                for ($hour = 8; $hour <= 16; $hour++) {
-                                    $time = sprintf("%02d:00", $hour);
-                                    echo '<option value="' . $time . '">' . $time . '</option>';
-                                }
-                                ?>
+                            <select id="godzina_wizyty" name="godzina_wizyty" required disabled>
+                                <option value="">Najpierw wybierz lekarza i datę</option>
                             </select>
+                            <div id="doctor_unavailable" class="error-message" style="display: none; color: #dc3545; margin-top: 5px;">
+                                Lekarz nie przyjmuje w wybranym dniu
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -404,11 +405,24 @@ try {
                                 <option value="kontrolna">Wizyta kontrolna</option>
                                 <option value="badanie">Badanie</option>
                             </select>
+                            <div id="visit_price" class="price-info" style="display: none; margin-top: 5px;">
+                                Cena wizyty: <span id="price_value">0</span> zł
+                            </div>
                         </div>
 
                         <div class="form-group">
                             <label for="opis">Opis problemu (opcjonalnie):</label>
                             <textarea id="opis" name="opis" rows="4"></textarea>
+                        </div>
+
+                        <div class="payment-info">
+                            <h4>Informacje o płatności:</h4>
+                            <p>Płatność za wizytę możesz dokonać:</p>
+                            <ul>
+                                <li>W gabinecie lekarskim przed wizytą</li>
+                                <li>W sekretariacie szpitala (parter, pokój 101)</li>
+                            </ul>
+                            <p class="payment-note">Uwaga: W przypadku rezygnacji z wizyty na mniej niż 24h przed umówionym terminem, może zostać naliczona opłata w wysokości 50% ceny wizyty.</p>
                         </div>
 
                         <input type="hidden" name="pacjent_id" value="<?php echo $pacjent['pacjent_id']; ?>">
@@ -449,5 +463,133 @@ try {
             <p>&copy; 2025 Prywatny Szpital im. Coinplex. Wszelkie prawa zastrzeżone.</p>
         </div>
     </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const lekarzSelect = document.getElementById('lekarz');
+        const dataWizytyInput = document.getElementById('data_wizyty');
+        const godzinaWizytySelect = document.getElementById('godzina_wizyty');
+        const doctorUnavailable = document.getElementById('doctor_unavailable');
+        const typWizytySelect = document.getElementById('typ_wizyty');
+        const visitPrice = document.getElementById('visit_price');
+        const priceValue = document.getElementById('price_value');
+
+        // Funkcja do aktualizacji dostępnych godzin
+        function updateAvailableHours() {
+            const selectedLekarz = lekarzSelect.value;
+            const selectedDate = dataWizytyInput.value;
+            
+            console.log('Wybrany lekarz:', selectedLekarz);
+            console.log('Wybrana data:', selectedDate);
+            
+            if (!selectedLekarz || !selectedDate) {
+                godzinaWizytySelect.disabled = true;
+                godzinaWizytySelect.innerHTML = '<option value="">Najpierw wybierz lekarza i datę</option>';
+                doctorUnavailable.style.display = 'none';
+                return;
+            }
+
+            // Pobierz dzień tygodnia z wybranej daty
+            const date = new Date(selectedDate);
+            const days = ['niedziela', 'poniedzialek', 'wtorek', 'sroda', 'czwartek', 'piatek', 'sobota'];
+            const dayOfWeek = days[date.getDay()];
+            
+            console.log('Dzień tygodnia:', dayOfWeek);
+
+            // Sprawdź zajęte godziny dla wybranego lekarza i daty
+            fetch('check_available_hours.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `lekarz_id=${selectedLekarz}&data=${selectedDate}&dzien=${dayOfWeek}`
+            })
+            .then(response => {
+                console.log('Status odpowiedzi:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Otrzymane dane:', data);
+                
+                if (data.error) {
+                    console.error('Błąd:', data.error);
+                    godzinaWizytySelect.disabled = true;
+                    godzinaWizytySelect.innerHTML = '<option value="">Brak dostępnych godzin</option>';
+                    doctorUnavailable.style.display = 'block';
+                    return;
+                }
+
+                // Wyczyść obecne opcje
+                godzinaWizytySelect.innerHTML = '';
+                godzinaWizytySelect.disabled = false;
+                doctorUnavailable.style.display = 'none';
+
+                // Dodaj opcję domyślną
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Wybierz godzinę';
+                godzinaWizytySelect.appendChild(defaultOption);
+
+                // Dodaj dostępne godziny
+                if (data.availableHours && data.availableHours.length > 0) {
+                    data.availableHours.forEach(hour => {
+                        const option = document.createElement('option');
+                        option.value = hour;
+                        option.textContent = hour;
+                        godzinaWizytySelect.appendChild(option);
+                    });
+                } else {
+                    godzinaWizytySelect.innerHTML = '<option value="">Brak dostępnych godzin</option>';
+                }
+            })
+            .catch(error => {
+                console.error('Błąd podczas pobierania dostępnych godzin:', error);
+                godzinaWizytySelect.disabled = true;
+                godzinaWizytySelect.innerHTML = '<option value="">Błąd podczas pobierania godzin</option>';
+                doctorUnavailable.style.display = 'none';
+            });
+        }
+
+        // Funkcja do aktualizacji ceny wizyty
+        function updateVisitPrice() {
+            const selectedLekarz = lekarzSelect.value;
+            const selectedType = typWizytySelect.value;
+            
+            if (!selectedLekarz || !selectedType) {
+                visitPrice.style.display = 'none';
+                return;
+            }
+
+            // Pobierz cenę wizyty
+            fetch('get_visit_price.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `lekarz_id=${selectedLekarz}&typ_wizyty=${selectedType}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.price) {
+                    priceValue.textContent = data.price;
+                    visitPrice.style.display = 'block';
+                } else {
+                    visitPrice.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Błąd podczas pobierania ceny:', error);
+                visitPrice.style.display = 'none';
+            });
+        }
+
+        // Nasłuchuj zmian w wyborze lekarza i daty
+        lekarzSelect.addEventListener('change', updateAvailableHours);
+        dataWizytyInput.addEventListener('change', updateAvailableHours);
+
+        // Nasłuchuj zmian w wyborze typu wizyty
+        typWizytySelect.addEventListener('change', updateVisitPrice);
+    });
+    </script>
 </body>
 </html> 
