@@ -13,7 +13,7 @@ try {
     exit();
 }
 
-// Sprawdzenie czy przekazano ID wiadomości
+// Sprawdzenie czy przekazano ID aktualności
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header('Location: aktualnosci.php');
     exit();
@@ -21,7 +21,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $newsId = (int)$_GET['id'];
 
-// Pobieranie wiadomości
+// Pobieranie aktualności
 $stmt = $pdo->prepare("SELECT n.*, u.imie, u.nazwisko 
                        FROM news n 
                        JOIN users u ON n.autor_id = u.id 
@@ -29,7 +29,7 @@ $stmt = $pdo->prepare("SELECT n.*, u.imie, u.nazwisko
 $stmt->execute([$newsId]);
 $news = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Jeśli wiadomość nie istnieje, przekieruj do listy aktualności
+// Jeśli aktualność nie istnieje, przekieruj do strony z aktualnościami
 if (!$news) {
     header('Location: aktualnosci.php');
     exit();
@@ -68,30 +68,28 @@ if (!$news) {
     </header>
 
     <main class="main-content">
-        <article class="news-detail">
-            <div class="news-header">
-                <h1><?php echo htmlspecialchars($news['tytul']); ?></h1>
+        <div class="news-detail">
+            <a href="aktualnosci.php" class="back-link">← Powrót do aktualności</a>
+            
+            <article class="news-full">
+                <h1 class="news-title"><?php echo htmlspecialchars($news['tytul']); ?></h1>
+                
                 <div class="news-meta">
                     <span class="news-date"><?php echo date('d.m.Y', strtotime($news['data_publikacji'])); ?></span>
                     <span class="news-author">Autor: <?php echo htmlspecialchars($news['imie'] . ' ' . $news['nazwisko']); ?></span>
                 </div>
-            </div>
 
-            <?php if ($news['zdjecie']): ?>
-            <div class="news-image">
-                <img src="<?php echo htmlspecialchars($news['zdjecie']); ?>" 
-                     alt="<?php echo htmlspecialchars($news['tytul']); ?>">
-            </div>
-            <?php endif; ?>
+                <?php if ($news['zdjecie']): ?>
+                <div class="news-image-full">
+                    <img src="<?php echo htmlspecialchars($news['zdjecie']); ?>" alt="<?php echo htmlspecialchars($news['tytul']); ?>">
+                </div>
+                <?php endif; ?>
 
-            <div class="news-content">
-                <?php echo nl2br(htmlspecialchars($news['tresc'])); ?>
-            </div>
-
-            <div class="news-footer">
-                <a href="aktualnosci.php" class="btn-back">Powrót do aktualności</a>
-            </div>
-        </article>
+                <div class="news-content-full">
+                    <?php echo nl2br(htmlspecialchars($news['tresc'])); ?>
+                </div>
+            </article>
+        </div>
     </main>
 
     <footer class="footer">

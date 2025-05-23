@@ -13,34 +13,63 @@ try {
     exit();
 }
 
-// Pobieranie głównej wiadomości
-$stmt = $pdo->query("SELECT n.*, u.imie, u.nazwisko 
+// Pobierz aktualną stronę
+$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$currentPage = max(1, $currentPage); // Upewnij się, że strona nie jest mniejsza niż 1
+
+// Liczba wiadomości na stronę
+$newsPerPage = 7; // 1 główna + 2 wyróżnione + 4 pozostałe
+
+// Oblicz offset dla zapytania SQL
+$offset = ($currentPage - 1) * $newsPerPage;
+
+// Pobieranie głównej wiadomości dla aktualnej strony
+$stmt = $pdo->prepare("SELECT n.*, u.imie, u.nazwisko 
                      FROM news n 
                      JOIN users u ON n.autor_id = u.id 
                      WHERE n.status = 'opublikowany' 
                      ORDER BY n.data_publikacji DESC 
-                     LIMIT 1");
+                     LIMIT ?, 1");
+$stmt->bindValue(1, $offset, PDO::PARAM_INT);
+$stmt->execute();
 $mainNews = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Pobieranie dwóch wyróżnionych wiadomości
-$stmt = $pdo->query("SELECT n.*, u.imie, u.nazwisko 
-                     FROM news n 
-                     JOIN users u ON n.autor_id = u.id 
-                     WHERE n.status = 'opublikowany' 
-                     AND n.id != {$mainNews['id']} 
-                     ORDER BY n.data_publikacji DESC 
-                     LIMIT 2");
-$featuredNews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$featuredNews = [];
+if ($mainNews) {
+    $stmt = $pdo->prepare("SELECT n.*, u.imie, u.nazwisko 
+                         FROM news n 
+                         JOIN users u ON n.autor_id = u.id 
+                         WHERE n.status = 'opublikowany' 
+                         AND n.id != ? 
+                         ORDER BY n.data_publikacji DESC 
+                         LIMIT 2");
+    $stmt->execute([$mainNews['id']]);
+    $featuredNews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 // Pobieranie pozostałych wiadomości
-$stmt = $pdo->query("SELECT n.*, u.imie, u.nazwisko 
-                     FROM news n 
-                     JOIN users u ON n.autor_id = u.id 
-                     WHERE n.status = 'opublikowany' 
-                     AND n.id NOT IN ({$mainNews['id']}, " . implode(',', array_column($featuredNews, 'id')) . ") 
-                     ORDER BY n.data_publikacji DESC 
-                     LIMIT 4");
-$otherNews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$otherNews = [];
+if ($mainNews && !empty($featuredNews)) {
+    $featuredIds = array_column($featuredNews, 'id');
+    $featuredIds[] = $mainNews['id'];
+    $placeholders = str_repeat('?,', count($featuredIds) - 1) . '?';
+    
+    $stmt = $pdo->prepare("SELECT n.*, u.imie, u.nazwisko 
+                         FROM news n 
+                         JOIN users u ON n.autor_id = u.id 
+                         WHERE n.status = 'opublikowany' 
+                         AND n.id NOT IN ($placeholders) 
+                         ORDER BY n.data_publikacji DESC 
+                         LIMIT 4");
+    $stmt->execute($featuredIds);
+    $otherNews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Pobierz całkowitą liczbę wiadomości dla paginacji
+$stmt = $pdo->query("SELECT COUNT(*) FROM news WHERE status = 'opublikowany'");
+$totalNews = $stmt->fetchColumn();
+$totalPages = ceil($totalNews / $newsPerPage);
 ?>
 
 <!DOCTYPE html>
@@ -77,31 +106,60 @@ $otherNews = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <main class="main-content">
         <h1 class="page-title">Aktualności</h1>
         
-        <!-- Główne wiadomości -->
-        <section class="featured-news">
-            <div class="featured-news-grid">
-                <!-- Główna wiadomość -->
-                <?php if ($mainNews): ?>
-                <article class="featured-news-main">
-                    <div class="news-image">
-                        <?php if ($mainNews['zdjecie']): ?>
-                            <img src="<?php echo htmlspecialchars($mainNews['zdjecie']); ?>" alt="<?php echo htmlspecialchars($mainNews['tytul']); ?>">
-                        <?php else: ?>
-                            <img src="img/news/placeholder.png" alt="Brak zdjęcia">
-                        <?php endif; ?>
-                    </div>
-                    <div class="news-content">
-                        <span class="news-date"><?php echo date('d.m.Y', strtotime($mainNews['data_publikacji'])); ?></span>
-                        <h2><?php echo htmlspecialchars($mainNews['tytul']); ?></h2>
-                        <p><?php echo htmlspecialchars(substr($mainNews['tresc'], 0, 200)) . '...'; ?></p>
-                        <a href="aktualnosc.php?id=<?php echo $mainNews['id']; ?>" class="read-more">Czytaj więcej</a>
-                    </div>
-                </article>
-                <?php endif; ?>
+        <?php if (!$mainNews && empty($featuredNews) && empty($otherNews)): ?>
+            <div class="no-news-message">
+                <h2>Brak aktualności</h2>
+                <p>W tej chwili nie ma żadnych aktualności do wyświetlenia. Zapraszamy wkrótce!</p>
+            </div>
+        <?php else: ?>
+            <!-- Główne wiadomości -->
+            <section class="featured-news">
+                <div class="featured-news-grid">
+                    <!-- Główna wiadomość -->
+                    <?php if ($mainNews): ?>
+                    <article class="featured-news-main">
+                        <div class="news-image">
+                            <?php if ($mainNews['zdjecie']): ?>
+                                <img src="<?php echo htmlspecialchars($mainNews['zdjecie']); ?>" alt="<?php echo htmlspecialchars($mainNews['tytul']); ?>">
+                            <?php else: ?>
+                                <img src="img/news/placeholder.png" alt="Brak zdjęcia">
+                            <?php endif; ?>
+                        </div>
+                        <div class="news-content">
+                            <span class="news-date"><?php echo date('d.m.Y', strtotime($mainNews['data_publikacji'])); ?></span>
+                            <h2><?php echo htmlspecialchars($mainNews['tytul']); ?></h2>
+                            <p><?php echo htmlspecialchars(substr($mainNews['tresc'], 0, 200)) . '...'; ?></p>
+                            <a href="aktualnosc.php?id=<?php echo $mainNews['id']; ?>" class="read-more">Czytaj więcej</a>
+                        </div>
+                    </article>
+                    <?php endif; ?>
 
-                <!-- Dodatkowe wyróżnione wiadomości -->
-                <?php foreach ($featuredNews as $news): ?>
-                <article class="featured-news-secondary">
+                    <!-- Dodatkowe wyróżnione wiadomości -->
+                    <?php foreach ($featuredNews as $news): ?>
+                    <article class="featured-news-secondary">
+                        <div class="news-image">
+                            <?php if ($news['zdjecie']): ?>
+                                <img src="<?php echo htmlspecialchars($news['zdjecie']); ?>" alt="<?php echo htmlspecialchars($news['tytul']); ?>">
+                            <?php else: ?>
+                                <img src="img/news/placeholder.png" alt="Brak zdjęcia">
+                            <?php endif; ?>
+                        </div>
+                        <div class="news-content">
+                            <span class="news-date"><?php echo date('d.m.Y', strtotime($news['data_publikacji'])); ?></span>
+                            <h3><?php echo htmlspecialchars($news['tytul']); ?></h3>
+                            <p><?php echo htmlspecialchars(substr($news['tresc'], 0, 100)) . '...'; ?></p>
+                            <a href="aktualnosc.php?id=<?php echo $news['id']; ?>" class="read-more">Czytaj więcej</a>
+                        </div>
+                    </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+
+            <!-- Pozostałe wiadomości -->
+            <?php if (!empty($otherNews)): ?>
+            <section class="news-grid">
+                <?php foreach ($otherNews as $news): ?>
+                <article class="news-item">
                     <div class="news-image">
                         <?php if ($news['zdjecie']): ?>
                             <img src="<?php echo htmlspecialchars($news['zdjecie']); ?>" alt="<?php echo htmlspecialchars($news['tytul']); ?>">
@@ -117,44 +175,47 @@ $otherNews = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 </article>
                 <?php endforeach; ?>
+            </section>
+            <?php endif; ?>
+
+            <!-- Paginacja -->
+            <?php if ($totalPages > 1): ?>
+            <div class="pagination">
+                <?php if ($currentPage > 1): ?>
+                    <a href="?page=<?php echo $currentPage - 1; ?>" class="pagination-link">&laquo; Poprzednia</a>
+                <?php endif; ?>
+
+                <?php
+                $startPage = max(1, $currentPage - 2);
+                $endPage = min($totalPages, $currentPage + 2);
+
+                if ($startPage > 1) {
+                    echo '<a href="?page=1">1</a>';
+                    if ($startPage > 2) {
+                        echo '<span class="pagination-dots">...</span>';
+                    }
+                }
+
+                for ($i = $startPage; $i <= $endPage; $i++): ?>
+                    <a href="?page=<?php echo $i; ?>" class="pagination-link <?php echo ($i == $currentPage ? 'active' : ''); ?>">
+                        <?php echo $i; ?>
+                    </a>
+                <?php endfor;
+
+                if ($endPage < $totalPages) {
+                    if ($endPage < $totalPages - 1) {
+                        echo '<span class="pagination-dots">...</span>';
+                    }
+                    echo '<a href="?page=' . $totalPages . '">' . $totalPages . '</a>';
+                }
+                ?>
+
+                <?php if ($currentPage < $totalPages): ?>
+                    <a href="?page=<?php echo $currentPage + 1; ?>" class="pagination-link">Następna &raquo;</a>
+                <?php endif; ?>
             </div>
-        </section>
-
-        <!-- Pozostałe wiadomości -->
-        <section class="news-grid">
-            <?php foreach ($otherNews as $news): ?>
-            <article class="news-item">
-                <div class="news-image">
-                    <?php if ($news['zdjecie']): ?>
-                        <img src="<?php echo htmlspecialchars($news['zdjecie']); ?>" alt="<?php echo htmlspecialchars($news['tytul']); ?>">
-                    <?php else: ?>
-                        <img src="img/news/placeholder.png" alt="Brak zdjęcia">
-                    <?php endif; ?>
-                </div>
-                <div class="news-content">
-                    <span class="news-date"><?php echo date('d.m.Y', strtotime($news['data_publikacji'])); ?></span>
-                    <h3><?php echo htmlspecialchars($news['tytul']); ?></h3>
-                    <p><?php echo htmlspecialchars(substr($news['tresc'], 0, 100)) . '...'; ?></p>
-                    <a href="aktualnosc.php?id=<?php echo $news['id']; ?>" class="read-more">Czytaj więcej</a>
-                </div>
-            </article>
-            <?php endforeach; ?>
-        </section>
-
-        <!-- Paginacja -->
-        <div class="pagination">
-            <?php
-            // Pobierz całkowitą liczbę wiadomości
-            $stmt = $pdo->query("SELECT COUNT(*) FROM news WHERE status = 'opublikowany'");
-            $totalNews = $stmt->fetchColumn();
-            $newsPerPage = 7; // 1 główna + 2 wyróżnione + 4 pozostałe
-            $totalPages = ceil($totalNews / $newsPerPage);
-
-            for ($i = 1; $i <= $totalPages; $i++) {
-                echo "<a href='?page=$i'" . ($i == 1 ? " class='active'" : "") . ">$i</a>";
-            }
-            ?>
-        </div>
+            <?php endif; ?>
+        <?php endif; ?>
     </main>
 
     <footer class="footer">
