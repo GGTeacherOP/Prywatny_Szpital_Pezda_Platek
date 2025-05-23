@@ -1,37 +1,85 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Animacja liczników
-    const achievementNumbers = document.querySelectorAll('.achievement-number');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const target = entry.target;
-                const value = parseInt(target.dataset.value);
-                animateCounter(target, 0, value, 2000);
-                observer.unobserve(target);
-            }
-        });
-    }, { threshold: 0.5 });
-
-    achievementNumbers.forEach(number => {
-        observer.observe(number);
-    });
-
-    // Funkcja animacji licznika
-    function animateCounter(element, start, end, duration) {
+    // Funkcja do animacji licznika
+    function animateCounter(element, target) {
+        // Ustawiamy początkową wartość na 0
+        element.textContent = '0';
+        
+        // Używamy requestAnimationFrame dla płynnej animacji
         let startTime = null;
-        const step = (timestamp) => {
+        const duration = 2000; // 2 sekundy
+        
+        function updateCounter(timestamp) {
             if (!startTime) startTime = timestamp;
             const progress = Math.min((timestamp - startTime) / duration, 1);
-            const currentNumber = Math.floor(progress * (end - start) + start);
-            element.textContent = currentNumber.toLocaleString();
+            
+            // Używamy funkcji easeOutQuad dla płynniejszej animacji
+            const easeProgress = 1 - Math.pow(1 - progress, 2);
+            const currentValue = Math.floor(easeProgress * target);
+            
+            element.textContent = currentValue;
+            
             if (progress < 1) {
-                requestAnimationFrame(step);
+                requestAnimationFrame(updateCounter);
             } else {
-                element.textContent = end.toLocaleString();
+                element.textContent = target;
             }
-        };
-        requestAnimationFrame(step);
+        }
+        
+        requestAnimationFrame(updateCounter);
     }
+
+    // Pobieranie danych z serwera
+    fetch('get_stats.php')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Błąd sieci: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Otrzymane dane:', data);
+
+            // Aktualizacja liczników
+            const satisfiedPatientsElement = document.getElementById('satisfied-patients');
+            const totalDoctorsElement = document.getElementById('total-doctors');
+            const totalDepartmentsElement = document.getElementById('total-departments');
+            const yearsExperienceElement = document.getElementById('years-experience');
+
+            // Ustawiamy wszystkie elementy na 0 i dodajemy klasę dla animacji
+            [satisfiedPatientsElement, totalDoctorsElement, totalDepartmentsElement, yearsExperienceElement].forEach(el => {
+                if (el) {
+                    el.textContent = '0';
+                    el.style.opacity = '0';
+                }
+            });
+
+            // Po krótkim opóźnieniu rozpoczynamy animacje
+            setTimeout(() => {
+                if (satisfiedPatientsElement && typeof data.satisfiedPatients === 'number') {
+                    satisfiedPatientsElement.style.opacity = '1';
+                    animateCounter(satisfiedPatientsElement, data.satisfiedPatients);
+                }
+
+                if (totalDoctorsElement && typeof data.totalDoctors === 'number') {
+                    totalDoctorsElement.style.opacity = '1';
+                    animateCounter(totalDoctorsElement, data.totalDoctors);
+                }
+
+                if (totalDepartmentsElement && typeof data.totalDepartments === 'number') {
+                    totalDepartmentsElement.style.opacity = '1';
+                    animateCounter(totalDepartmentsElement, data.totalDepartments);
+                }
+
+                if (yearsExperienceElement) {
+                    const yearsValue = parseInt(yearsExperienceElement.dataset.value) || 30;
+                    yearsExperienceElement.style.opacity = '1';
+                    animateCounter(yearsExperienceElement, yearsValue);
+                }
+            }, 100);
+        })
+        .catch(error => {
+            console.error('Błąd podczas pobierania danych:', error);
+        });
 
     // Efekt parallax dla zdjęć historycznych
     const historyImages = document.querySelectorAll('.history-image');

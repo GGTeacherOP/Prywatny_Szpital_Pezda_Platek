@@ -36,13 +36,24 @@ try {
     $stmt = $pdo->query("SELECT COUNT(*) as total FROM results");
     $totalResults = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-    // Pobieranie liczby lekarzy
-    $stmt = $pdo->query("SELECT COUNT(*) as total FROM doctors");
+    // Pobieranie liczby lekarzy (tylko aktywnych)
+    $stmt = $pdo->query("
+        SELECT COUNT(*) as total 
+        FROM doctors d 
+        JOIN users u ON d.uzytkownik_id = u.id 
+        WHERE u.status = 'aktywny'
+    ");
     $totalDoctors = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    error_log("Liczba lekarzy: " . $totalDoctors);
 
     // Pobieranie liczby unikalnych specjalizacji (oddziałów)
-    $stmt = $pdo->query("SELECT COUNT(DISTINCT specjalizacja) as total FROM doctors");
+    $stmt = $pdo->query("
+        SELECT COUNT(DISTINCT specjalizacja) as total 
+        FROM doctors 
+        WHERE specjalizacja IS NOT NULL AND specjalizacja != ''
+    ");
     $totalDepartments = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    error_log("Liczba oddziałów: " . $totalDepartments);
 
     // Pobieranie listy wszystkich specjalizacji
     $stmt = $pdo->query("SELECT DISTINCT specjalizacja FROM doctors ORDER BY specjalizacja");
@@ -89,11 +100,20 @@ try {
     $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
     error_log("Pobrane opinie: " . print_r($reviews, true));
 
+    // Pobieranie liczby zadowolonych pacjentów (ocena > 3)
+    $stmt = $pdo->query("
+        SELECT COUNT(*) as total 
+        FROM reviews 
+        WHERE ocena > 3 AND status = 'zatwierdzona'
+    ");
+    $satisfiedPatients = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    error_log("Liczba zadowolonych pacjentów: " . $satisfiedPatients);
+
     $stats = [
         'patients' => $totalPatients,
         'results' => $totalResults,
-        'doctors' => $totalDoctors,
-        'departments' => $totalDepartments,
+        'totalDoctors' => $totalDoctors,
+        'totalDepartments' => $totalDepartments,
         'specializations' => $specializations,
         'averageRating' => $averageRating,
         'totalReviews' => $totalReviews,
@@ -101,9 +121,13 @@ try {
         'debug' => [
             'reviewStats' => $reviewStats,
             'allReviewsCount' => count($allReviews)
-        ]
+        ],
+        'satisfiedPatients' => $satisfiedPatients
     ];
 
+    error_log("Odpowiedź: " . print_r($stats, true));
+
+    // Wysłanie odpowiedzi jako JSON
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($stats);
 
@@ -112,14 +136,13 @@ try {
     header('HTTP/1.1 500 Internal Server Error');
     echo json_encode([
         'error' => 'Błąd bazy danych',
-        'message' => 'Nie można połączyć się z bazą danych. Sprawdź ustawienia połączenia.',
-        'debug' => $e->getMessage()
+        'message' => $e->getMessage()
     ]);
 } catch(Exception $e) {
-    error_log("Błąd konfiguracji: " . $e->getMessage());
+    error_log("Błąd ogólny: " . $e->getMessage());
     header('HTTP/1.1 500 Internal Server Error');
     echo json_encode([
-        'error' => 'Błąd konfiguracji',
+        'error' => 'Błąd ogólny',
         'message' => $e->getMessage()
     ]);
 }
