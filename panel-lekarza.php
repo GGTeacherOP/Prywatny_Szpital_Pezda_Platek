@@ -538,8 +538,9 @@ try {
 
                         <div class="form-group">
                             <label for="plik">Plik z wynikami:</label>
-                            <input type="file" id="plik" name="plik" accept=".pdf,.jpg,.jpeg,.png" required>
-                            <small>Dozwolone formaty: PDF, JPG, PNG. Maksymalny rozmiar: 10MB</small>
+                            <input type="file" id="plik" name="plik" accept=".pdf" required>
+                            <small>Dozwolony format: PDF. Maksymalny rozmiar: 10MB</small>
+                            <div id="fileError" class="error-message" style="display: none; color: #dc3545; margin-top: 5px;"></div>
                         </div>
 
                         <div class="form-actions">
@@ -606,7 +607,6 @@ try {
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Wystąpił błąd podczas aktualizacji statusu wizyty');
                     });
                 });
             });
