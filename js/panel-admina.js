@@ -93,6 +93,88 @@ document.addEventListener('DOMContentLoaded', function() {
         // Zapisz oryginalną wartość przy załadowaniu
         select.dataset.originalValue = select.value;
     });
+
+    // Obsługa zmiany statusu wyników badań
+    const resultStatusSelects = document.querySelectorAll('.status-select[data-result-id]');
+    console.log('Znalezione selektory statusu:', resultStatusSelects.length);
+    
+    resultStatusSelects.forEach(select => {
+        console.log('Inicjalizacja selektora:', select.dataset.resultId);
+        
+        select.addEventListener('change', function() {
+            const resultId = this.dataset.resultId;
+            const newStatus = this.value;
+            
+            console.log('Zmiana statusu:', { resultId, newStatus });
+            
+            // Wysłanie żądania AJAX
+            fetch('update_result_status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `result_id=${resultId}&status=${newStatus}`
+            })
+            .then(response => {
+                console.log('Odpowiedź serwera:', response);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Dane odpowiedzi:', data);
+                if (data.success) {
+                    // Aktualizacja statusu w interfejsie
+                    const resultCard = this.closest('.result-card');
+                    resultCard.querySelector('.result-status').textContent = newStatus;
+                    
+                    // Opcjonalnie: pokazanie komunikatu o sukcesie
+                    alert('Status został zaktualizowany');
+                } else {
+                    // W przypadku błędu, przywrócenie poprzedniej wartości
+                    this.value = this.dataset.originalValue;
+                    alert('Wystąpił błąd podczas aktualizacji statusu: ' + (data.message || 'Nieznany błąd'));
+                }
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+                this.value = this.dataset.originalValue;
+                alert('Wystąpił błąd podczas aktualizacji statusu');
+            });
+        });
+        
+        // Zapisywanie oryginalnej wartości przy załadowaniu
+        select.dataset.originalValue = select.value;
+    });
+
+    // Obsługa aktualizacji statusu opinii o lekarzach
+    const doctorReviewStatusSelects = document.querySelectorAll('#opinie-lekarzy .status-select');
+    doctorReviewStatusSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            const reviewId = this.dataset.reviewId;
+            const newStatus = this.value;
+            
+            fetch('update_doctor_review_status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `review_id=${reviewId}&status=${newStatus}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Status opinii o lekarzu został zaktualizowany', 'success');
+                } else {
+                    showNotification('Wystąpił błąd podczas aktualizacji statusu', 'error');
+                    this.value = this.dataset.originalValue;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Wystąpił błąd podczas aktualizacji statusu', 'error');
+                this.value = this.dataset.originalValue;
+            });
+        });
+    });
 });
 
 // Funkcja do usuwania wiadomości
@@ -125,4 +207,17 @@ function deleteNews(newsId) {
             alert('Wystąpił błąd podczas usuwania wiadomości.');
         });
     }
+}
+
+// Funkcja do wyświetlania powiadomień
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
 } 

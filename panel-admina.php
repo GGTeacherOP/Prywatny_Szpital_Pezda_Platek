@@ -60,8 +60,92 @@ try {
     <link rel="icon" type="image/png" href="img/logo/icon.png">
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <link rel='stylesheet' type='text/css' media='screen' href='css/panel-admina.css'>
+    <link rel='stylesheet' type='text/css' media='screen' href='css/wyniki-badan.css'>
     <script src='main.js'></script>
     <script src='js/panel-admina.js'></script>
+    <script>
+        // Obsługa zmiany statusu wyników badań
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusSelects = document.querySelectorAll('.status-select[data-result-id]');
+            
+            statusSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const resultId = this.dataset.resultId;
+                    const newStatus = this.value;
+                    
+                    // Wysłanie żądania AJAX
+                    fetch('update_result_status.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `result_id=${resultId}&status=${newStatus}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Aktualizacja statusu w interfejsie
+                            const resultCard = this.closest('.result-card');
+                            resultCard.querySelector('.result-status').textContent = newStatus;
+                            
+                            // Opcjonalnie: pokazanie komunikatu o sukcesie
+                            alert('Status został zaktualizowany');
+                        } else {
+                            // W przypadku błędu, przywrócenie poprzedniej wartości
+                            this.value = this.dataset.originalValue;
+                            alert('Wystąpił błąd podczas aktualizacji statusu: ' + (data.message || 'Nieznany błąd'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Błąd:', error);
+                        this.value = this.dataset.originalValue;
+                        alert('Wystąpił błąd podczas aktualizacji statusu');
+                    });
+                });
+                
+                // Zapisywanie oryginalnej wartości przy załadowaniu
+                select.dataset.originalValue = select.value;
+            });
+
+            // Obsługa zmiany statusu opinii o lekarzach
+            const reviewStatusSelects = document.querySelectorAll('.review-status .status-select');
+            
+            reviewStatusSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const reviewId = this.dataset.reviewId;
+                    const newStatus = this.value;
+                    
+                    // Wysłanie żądania AJAX
+                    fetch('update_doctor_review_status.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `review_id=${reviewId}&status=${newStatus}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Opcjonalnie: pokazanie komunikatu o sukcesie
+                            alert(data.message || 'Status został zaktualizowany');
+                        } else {
+                            // W przypadku błędu, przywrócenie poprzedniej wartości
+                            this.value = this.dataset.originalValue;
+                            alert('Wystąpił błąd podczas aktualizacji statusu: ' + (data.message || 'Nieznany błąd'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Błąd:', error);
+                        this.value = this.dataset.originalValue;
+                        alert('Wystąpił błąd podczas aktualizacji statusu');
+                    });
+                });
+                
+                // Zapisywanie oryginalnej wartości przy załadowaniu
+                select.dataset.originalValue = select.value;
+            });
+        });
+    </script>
 </head>
 <body>
     <header class="header">
@@ -88,6 +172,7 @@ try {
             <li><a href="#nowa-wiadomosc">Utwórz nową wiadomość</a></li>
             <li><a href="#historia-opinii">Historia opinii</a></li>
             <li><a href="#historia-wiadomosci">Historia wiadomości</a></li>
+            <li><a href="#wyniki-badan">Wyniki badań</a></li>
         </ul>
     </nav>
 
@@ -192,20 +277,28 @@ try {
                 <h2>Historia Opinii</h2>
                 <div class="reviews-history-container">
                     <?php
-                    // Pobieranie wszystkich opinii
-                    $stmt = $conn->prepare("
-                        SELECT r.*, u.imie, u.nazwisko 
-                        FROM reviews r 
-                        JOIN users u ON r.uzytkownik_id = u.id 
-                        ORDER BY r.data_utworzenia DESC
-                    ");
-                    $stmt->execute();
-                    $wszystkie_opinie = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    try {
+                        // Pobieranie wszystkich opinii
+                        $stmt = $conn->prepare("
+                            SELECT 
+                                r.id,
+                                r.ocena,
+                                r.tresc,
+                                r.data_utworzenia,
+                                r.status,
+                                u.imie,
+                                u.nazwisko
+                            FROM reviews r
+                            JOIN users u ON r.uzytkownik_id = u.id
+                            ORDER BY r.data_utworzenia DESC
+                        ");
+                        $stmt->execute();
+                        $wszystkie_opinie = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    if (count($wszystkie_opinie) > 0):
-                        foreach ($wszystkie_opinie as $opinia):
+                        if (count($wszystkie_opinie) > 0):
+                            foreach ($wszystkie_opinie as $opinia):
                     ?>
-                        <div class="review-history-card">
+                        <div class="review-history-card" data-review-id="<?php echo htmlspecialchars($opinia['id']); ?>">
                             <div class="review-header">
                                 <h4><?php echo htmlspecialchars($opinia['imie'] . ' ' . $opinia['nazwisko']); ?></h4>
                                 <span class="review-date"><?php echo date('d.m.Y H:i', strtotime($opinia['data_utworzenia'])); ?></span>
@@ -217,7 +310,7 @@ try {
                             </div>
                             <p class="review-content"><?php echo nl2br(htmlspecialchars($opinia['tresc'])); ?></p>
                             <div class="review-actions">
-                                <select class="status-select" data-review-id="<?php echo $opinia['id']; ?>">
+                                <select class="status-select" data-review-id="<?php echo htmlspecialchars($opinia['id']); ?>">
                                     <option value="oczekujaca" <?php echo $opinia['status'] === 'oczekujaca' ? 'selected' : ''; ?>>Oczekująca</option>
                                     <option value="zatwierdzona" <?php echo $opinia['status'] === 'zatwierdzona' ? 'selected' : ''; ?>>Zatwierdzona</option>
                                     <option value="odrzucona" <?php echo $opinia['status'] === 'odrzucona' ? 'selected' : ''; ?>>Odrzucona</option>
@@ -225,13 +318,60 @@ try {
                             </div>
                         </div>
                     <?php 
-                        endforeach;
-                    else:
+                            endforeach;
+                        else:
                     ?>
                         <p class="no-reviews">Brak opinii</p>
-                    <?php endif; ?>
+                    <?php 
+                        endif;
+                    } catch(PDOException $e) {
+                        echo '<p class="error-message">Błąd podczas pobierania opinii: ' . htmlspecialchars($e->getMessage()) . '</p>';
+                    }
+                    ?>
                 </div>
             </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Obsługa zmiany statusu opinii o szpitalu
+                    const reviewStatusSelects = document.querySelectorAll('.review-actions .status-select');
+                    
+                    reviewStatusSelects.forEach(select => {
+                        // Zapisywanie oryginalnej wartości przy załadowaniu
+                        select.dataset.originalValue = select.value;
+                        
+                        select.addEventListener('change', function() {
+                            const reviewId = this.dataset.reviewId;
+                            const newStatus = this.value;
+                            
+                            // Wysłanie żądania AJAX
+                            fetch('update_review_status.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: `review_id=${reviewId}&status=${newStatus}`
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Opcjonalnie: pokazanie komunikatu o sukcesie
+                                    alert(data.message || 'Status został zaktualizowany');
+                                } else {
+                                    // W przypadku błędu, przywrócenie poprzedniej wartości
+                                    this.value = this.dataset.originalValue;
+                                    alert('Wystąpił błąd podczas aktualizacji statusu: ' + (data.message || 'Nieznany błąd'));
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Błąd:', error);
+                                this.value = this.dataset.originalValue;
+                                alert('Wystąpił błąd podczas aktualizacji statusu');
+                            });
+                        });
+                    });
+                });
+            </script>
 
             <!-- Sekcja Historia Wiadomości -->
             <div id="historia-wiadomosci" class="dashboard-section" style="display: none;">
@@ -274,6 +414,55 @@ try {
                     else:
                     ?>
                         <p class="no-news">Brak wiadomości</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Sekcja Wyniki Badań -->
+            <div id="wyniki-badan" class="dashboard-section" style="display: none;">
+                <h2>Wyniki Badań</h2>
+                <div class="results-container">
+                    <?php
+                    // Pobieranie wszystkich wyników badań
+                    $stmt = $conn->prepare("
+                        SELECT r.*, 
+                               pu.imie as pacjent_imie, pu.nazwisko as pacjent_nazwisko,
+                               lu.imie as lekarz_imie, lu.nazwisko as lekarz_nazwisko
+                        FROM results r
+                        JOIN patients p ON r.pacjent_id = p.id
+                        JOIN users pu ON p.uzytkownik_id = pu.id
+                        JOIN doctors d ON r.lekarz_id = d.id
+                        JOIN users lu ON d.uzytkownik_id = lu.id
+                        ORDER BY r.data_wystawienia DESC
+                    ");
+                    $stmt->execute();
+                    $wyniki_badan = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    if (count($wyniki_badan) > 0):
+                        foreach ($wyniki_badan as $wynik):
+                    ?>
+                        <div class="result-card" data-result-id="<?php echo $wynik['id']; ?>">
+                            <div class="result-header">
+                                <h4>Badanie: <?php echo htmlspecialchars($wynik['typ_badania']); ?></h4>
+                                <span class="result-date"><?php echo date('d.m.Y H:i', strtotime($wynik['data_wystawienia'])); ?></span>
+                            </div>
+                            <div class="result-details">
+                                <p><strong>Pacjent:</strong> <?php echo htmlspecialchars($wynik['pacjent_imie'] . ' ' . $wynik['pacjent_nazwisko']); ?></p>
+                                <p><strong>Lekarz:</strong> <?php echo htmlspecialchars($wynik['lekarz_imie'] . ' ' . $wynik['lekarz_nazwisko']); ?></p>
+                                <p><strong>PIN:</strong> <?php echo htmlspecialchars($wynik['pin']); ?></p>
+                            </div>
+                            <div class="result-status">
+                                <select class="status-select" data-result-id="<?php echo $wynik['id']; ?>" onchange="console.log('Zmiana statusu:', this.value, this.dataset.resultId)">
+                                    <option value="oczekujący" <?php echo $wynik['status'] === 'oczekujący' ? 'selected' : ''; ?>>Oczekujący</option>
+                                    <option value="gotowy" <?php echo $wynik['status'] === 'gotowy' ? 'selected' : ''; ?>>Gotowy</option>
+                                </select>
+                            </div>
+                        </div>
+                    <?php 
+                        endforeach;
+                    else:
+                    ?>
+                        <p class="no-results">Brak wyników badań</p>
                     <?php endif; ?>
                 </div>
             </div>
