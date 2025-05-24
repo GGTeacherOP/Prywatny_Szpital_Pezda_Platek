@@ -50,6 +50,71 @@ try {
     <link rel='stylesheet' type='text/css' media='screen' href='css/panel-pacjenta.css'>
     <script src='main.js'></script>
     <script src='js/panel-pacjenta.js'></script>
+    <style>
+        .opinion-type-selector {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            justify-content: center;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .opinion-switch-btn {
+            padding: 1.2rem 2.5rem;
+            border: none;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 220px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+
+        .opinion-switch-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #007bff, #00bcd4);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .opinion-switch-btn:hover {
+            transform: translateY(-2px);
+            color: #007bff;
+            background-color: #f0f7ff;
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.15);
+        }
+
+        .opinion-switch-btn.active {
+            background: linear-gradient(45deg, #007bff, #00bcd4);
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.25);
+        }
+
+        .opinion-switch-btn.active:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(0, 123, 255, 0.3);
+        }
+
+        .opinion-switch-btn span {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -318,30 +383,96 @@ try {
             <div id="wystaw-opinie" class="dashboard-section" style="display: none;">
                 <h2>Wystaw Opinię</h2>
                 <div class="opinion-form-container">
-                    <form id="opinionForm" class="opinion-form">
+                    <div class="opinion-type-selector">
+                        <button class="opinion-switch-btn active" data-type="hospital"><span>Opinia o szpitalu</span></button>
+                        <button class="opinion-switch-btn" data-type="doctor"><span>Opinia o lekarzu</span></button>
+                    </div>
+
+                    <!-- Formularz opinii o szpitalu -->
+                    <form id="hospitalOpinionForm" class="opinion-form">
+                        <h3>Opinia o szpitalu</h3>
                         <div class="form-group">
-                            <label for="ocena">Ocena:</label>
+                            <label for="hospital_ocena">Ocena:</label>
                             <div class="rating">
-                                <input type="radio" id="star5" name="ocena" value="5" required>
-                                <label for="star5">★</label>
-                                <input type="radio" id="star4" name="ocena" value="4">
-                                <label for="star4">★</label>
-                                <input type="radio" id="star3" name="ocena" value="3">
-                                <label for="star3">★</label>
-                                <input type="radio" id="star2" name="ocena" value="2">
-                                <label for="star2">★</label>
-                                <input type="radio" id="star1" name="ocena" value="1">
-                                <label for="star1">★</label>
+                                <input type="radio" id="hospital_star5" name="ocena" value="5" required>
+                                <label for="hospital_star5">★</label>
+                                <input type="radio" id="hospital_star4" name="ocena" value="4">
+                                <label for="hospital_star4">★</label>
+                                <input type="radio" id="hospital_star3" name="ocena" value="3">
+                                <label for="hospital_star3">★</label>
+                                <input type="radio" id="hospital_star2" name="ocena" value="2">
+                                <label for="hospital_star2">★</label>
+                                <input type="radio" id="hospital_star1" name="ocena" value="1">
+                                <label for="hospital_star1">★</label>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="komentarz">Komentarz:</label>
-                            <textarea id="komentarz" name="komentarz" rows="4" required></textarea>
+                            <label for="hospital_komentarz">Komentarz:</label>
+                            <textarea id="hospital_komentarz" name="komentarz" rows="4" required></textarea>
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" class="btn-submit">Wyślij opinię</button>
+                            <button type="submit" class="btn-submit">Wyślij opinię o szpitalu</button>
+                        </div>
+                    </form>
+
+                    <!-- Formularz opinii o lekarzu -->
+                    <form id="doctorOpinionForm" class="opinion-form" style="display: none;">
+                        <h3>Opinia o lekarzu</h3>
+                        <div class="form-group">
+                            <label for="lekarz_opinii">Wybierz lekarza:</label>
+                            <select id="lekarz_opinii" name="lekarz_id" required>
+                                <option value="">Wybierz lekarza</option>
+                                <?php
+                                // Pobieranie listy lekarzy
+                                $stmt = $conn->prepare("
+                                    SELECT 
+                                        d.id,
+                                        u.imie,
+                                        u.nazwisko,
+                                        d.specjalizacja
+                                    FROM doctors d
+                                    JOIN users u ON d.uzytkownik_id = u.id
+                                    WHERE u.status = 'aktywny'
+                                    ORDER BY d.specjalizacja, u.nazwisko, u.imie
+                                ");
+                                $stmt->execute();
+                                $lekarze = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                foreach ($lekarze as $lekarz) {
+                                    echo '<option value="' . $lekarz['id'] . '">' . 
+                                         'Dr ' . htmlspecialchars($lekarz['imie'] . ' ' . $lekarz['nazwisko']) . 
+                                         ' - ' . htmlspecialchars($lekarz['specjalizacja']) . 
+                                         '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="doctor_ocena">Ocena:</label>
+                            <div class="rating">
+                                <input type="radio" id="doctor_star5" name="ocena" value="5" required>
+                                <label for="doctor_star5">★</label>
+                                <input type="radio" id="doctor_star4" name="ocena" value="4">
+                                <label for="doctor_star4">★</label>
+                                <input type="radio" id="doctor_star3" name="ocena" value="3">
+                                <label for="doctor_star3">★</label>
+                                <input type="radio" id="doctor_star2" name="ocena" value="2">
+                                <label for="doctor_star2">★</label>
+                                <input type="radio" id="doctor_star1" name="ocena" value="1">
+                                <label for="doctor_star1">★</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="doctor_komentarz">Komentarz:</label>
+                            <textarea id="doctor_komentarz" name="komentarz" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit">Wyślij opinię o lekarzu</button>
                         </div>
                     </form>
                 </div>
@@ -589,6 +720,81 @@ try {
 
         // Nasłuchuj zmian w wyborze typu wizyty
         typWizytySelect.addEventListener('change', updateVisitPrice);
+
+        // Obsługa przełączania między formularzami opinii
+        const opinionTypeBtns = document.querySelectorAll('.opinion-switch-btn');
+        const hospitalForm = document.getElementById('hospitalOpinionForm');
+        const doctorForm = document.getElementById('doctorOpinionForm');
+
+        opinionTypeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Usuń klasę active ze wszystkich przycisków
+                opinionTypeBtns.forEach(b => b.classList.remove('active'));
+                // Dodaj klasę active do klikniętego przycisku
+                this.classList.add('active');
+
+                // Pokaż odpowiedni formularz
+                if (this.dataset.type === 'hospital') {
+                    hospitalForm.style.display = 'block';
+                    doctorForm.style.display = 'none';
+                } else {
+                    hospitalForm.style.display = 'none';
+                    doctorForm.style.display = 'block';
+                }
+            });
+        });
+
+        // Obsługa formularza opinii o szpitalu
+        hospitalForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            formData.append('type', 'hospital');
+
+            fetch('save_opinion.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Dziękujemy za opinię o szpitalu!');
+                    this.reset();
+                } else {
+                    alert(data.message || 'Wystąpił błąd podczas zapisywania opinii.');
+                }
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+                alert('Wystąpił błąd podczas zapisywania opinii.');
+            });
+        });
+
+        // Obsługa formularza opinii o lekarzu
+        doctorForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            formData.append('type', 'doctor');
+
+            fetch('save_opinion.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Dziękujemy za opinię o lekarzu!');
+                    this.reset();
+                } else {
+                    alert(data.message || 'Wystąpił błąd podczas zapisywania opinii.');
+                }
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+                alert('Wystąpił błąd podczas zapisywania opinii.');
+            });
+        });
     });
     </script>
 </body>
