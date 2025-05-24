@@ -18,53 +18,64 @@ $dbname = "szpital";
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Pobieranie danych właściciela
+    $stmt = $conn->prepare("
+        SELECT imie, nazwisko 
+        FROM users 
+        WHERE id = :user_id
+    ");
+    $stmt->bindParam(':user_id', $_SESSION['user_id']);
+    $stmt->execute();
+    $wlasciciel = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Pobieranie statystyk finansowych
+    $stmt = $conn->query("
+        SELECT 
+            SUM(dvp.cena) as przychod_z_wizyt
+        FROM visits v
+        JOIN doctor_visit_prices dvp ON v.lekarz_id = dvp.lekarz_id AND v.typ_wizyty = dvp.typ_wizyty
+        WHERE v.status = 'zakończona'
+    ");
+    $finanse = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Pobieranie statystyk kadrowych
+    $stmt = $conn->query("
+        SELECT 
+            COUNT(DISTINCT d.id) as liczba_lekarzy,
+            COUNT(DISTINCT n.id) as liczba_pielegniarek,
+            COUNT(DISTINCT s.id) as liczba_personelu
+        FROM doctors d
+        CROSS JOIN nurses n
+        CROSS JOIN staff s
+    ");
+    $kadry = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Pobieranie statystyk pacjentów
+    $stmt = $conn->query("
+        SELECT 
+            COUNT(DISTINCT p.id) as liczba_pacjentow,
+            COUNT(DISTINCT v.id) as liczba_wizyt,
+            AVG(dr.ocena) as srednia_ocena_lekarzy
+        FROM patients p
+        LEFT JOIN visits v ON v.pacjent_id = p.id
+        LEFT JOIN doctor_reviews dr ON dr.lekarz_id = v.lekarz_id
+    ");
+    $pacjenci = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Pobieranie statystyk obłożenia
+    $stmt = $conn->query("
+        SELECT 
+            COUNT(DISTINCT r.id) as liczba_sal,
+            COUNT(DISTINCT d.id) as liczba_oddzialow
+        FROM rooms r
+        LEFT JOIN departments d ON d.id = r.oddzial_id
+    ");
+    $oblozenie = $stmt->fetch(PDO::FETCH_ASSOC);
+
 } catch(PDOException $e) {
     echo "Błąd połączenia: " . $e->getMessage();
 }
-
-// Pobieranie statystyk finansowych
-$stmt = $conn->query("
-    SELECT 
-        SUM(dvp.cena) as przychod_z_wizyt
-    FROM visits v
-    JOIN doctor_visit_prices dvp ON v.lekarz_id = dvp.lekarz_id AND v.typ_wizyty = dvp.typ_wizyty
-    WHERE v.status = 'zakończona'
-");
-$finanse = $stmt->fetch(PDO::FETCH_ASSOC);
-
-// Pobieranie statystyk kadrowych
-$stmt = $conn->query("
-    SELECT 
-        COUNT(DISTINCT d.id) as liczba_lekarzy,
-        COUNT(DISTINCT n.id) as liczba_pielegniarek,
-        COUNT(DISTINCT s.id) as liczba_personelu
-    FROM doctors d
-    CROSS JOIN nurses n
-    CROSS JOIN staff s
-");
-$kadry = $stmt->fetch(PDO::FETCH_ASSOC);
-
-// Pobieranie statystyk pacjentów
-$stmt = $conn->query("
-    SELECT 
-        COUNT(DISTINCT p.id) as liczba_pacjentow,
-        COUNT(DISTINCT v.id) as liczba_wizyt,
-        AVG(dr.ocena) as srednia_ocena_lekarzy
-    FROM patients p
-    LEFT JOIN visits v ON v.pacjent_id = p.id
-    LEFT JOIN doctor_reviews dr ON dr.lekarz_id = v.lekarz_id
-");
-$pacjenci = $stmt->fetch(PDO::FETCH_ASSOC);
-
-// Pobieranie statystyk obłożenia
-$stmt = $conn->query("
-    SELECT 
-        COUNT(DISTINCT r.id) as liczba_sal,
-        COUNT(DISTINCT d.id) as liczba_oddzialow
-    FROM rooms r
-    LEFT JOIN departments d ON d.id = r.oddzial_id
-");
-$oblozenie = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -103,7 +114,7 @@ $oblozenie = $stmt->fetch(PDO::FETCH_ASSOC);
             <div class="dashboard-header">
                 <h1>Panel Właściciela</h1>
                 <div class="owner-info">
-                    <p>Witaj, <span class="owner-name">Właściciel</span></p>
+                    <p>Witaj, <span class="owner-name"><?php echo htmlspecialchars($wlasciciel['imie']); ?></span></p>
                 </div>
             </div>
 
