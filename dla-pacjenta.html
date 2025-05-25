@@ -99,32 +99,21 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => {
-                if (response.headers.get('content-type')?.includes('application/pdf')) {
-                    return response.blob().then(blob => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = response.headers.get('content-disposition').split('filename=')[1].replace(/"/g, '');
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                        a.remove();
-                        messageDiv.textContent = 'Pobieranie wyników rozpoczęte...';
-                        messageDiv.className = 'message success';
-                    });
-                } else {
-                    return response.json();
-                }
-            })
+            .then(response => response.json())
             .then(data => {
-                if (data) {
+                if (data.success) {
+                    // Otwieramy plik z podfolderu uploads/wyniki/
+                    const fileUrl = 'uploads/wyniki/' + data.filename;
+                    window.open(fileUrl, '_blank');
+                    messageDiv.textContent = 'Otwieranie wyników...';
+                    messageDiv.className = 'message success';
+                } else {
                     messageDiv.textContent = data.message;
-                    messageDiv.className = 'message ' + (data.success ? 'success' : 'error');
+                    messageDiv.className = 'message error';
                 }
             })
             .catch(error => {
-                messageDiv.textContent = 'Wystąpił błąd podczas pobierania wyników';
+                messageDiv.textContent = 'Wystąpił błąd podczas otwierania wyników';
                 messageDiv.className = 'message error';
             });
         });

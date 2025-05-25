@@ -36,14 +36,12 @@ try {
                         throw new Exception('Dane pliku są puste');
                     }
 
-                    // Ustawienie nagłówków do pobrania pliku PDF
-                    header('Content-Type: application/pdf');
-                    header('Content-Disposition: attachment; filename="wynik_' . $wynik['typ_badania'] . '_' . date('Y-m-d', strtotime($wynik['data_wystawienia'])) . '.pdf"');
-                    header('Cache-Control: no-cache, must-revalidate');
-                    header('Pragma: no-cache');
-                    
-                    // Wysłanie danych PDF
-                    echo $wynik['plik_wyniku'];
+                    // Zwracamy nazwę pliku
+                    echo json_encode([
+                        'success' => true,
+                        'filename' => $wynik['plik_wyniku'],
+                        'message' => 'Znaleziono wyniki'
+                    ]);
                     exit();
                 } catch (Exception $e) {
                     error_log("Błąd podczas pobierania wyników: " . $e->getMessage());
