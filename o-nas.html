@@ -19,12 +19,13 @@
             <ul>
                 <li><a href="index.html">Strona główna</a></li>
                 <li><a href="o-nas.html" class="active">O nas</a></li>
-                <li><a href="aktualnosci.html">Aktualności</a></li>
+                <li><a href="personel.php">Nasz Personel</a></li>
+                <li><a href="aktualnosci.php">Aktualności</a></li>
                 <li><a href="dla-pacjenta.html">Dla pacjenta</a></li>
             </ul>
         </nav>
         <div class="login-button">
-            <a href="logowanie.html" class="btn-login">Zaloguj się</a>
+            <a href="logowanie.php" class="btn-login">Zaloguj się</a>
         </div>
     </header>
 
@@ -63,6 +64,60 @@
                         <div class="history-image new">
                             <img src="img/about-us/szpital2025.jpg" alt="Szpital obecnie">
                             <span class="image-caption">Szpital obecnie</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="achievements-section">
+            <div class="achievements-content">
+                <h2>Nasze Osiągnięcia</h2>
+                <div class="achievements-grid">
+                    <div class="achievement-card">
+                        <div class="achievement-icon">🏆</div>
+                        <div class="achievement-number" id="satisfied-patients">0</div>
+                        <div class="achievement-label">Zadowolonych Pacjentów</div>
+                    </div>
+                    <div class="achievement-card">
+                        <div class="achievement-icon">👨‍⚕️</div>
+                        <div class="achievement-number" id="total-doctors">0</div>
+                        <div class="achievement-label">Specjalistów</div>
+                    </div>
+                    <div class="achievement-card">
+                        <div class="achievement-icon">🏥</div>
+                        <div class="achievement-number" id="total-departments">0</div>
+                        <div class="achievement-label">Oddziałów</div>
+                    </div>
+                    <div class="achievement-card">
+                        <div class="achievement-icon">⭐</div>
+                        <div class="achievement-number" id="years-experience" data-value="30">0</div>
+                        <div class="achievement-label">Lat Doświadczenia</div>
+                    </div>
+                </div>
+                <div class="achievements-gallery">
+                    <h3>Certyfikaty i Nagrody</h3>
+                    <div class="certificates-grid">
+                        <div class="certificate-card">
+                            <img src="img/about-us/iso.png+iso+certyfikat+jakość+potwierdzenie" alt="Certyfikat ISO 9001">
+                            <div class="certificate-info">
+                                <h4>Certyfikat Jakości ISO 9001</h4>
+                                <p>Najwyższe standardy opieki medycznej</p>
+                            </div>
+                        </div>
+                        <div class="certificate-card">
+                            <img src="img/about-us/nagrodaInno.jpg" alt="Nagroda za Innowacyjność">
+                            <div class="certificate-info">
+                                <h4>Nagroda za Innowacyjność</h4>
+                                <p>Wprowadzanie nowoczesnych metod leczenia</p>
+                            </div>
+                        </div>
+                        <div class="certificate-card">
+                            <img src="img/about-us/certyfikat.png" alt="Certyfikat Akredytacji">
+                            <div class="certificate-info">
+                                <h4>Certyfikat Akredytacji</h4>
+                                <p>Potwierdzenie najwyższych standardów</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -109,87 +164,6 @@
             </div>
         </section>
 
-        <section class="doctors-section">
-            <h1>Nasz Zespół Lekarski</h1>
-            
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-specialty="all">Wszyscy</button>
-                <button class="filter-btn" data-specialty="kardiolog">Kardiolodzy</button>
-                <button class="filter-btn" data-specialty="neurolog">Neurolodzy</button>
-                <button class="filter-btn" data-specialty="ortopeda">Ortopedzi</button>
-                <button class="filter-btn" data-specialty="pediatra">Pediatrzy</button>
-                <button class="filter-btn" data-specialty="chirurg">Chirurdzy</button>
-            </div>
-
-            <div class="doctors-grid">
-                <!-- Wszystkie dane będą pobierane dynamicznie z bazy danych -->
-                <div class="doctor-card" data-specialty="kardiolog">
-                    <div class="doctor-image">
-                        <img src="img/about-us/placeholder-user.png" alt="[Imię i nazwisko będzie pobierane z bazy danych]">
-                    </div>
-                    <div class="doctor-info">
-                        <h3>[Imię i nazwisko będzie pobierane z bazy danych]</h3>
-                        <p class="specialty">[Specjalizacja będzie pobierana z bazy danych]</p>
-                        <p class="description">[Opis lekarza będzie pobierany z bazy danych]</p>
-                    </div>
-                </div>
-
-                <div class="doctor-card" data-specialty="neurolog">
-                    <div class="doctor-image">
-                        <img src="img/about-us/placeholder-user.png" alt="[Imię i nazwisko będzie pobierane z bazy danych]">
-                    </div>
-                    <div class="doctor-info">
-                        <h3>[Imię i nazwisko będzie pobierane z bazy danych]</h3>
-                        <p class="specialty">[Specjalizacja będzie pobierana z bazy danych]</p>
-                        <p class="description">[Opis lekarza będzie pobierany z bazy danych]</p>
-                    </div>
-                </div>
-
-                <div class="doctor-card" data-specialty="ortopeda">
-                    <div class="doctor-image">
-                        <img src="img/about-us/placeholder-user.png" alt="[Imię i nazwisko będzie pobierane z bazy danych]">
-                    </div>
-                    <div class="doctor-info">
-                        <h3>[Imię i nazwisko będzie pobierane z bazy danych]</h3>
-                        <p class="specialty">[Specjalizacja będzie pobierana z bazy danych]</p>
-                        <p class="description">[Opis lekarza będzie pobierany z bazy danych]</p>
-                    </div>
-                </div>
-
-                <div class="doctor-card" data-specialty="pediatra">
-                    <div class="doctor-image">
-                        <img src="img/about-us/placeholder-user.png" alt="Dr Maria Zielińska">
-                    </div>
-                    <div class="doctor-info">
-                        <h3>Dr Maria Zielińska</h3>
-                        <p class="specialty">Pediatra</p>
-                        <p class="description">[Opis lekarza będzie pobierany z bazy danych]</p>
-                    </div>
-                </div>
-
-                <div class="doctor-card" data-specialty="chirurg">
-                    <div class="doctor-image">
-                        <img src="img/about-us/placeholder-user.png" alt="Dr Piotr Lewandowski">
-                    </div>
-                    <div class="doctor-info">
-                        <h3>Dr Piotr Lewandowski</h3>
-                        <p class="specialty">Chirurg</p>
-                        <p class="description">[Opis lekarza będzie pobierany z bazy danych]</p>
-                    </div>
-                </div>
-
-                <div class="doctor-card" data-specialty="kardiolog">
-                    <div class="doctor-image">
-                        <img src="img/about-us/placeholder-user.png" alt="Dr Karolina Dąbrowska">
-                    </div>
-                    <div class="doctor-info">
-                        <h3>Dr Karolina Dąbrowska</h3>
-                        <p class="specialty">Kardiolog</p>
-                        <p class="description">[Opis lekarza będzie pobierany z bazy danych]</p>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
     <footer class="footer">
@@ -209,9 +183,9 @@
             <div class="footer-section">
                 <h3>Obserwuj nas</h3>
                 <div class="social-links">
-                    <a href="#">Facebook</a>
-                    <a href="#">Twitter</a>
-                    <a href="#">Instagram</a>
+                    <a href="#" target="_blank" title="Facebook"><img src="img/social/facebook.png" alt="Facebook"></a>
+                    <a href="#" target="_blank" title="Instagram"><img src="img/social/instagram.png" alt="Instagram"></a>
+                    <a href="#" target="_blank" title="Twitter"><img src="img/social/twitter.png" alt="Twitter"></a>
                 </div>
             </div>
         </div>
@@ -219,5 +193,6 @@
             <p>&copy; 2025 Prywatny Szpital im. Coinplex. Wszelkie prawa zastrzeżone.</p>
         </div>
     </footer>
+    <script src="js/o-nas.js"></script>
 </body>
 </html> 
