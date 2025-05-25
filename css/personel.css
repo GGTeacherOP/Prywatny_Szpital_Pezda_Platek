@@ -13,26 +13,26 @@ body.personel-page {
     background-color: #ffffff;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    text-align: center; /* Dodane dla centrowania H1 i podtytułu */
+    text-align: center;
 }
 
 /* Główny nagłówek strony (Nasz Zespół) */
 .personel-section > h1 {
-    display: inline-block; /* Aby ::after było względem szerokości tekstu */
-    position: relative; /* Dla pozycjonowania ::after */
-    color: #2c3e50; /* Powrót do ciemnego koloru */
-    font-size: 3.2em; /* Większa czcionka */
+    display: inline-block;
+    position: relative;
+    color: #2c3e50;
+    font-size: 3.2em;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    margin-bottom: 15px; /* Mniejszy margines dolny przed podkreśleniem */
-    padding-bottom: 15px; /* Dodatkowy padding na dolne podkreślenie */
-    background-color: transparent; /* Usunięcie tła */
-    border-radius: 0; /* Usunięcie zaokrąglenia */
-    box-shadow: none; /* Usunięcie cienia */
-    padding-left: 0; /* Reset paddingu */
-    padding-right: 0; /* Reset paddingu */
-    padding-top: 0; /* Reset paddingu */
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
 }
 
 .personel-section > h1::after {
@@ -40,86 +40,117 @@ body.personel-page {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 0; /* Na samym dole elementu h1 (uwzględniając padding-bottom) */
-    width: 100px; /* Szerokość podkreślenia */
-    height: 5px; /* Grubość podkreślenia */
-    background-color: #3498db; /* Kolor niebieski motywu */
-    border-radius: 3px; /* Zaokrąglenie linii */
+    bottom: 0;
+    width: 100px;
+    height: 5px;
+    background-color: #3498db;
+    border-radius: 3px;
 }
 
 /* Podtytuł strony */
 .personel-section .page-subtitle {
     margin-bottom: 70px;
-    font-size: 1.3em; /* Lekko większy */
-    color: #556a7f; /* Ciemniejszy, bardziej stonowany szary */
-    max-width: 800px; /* Nieco szerszy */
+    font-size: 1.3em;
+    color: #556a7f;
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
-    font-style: italic; /* Dodanie kursywy */
+    font-style: italic;
 }
 
 /* Kontener dla kategorii personelu */
 .personel-category {
-    margin-bottom: 70px; /* Zwiększony odstęp między kategoriami */
-    background-color: transparent; /* Usunięcie tła, aby sekcja przejęła tło */
-    padding: 0; /* Usunięcie paddingu, bo sekcja ma swój */
+    margin-bottom: 70px;
+    background-color: transparent;
+    padding: 0;
     border-radius: 0;
-    box-shadow: none; /* Usunięcie cienia, bo sekcja ma swój */
+    box-shadow: none;
 }
 
-/* Nagłówki kategorii (Lekarze, Pielęgniarki itp.) */
+/* Nagłówki kategorii */
 .personel-category h2 {
-    color: #3498db; /* Jasny, przyjazny niebieski */
-    border-bottom: none; /* Usunięcie poprzedniej ramki */
+    color: #3498db;
+    border-bottom: none;
     padding-bottom: 0;
-    margin-bottom: 35px; /* Zwiększony margines dolny */
-    font-size: 2.3em; /* Lekko większy */
-    font-weight: 700; /* Grubszy */
+    margin-bottom: 35px;
+    font-size: 2.3em;
+    font-weight: 700;
     text-align: left;
     position: relative;
-    padding-left: 0; /* Usunięcie poprzedniego paddingu, dekoracja inaczej */
+    padding-left: 0;
 }
 
-/* Element dekoracyjny pod H2 kategorii */
-.personel-category h2::after { /* Zmieniono z ::before na ::after dla innego efektu */
+.personel-category h2::after {
     content: '';
     position: absolute;
     left: 0;
-    bottom: -10px; /* Umiejscowienie pod tekstem */
-    width: 70px; /* Dłuższa linia */
+    bottom: -10px;
+    width: 70px;
     height: 4px;
-    background-image: linear-gradient(to right, #3498db, #2980b9); /* Gradient dla linii */
+    background-image: linear-gradient(to right, #3498db, #2980b9);
     border-radius: 2px;
+}
+
+/* Przyciski filtrowania */
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    padding: 0 1rem;
+}
+
+.filter-btn {
+    background-color: #f8f9fa;
+    border: none;
+    color: #2c3e50;
+    padding: 0.8rem 1.8rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: #3498db;
+    color: #fff;
+}
+
+.filter-btn.active {
+    background-color: #3498db;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
 }
 
 /* Siatka dla kart personelu */
 .staff-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Optymalna szerokość karty */
-    gap: 35px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
 }
 
 /* Karta pojedynczego pracownika */
 .staff-card {
-    border: 1px solid #dde4eb;
-    border-top: 4px solid #3498db;
-    border-radius: 12px;
-    padding: 25px;
-    padding-top: 20px;
-    background-color: #fdfdfd;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    background-color: #fff;
+    border-radius: 10px;
     overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    opacity: 1;
+    transform: scale(1);
 }
 
-.staff-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 10px 25px rgba(44, 62, 80, 0.12);
-    border-color: #2980b9;
+.staff-card.hidden {
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+    display: none;
 }
 
 /* Zdjęcie pracownika */
@@ -182,130 +213,6 @@ body.personel-page {
     margin-bottom: 0;
 }
 
-/* Style dla filtrów */
-.filter-buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin: 30px 0;
-    padding: 0 20px;
-}
-
-.filter-btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 25px;
-    background: linear-gradient(145deg, #ffffff, #f0f0f0);
-    color: #333;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 600;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
-    position: relative;
-    overflow: hidden;
-}
-
-.filter-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255, 255, 255, 0.3),
-        transparent
-    );
-    transition: 0.5s;
-}
-
-.filter-btn:hover::before {
-    left: 100%;
-}
-
-.filter-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1);
-    background: linear-gradient(145deg, #f0f0f0, #ffffff);
-}
-
-.filter-btn.active {
-    background: linear-gradient(145deg, #4a90e2, #357abd);
-    color: white;
-    box-shadow: inset 5px 5px 10px #357abd, inset -5px -5px 10px #4a90e2;
-}
-
-.filter-btn.btn-click {
-    transform: scale(0.95);
-    box-shadow: inset 5px 5px 10px #d9d9d9, inset -5px -5px 10px #ffffff;
-}
-
-/* Filtry specjalizacji */
-.specialization-filter {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    width: 100%;
-    max-width: 600px;
-}
-
-.spec-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 20px;
-    background: linear-gradient(145deg, #ffffff, #f0f0f0);
-    color: #333;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
-    box-shadow: 3px 3px 6px #d9d9d9, -3px -3px 6px #ffffff;
-}
-
-.spec-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-}
-
-.spec-btn.active {
-    background: linear-gradient(145deg, #4a90e2, #357abd);
-    color: white;
-    box-shadow: inset 3px 3px 6px #357abd, inset -3px -3px 6px #4a90e2;
-}
-
-/* Animacje dla kart personelu */
-.staff-card {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.staff-card.animate-in {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.staff-card.filter-match {
-    animation: filterPulse 1s ease;
-}
-
-@keyframes filterPulse {
-    0% { transform: translateX(-20px); opacity: 0; }
-    100% { transform: translateX(0); opacity: 1; }
-}
-
 /* Przycisk powrotu na górę */
 .back-to-top {
     position: fixed;
@@ -362,27 +269,6 @@ body.personel-page {
 
     .staff-card {
         max-width: 100%;
-    }
-
-    .filter-buttons {
-        padding: 0 10px;
-    }
-
-    .filter-btn {
-        width: 100%;
-        max-width: 300px;
-        justify-content: center;
-    }
-
-    .specialization-filter {
-        flex-direction: column;
-        align-items: center;
-        padding: 10px;
-    }
-
-    .spec-btn {
-        width: 100%;
-        max-width: 250px;
     }
 
     .back-to-top {
@@ -453,4 +339,104 @@ body.personel-page {
     background-color: #0d1642;
     transform: translateY(-2px) scale(1.03);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    font-style: italic;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.staff-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.staff-card:hover {
+    transform: translateY(-5px);
+}
+
+.staff-card img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+}
+
+.staff-card h3 {
+    color: #333;
+    margin: 0.5rem 0;
+    font-size: 1.2rem;
+}
+
+.staff-card .position-specialty {
+    color: #666;
+    font-weight: 500;
+    margin: 0.5rem 0;
+}
+
+.staff-card .details {
+    color: #777;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-top: 1rem;
+}
+
+.personel-category {
+    margin-bottom: 3rem;
+}
+
+.personel-category h2 {
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.error {
+    text-align: center;
+    padding: 2rem;
+    background: #fff3f3;
+    border: 1px solid #ffcdd2;
+    border-radius: 8px;
+    margin: 1rem 0;
+    color: #d32f2f;
+}
+
+.error p {
+    margin: 0.5rem 0;
+}
+
+.retry-button {
+    background: #2196f3;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.retry-button:hover {
+    background: #1976d2;
+}
+
+.info {
+    text-align: center;
+    padding: 2rem;
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 8px;
+    margin: 1rem 0;
+    color: #1565c0;
 } 

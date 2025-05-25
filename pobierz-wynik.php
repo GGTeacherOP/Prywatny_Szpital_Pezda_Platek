@@ -30,20 +30,26 @@ try {
         if ($wynik) {
             // Jeśli wynik jest gotowy, pobierz plik
             if ($wynik['status'] === 'gotowy' && $wynik['plik_wyniku']) {
-                $plik = $wynik['plik_wyniku'];
-                $sciezka_pliku = 'uploads/wyniki/' . $plik;
+                try {
+                    // Sprawdź czy dane nie są puste
+                    if (empty($wynik['plik_wyniku'])) {
+                        throw new Exception('Dane pliku są puste');
+                    }
 
-                if (file_exists($sciezka_pliku)) {
-                    // Ustawienie nagłówków do pobrania pliku
-                    header('Content-Type: application/pdf');
-                    header('Content-Disposition: attachment; filename="wynik_' . $wynik['typ_badania'] . '_' . date('Y-m-d', strtotime($wynik['data_wystawienia'])) . '.pdf"');
-                    header('Content-Length: ' . filesize($sciezka_pliku));
-                    
-                    // Wysłanie pliku
-                    readfile($sciezka_pliku);
+                    // Zwracamy nazwę pliku
+                    echo json_encode([
+                        'success' => true,
+                        'filename' => $wynik['plik_wyniku'],
+                        'message' => 'Znaleziono wyniki'
+                    ]);
                     exit();
-                } else {
-                    echo json_encode(['success' => false, 'message' => 'Plik z wynikami nie został znaleziony']);
+                } catch (Exception $e) {
+                    error_log("Błąd podczas pobierania wyników: " . $e->getMessage());
+                    error_log("Dane wyniku: " . print_r($wynik, true));
+                    echo json_encode([
+                        'success' => false, 
+                        'message' => 'Wystąpił błąd podczas pobierania wyników: ' . $e->getMessage()
+                    ]);
                 }
             } else {
                 echo json_encode(['success' => false, 'message' => 'Wyniki nie są jeszcze gotowe']);

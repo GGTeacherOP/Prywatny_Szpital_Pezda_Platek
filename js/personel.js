@@ -3,97 +3,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Elementy DOM
     const staffCards = document.querySelectorAll('.staff-card');
-    const filterButtons = document.createElement('div');
+    const filterButtons = document.querySelectorAll('.filter-btn');
 
-    // Tworzenie sekcji filtrowania
-    const filterSection = document.createElement('div');
-    filterSection.className = 'filter-buttons';
-    filterSection.innerHTML = `
-        <button class="filter-btn active" data-category="Wszyscy">Wszyscy</button>
-        <button class="filter-btn" data-category="Lekarze">Lekarze</button>
-    `;
-
-    // Dodanie przycisku specjalizacji dla lekarzy
-    const specializations = ['Wszystkie', 'Kardiologia', 'Neurologia', 'Chirurgia Ogólna', 'Pediatria'];
-    const specializationFilter = document.createElement('div');
-    specializationFilter.className = 'specialization-filter';
-    specializationFilter.style.display = 'none'; // Domyślnie ukryty
-
-    specializations.forEach(spec => {
-        const button = document.createElement('button');
-        button.textContent = spec;
-        button.className = 'spec-btn';
-        button.dataset.specialization = spec;
-        specializationFilter.appendChild(button);
-    });
-
-    // Dodanie elementów do strony
-    const personelSection = document.querySelector('.personel-section');
-    personelSection.insertBefore(filterSection, personelSection.firstChild);
-    filterSection.appendChild(specializationFilter);
-
-    // Funkcja filtrowania z animacją
-    function filterStaff(category) {
-        const cards = Array.from(staffCards);
-        cards.forEach((card, index) => {
-            const cardCategory = card.closest('.personel-category').querySelector('h2').textContent;
-            const isVisible = category === 'Wszyscy' || cardCategory === category;
+    // Funkcja filtrowania
+    function filterDoctors(specialization) {
+        staffCards.forEach(card => {
+            const cardSpecialization = card.querySelector('.position-specialty').textContent.trim();
             
-            if (isVisible) {
+            if (specialization === 'all' || cardSpecialization === specialization) {
                 card.style.display = 'block';
                 setTimeout(() => {
-                    card.classList.add('filter-match');
-                    setTimeout(() => card.classList.remove('filter-match'), 1000);
-                }, index * 100);
+                    card.classList.remove('hidden');
+                }, 10);
             } else {
-                card.style.display = 'none';
+                card.classList.add('hidden');
+                setTimeout(() => {
+                    card.style.display = 'none';
+                }, 300); // Czas równy transition w CSS
             }
         });
-
-        // Pokaż/ukryj filtr specjalizacji
-        specializationFilter.style.display = category === 'Lekarze' ? 'flex' : 'none';
     }
 
-    // Funkcja filtrowania po specjalizacji
-    function filterBySpecialization(specialization) {
-        const cards = Array.from(staffCards);
-        cards.forEach(card => {
-            const specialty = card.querySelector('.position-specialty').textContent;
-            const isVisible = specialization === 'Wszystkie' || specialty.includes(specialization);
-            card.style.display = isVisible ? 'block' : 'none';
+    // Obsługa kliknięć przycisków
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Usuń klasę active ze wszystkich przycisków
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Dodaj klasę active do klikniętego przycisku
+            this.classList.add('active');
+
+            const specialization = this.getAttribute('data-specialization');
+            filterDoctors(specialization);
         });
-    }
-
-    // Obsługa przycisków filtrowania
-    filterSection.addEventListener('click', (e) => {
-        if (e.target.classList.contains('filter-btn')) {
-            // Animacja przycisku
-            e.target.classList.add('btn-click');
-            setTimeout(() => e.target.classList.remove('btn-click'), 300);
-
-            // Usuń aktywną klasę ze wszystkich przycisków
-            filterSection.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            // Dodaj aktywną klasę do klikniętego przycisku
-            e.target.classList.add('active');
-            // Filtruj personel
-            filterStaff(e.target.dataset.category);
-        }
     });
 
-    // Obsługa przycisków specjalizacji
-    specializationFilter.addEventListener('click', (e) => {
-        if (e.target.classList.contains('spec-btn')) {
-            document.querySelectorAll('.spec-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            e.target.classList.add('active');
-            filterBySpecialization(e.target.dataset.specialization);
-        }
-    });
-
-    // Animacje przy przewijaniu z opóźnieniem
+    // Animacje przy przewijaniu
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry, index) => {
             if (entry.isIntersecting) {

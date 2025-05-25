@@ -3,6 +3,19 @@ console.log('main_animations.js loaded');
 document.addEventListener('DOMContentLoaded', () => {
     console.log('main_animations.js DOMContentLoaded');
 
+    // Animacja płynnego przewijania dla przycisku "Dowiedz się więcej"
+    const heroButton = document.querySelector('.hero-button');
+    if (heroButton) {
+        heroButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetSection = document.querySelector('#odnosnik');
+            targetSection.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    }
+
     // 1. Animacje przy przewijaniu (Scroll Animations)
     const animatedSections = document.querySelectorAll('.animated-section');
 

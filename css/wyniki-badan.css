@@ -1,0 +1,122 @@
+.results-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.result-card {
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.result-header {
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 1rem;
+}
+
+.result-header h4 {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.result-date {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.result-details {
+    margin-bottom: 1.5rem;
+}
+
+.result-details p {
+    margin: 0.5rem 0;
+    color: #34495e;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.result-details strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.result-status {
+    margin-top: 1rem;
+}
+
+.status-select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.status-select:hover {
+    border-color: #3498db;
+}
+
+.status-select:focus {
+    outline: none;
+    border-color: #2980b9;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    background: #f8f9fa;
+    border-radius: 15px;
+    margin: 2rem 0;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+    .results-container {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+    
+    .result-card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Animacje */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-card {
+    animation: fadeIn 0.5s ease-out forwards;
+} 

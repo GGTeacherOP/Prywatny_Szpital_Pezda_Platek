@@ -60,8 +60,167 @@ try {
     <link rel="icon" type="image/png" href="img/logo/icon.png">
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <link rel='stylesheet' type='text/css' media='screen' href='css/panel-admina.css'>
+    <link rel='stylesheet' type='text/css' media='screen' href='css/wyniki-badan.css'>
+    <style>
+        .tasks-section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tasks-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        button[type="submit"] {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button[type="submit"]:hover {
+            background: #0056b3;
+        }
+
+        .tasks-list {
+            margin-top: 30px;
+        }
+
+        .task-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .task-card h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .task-card p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .task-card p strong {
+            color: #333;
+        }
+    </style>
     <script src='main.js'></script>
     <script src='js/panel-admina.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obsługa nawigacji
+            const navLinks = document.querySelectorAll('.nav-list a');
+            const sections = document.querySelectorAll('section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    
+                    sections.forEach(section => {
+                        section.style.display = section.id === targetId ? 'block' : 'none';
+                    });
+                });
+            });
+
+            // Obsługa formularza zadań
+            const tasksForm = document.getElementById('tasksForm');
+            if (tasksForm) {
+                tasksForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(this);
+                    formData.append('action', 'add_task');
+
+                    fetch('php/tasks.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Zadanie zostało dodane pomyślnie!');
+                            tasksForm.reset();
+                            location.reload(); // Odświeżenie strony po dodaniu zadania
+                        } else {
+                            alert('Wystąpił błąd podczas dodawania zadania: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Błąd:', error);
+                        alert('Wystąpił błąd podczas dodawania zadania.');
+                    });
+                });
+            }
+
+            // Funkcja do aktualizacji statusu zadania
+            window.updateTaskStatus = function(taskId, newStatus) {
+                const formData = new FormData();
+                formData.append('action', 'update_status');
+                formData.append('task_id', taskId);
+                formData.append('status', newStatus);
+
+                fetch('php/tasks.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload(); // Odświeżenie strony po aktualizacji statusu
+                    } else {
+                        alert('Wystąpił błąd podczas aktualizacji statusu: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Błąd:', error);
+                    alert('Wystąpił błąd podczas aktualizacji statusu.');
+                });
+            };
+        });
+    </script>
 </head>
 <body>
     <header class="header">
@@ -72,7 +231,8 @@ try {
             <ul>
                 <li><a href="index.html">Strona główna</a></li>
                 <li><a href="o-nas.html">O nas</a></li>
-                <li><a href="aktualnosci.html">Aktualności</a></li>
+                <li><a href="personel.php">Nasz Personel</a></li>
+                <li><a href="aktualnosci.php">Aktualności</a></li>
                 <li><a href="dla-pacjenta.html">Dla pacjenta</a></li>
             </ul>
         </nav>
@@ -85,8 +245,9 @@ try {
         <ul>
             <li><a href="#panel-glowny" class="active">Panel główny</a></li>
             <li><a href="#nowa-wiadomosc">Utwórz nową wiadomość</a></li>
-            <li><a href="#historia-opinii">Historia opinii</a></li>
+            <li><a href="#zadania-obsługi">Zadania obsługi</a></li>
             <li><a href="#historia-wiadomosci">Historia wiadomości</a></li>
+            <li><a href="#wyniki-badan">Wyniki badań</a></li>
         </ul>
     </nav>
 
@@ -191,20 +352,28 @@ try {
                 <h2>Historia Opinii</h2>
                 <div class="reviews-history-container">
                     <?php
-                    // Pobieranie wszystkich opinii
-                    $stmt = $conn->prepare("
-                        SELECT r.*, u.imie, u.nazwisko 
-                        FROM reviews r 
-                        JOIN users u ON r.uzytkownik_id = u.id 
-                        ORDER BY r.data_utworzenia DESC
-                    ");
-                    $stmt->execute();
-                    $wszystkie_opinie = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    try {
+                        // Pobieranie wszystkich opinii
+                        $stmt = $conn->prepare("
+                            SELECT 
+                                r.id,
+                                r.ocena,
+                                r.tresc,
+                                r.data_utworzenia,
+                                r.status,
+                                u.imie,
+                                u.nazwisko
+                            FROM reviews r
+                            JOIN users u ON r.uzytkownik_id = u.id
+                            ORDER BY r.data_utworzenia DESC
+                        ");
+                        $stmt->execute();
+                        $wszystkie_opinie = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    if (count($wszystkie_opinie) > 0):
-                        foreach ($wszystkie_opinie as $opinia):
+                        if (count($wszystkie_opinie) > 0):
+                            foreach ($wszystkie_opinie as $opinia):
                     ?>
-                        <div class="review-history-card">
+                        <div class="review-history-card" data-review-id="<?php echo htmlspecialchars($opinia['id']); ?>">
                             <div class="review-header">
                                 <h4><?php echo htmlspecialchars($opinia['imie'] . ' ' . $opinia['nazwisko']); ?></h4>
                                 <span class="review-date"><?php echo date('d.m.Y H:i', strtotime($opinia['data_utworzenia'])); ?></span>
@@ -216,7 +385,7 @@ try {
                             </div>
                             <p class="review-content"><?php echo nl2br(htmlspecialchars($opinia['tresc'])); ?></p>
                             <div class="review-actions">
-                                <select class="status-select" data-review-id="<?php echo $opinia['id']; ?>">
+                                <select class="status-select" data-review-id="<?php echo htmlspecialchars($opinia['id']); ?>">
                                     <option value="oczekujaca" <?php echo $opinia['status'] === 'oczekujaca' ? 'selected' : ''; ?>>Oczekująca</option>
                                     <option value="zatwierdzona" <?php echo $opinia['status'] === 'zatwierdzona' ? 'selected' : ''; ?>>Zatwierdzona</option>
                                     <option value="odrzucona" <?php echo $opinia['status'] === 'odrzucona' ? 'selected' : ''; ?>>Odrzucona</option>
@@ -224,13 +393,60 @@ try {
                             </div>
                         </div>
                     <?php 
-                        endforeach;
-                    else:
+                            endforeach;
+                        else:
                     ?>
                         <p class="no-reviews">Brak opinii</p>
-                    <?php endif; ?>
+                    <?php 
+                        endif;
+                    } catch(PDOException $e) {
+                        echo '<p class="error-message">Błąd podczas pobierania opinii: ' . htmlspecialchars($e->getMessage()) . '</p>';
+                    }
+                    ?>
                 </div>
             </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Obsługa zmiany statusu opinii o szpitalu
+                    const reviewStatusSelects = document.querySelectorAll('.review-actions .status-select');
+                    
+                    reviewStatusSelects.forEach(select => {
+                        // Zapisywanie oryginalnej wartości przy załadowaniu
+                        select.dataset.originalValue = select.value;
+                        
+                        select.addEventListener('change', function() {
+                            const reviewId = this.dataset.reviewId;
+                            const newStatus = this.value;
+                            
+                            // Wysłanie żądania AJAX
+                            fetch('update_review_status.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: `review_id=${reviewId}&status=${newStatus}`
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Opcjonalnie: pokazanie komunikatu o sukcesie
+                                    alert(data.message || 'Status został zaktualizowany');
+                                } else {
+                                    // W przypadku błędu, przywrócenie poprzedniej wartości
+                                    this.value = this.dataset.originalValue;
+                                    alert('Wystąpił błąd podczas aktualizacji statusu: ' + (data.message || 'Nieznany błąd'));
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Błąd:', error);
+                                this.value = this.dataset.originalValue;
+                                alert('Wystąpił błąd podczas aktualizacji statusu');
+                            });
+                        });
+                    });
+                });
+            </script>
 
             <!-- Sekcja Historia Wiadomości -->
             <div id="historia-wiadomosci" class="dashboard-section" style="display: none;">
@@ -274,6 +490,139 @@ try {
                     ?>
                         <p class="no-news">Brak wiadomości</p>
                     <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Sekcja Wyniki Badań -->
+            <div id="wyniki-badan" class="dashboard-section" style="display: none;">
+                <h2>Wyniki Badań</h2>
+                <div class="results-container">
+                    <?php
+                    // Pobieranie wszystkich wyników badań
+                    $stmt = $conn->prepare("
+                        SELECT r.*, 
+                               pu.imie as pacjent_imie, pu.nazwisko as pacjent_nazwisko,
+                               lu.imie as lekarz_imie, lu.nazwisko as lekarz_nazwisko
+                        FROM results r
+                        JOIN patients p ON r.pacjent_id = p.id
+                        JOIN users pu ON p.uzytkownik_id = pu.id
+                        JOIN doctors d ON r.lekarz_id = d.id
+                        JOIN users lu ON d.uzytkownik_id = lu.id
+                        ORDER BY r.data_wystawienia DESC
+                    ");
+                    $stmt->execute();
+                    $wyniki_badan = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    if (count($wyniki_badan) > 0):
+                        foreach ($wyniki_badan as $wynik):
+                    ?>
+                        <div class="result-card" data-result-id="<?php echo $wynik['id']; ?>">
+                            <div class="result-header">
+                                <h4>Badanie: <?php echo htmlspecialchars($wynik['typ_badania']); ?></h4>
+                                <span class="result-date"><?php echo date('d.m.Y H:i', strtotime($wynik['data_wystawienia'])); ?></span>
+                            </div>
+                            <div class="result-details">
+                                <p><strong>Pacjent:</strong> <?php echo htmlspecialchars($wynik['pacjent_imie'] . ' ' . $wynik['pacjent_nazwisko']); ?></p>
+                                <p><strong>Lekarz:</strong> <?php echo htmlspecialchars($wynik['lekarz_imie'] . ' ' . $wynik['lekarz_nazwisko']); ?></p>
+                                <p><strong>PIN:</strong> <?php echo htmlspecialchars($wynik['pin']); ?></p>
+                            </div>
+                            <div class="result-status">
+                                <select class="status-select" data-result-id="<?php echo $wynik['id']; ?>" onchange="console.log('Zmiana statusu:', this.value, this.dataset.resultId)">
+                                    <option value="oczekujący" <?php echo $wynik['status'] === 'oczekujący' ? 'selected' : ''; ?>>Oczekujący</option>
+                                    <option value="gotowy" <?php echo $wynik['status'] === 'gotowy' ? 'selected' : ''; ?>>Gotowy</option>
+                                </select>
+                            </div>
+                        </div>
+                    <?php 
+                        endforeach;
+                    else:
+                    ?>
+                        <p class="no-results">Brak wyników badań</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Sekcja Zadania Obsługi -->
+            <div id="zadania-obsługi" class="dashboard-section" style="display: none;">
+                <h2>Zarządzanie Zadaniami Obsługi</h2>
+                <div class="tasks-section">
+                    <form action="php/dodaj_zadanie.php" method="POST" class="tasks-form">
+                        <div class="form-group">
+                            <label for="pracownik">Pracownik:</label>
+                            <select name="pracownik" required>
+                                <?php
+                                $stmt = $conn->query("
+                                    SELECT s.id, u.imie, u.nazwisko 
+                                    FROM staff s 
+                                    JOIN users u ON s.uzytkownik_id = u.id 
+                                    WHERE u.funkcja = 'obsluga'
+                                ");
+                                while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                    echo "<option value='" . $row['id'] . "'>" . $row['imie'] . " " . $row['nazwisko'] . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pomieszczenie">Pomieszczenie:</label>
+                            <input type="text" name="pomieszczenie" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="typ">Typ zadania:</label>
+                            <select name="typ" required>
+                                <option value="sprzątanie">Sprzątanie</option>
+                                <option value="konserwacja">Konserwacja</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="opis">Opis:</label>
+                            <textarea name="opis" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="data">Data:</label>
+                            <input type="date" name="data" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="godzina_start">Godzina rozpoczęcia:</label>
+                            <input type="time" name="godzina_start" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="godzina_koniec">Godzina zakończenia:</label>
+                            <input type="time" name="godzina_koniec" required>
+                        </div>
+
+                        <button type="submit">Dodaj zadanie</button>
+                    </form>
+
+                    <div class="tasks-list">
+                        <h3>Aktualne zadania</h3>
+                        <?php
+                        $stmt = $conn->query("
+                            SELECT t.*, u.imie, u.nazwisko 
+                            FROM tasks t 
+                            JOIN staff s ON t.pracownik_id = s.id 
+                            JOIN users u ON s.uzytkownik_id = u.id 
+                            WHERE t.status != 'wykonane' 
+                            ORDER BY t.data_zadania ASC, t.godzina_rozpoczecia ASC
+                        ");
+                        while($zadanie = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                            echo "<div class='task-card'>";
+                            echo "<h4>" . htmlspecialchars($zadanie['typ_zadania']) . "</h4>";
+                            echo "<p>Pracownik: " . htmlspecialchars($zadanie['imie'] . " " . $zadanie['nazwisko']) . "</p>";
+                            echo "<p>Pomieszczenie: " . htmlspecialchars($zadanie['numer_pomieszczenia']) . "</p>";
+                            echo "<p>Data: " . htmlspecialchars($zadanie['data_zadania']) . "</p>";
+                            echo "<p>Godziny: " . htmlspecialchars($zadanie['godzina_rozpoczecia'] . " - " . $zadanie['godzina_zakonczenia']) . "</p>";
+                            echo "<p>Status: " . htmlspecialchars($zadanie['status']) . "</p>";
+                            echo "</div>";
+                        }
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>

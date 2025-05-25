@@ -54,7 +54,8 @@ try {
             <ul>
                 <li><a href="index.html">Strona główna</a></li>
                 <li><a href="o-nas.html">O nas</a></li>
-                <li><a href="aktualnosci.html">Aktualności</a></li>
+                <li><a href="personel.php">Nasz Personel</a></li>
+                <li><a href="aktualnosci.php">Aktualności</a></li>
                 <li><a href="dla-pacjenta.html">Dla pacjenta</a></li>
             </ul>
         </nav>
@@ -537,8 +538,9 @@ try {
 
                         <div class="form-group">
                             <label for="plik">Plik z wynikami:</label>
-                            <input type="file" id="plik" name="plik" accept=".pdf,.jpg,.jpeg,.png" required>
-                            <small>Dozwolone formaty: PDF, JPG, PNG. Maksymalny rozmiar: 10MB</small>
+                            <input type="file" id="plik" name="plik" accept=".pdf" required>
+                            <small>Dozwolony format: PDF. Maksymalny rozmiar: 10MB</small>
+                            <div id="fileError" class="error-message" style="display: none; color: #dc3545; margin-top: 5px;"></div>
                         </div>
 
                         <div class="form-actions">
@@ -605,7 +607,6 @@ try {
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Wystąpił błąd podczas aktualizacji statusu wizyty');
                     });
                 });
             });
