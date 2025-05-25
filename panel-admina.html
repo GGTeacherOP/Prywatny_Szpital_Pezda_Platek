@@ -9,6 +9,7 @@
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <link rel='stylesheet' type='text/css' media='screen' href='css/panel-admina.css'>
     <script src='main.js'></script>
+    <script src='js/tasks.js'></script>
 </head>
 <body>
     <header class="header">
@@ -90,6 +91,56 @@
                                     <div class="preview-image"></div>
                                 </div>
                                 <p class="preview-info">Post został pomyślnie utworzony</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Sekcja Zarządzania Zadaniami Obsługi -->
+                    <section class="dashboard-section tasks-section">
+                        <h2>Zarządzanie Zadaniami Obsługi</h2>
+                        <div class="tasks-form">
+                            <div class="form-group">
+                                <label for="staff-member">Pracownik obsługi:</label>
+                                <select id="staff-member" required>
+                                    <option value="">Wybierz pracownika</option>
+                                    <!-- Opcje będą generowane dynamicznie z bazy danych -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="room-number">Numer pomieszczenia:</label>
+                                <input type="text" id="room-number" required placeholder="np. 101">
+                            </div>
+                            <div class="form-group">
+                                <label for="task-type">Typ zadania:</label>
+                                <select id="task-type" required>
+                                    <option value="">Wybierz typ zadania</option>
+                                    <option value="sprzatanie">Sprzątanie</option>
+                                    <option value="konserwacja">Konserwacja</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="task-description">Opis zadania:</label>
+                                <textarea id="task-description" required placeholder="Szczegółowy opis zadania..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="task-date">Data wykonania:</label>
+                                <input type="date" id="task-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="start-time">Godzina rozpoczęcia:</label>
+                                <input type="time" id="start-time" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="end-time">Godzina zakończenia:</label>
+                                <input type="time" id="end-time" required>
+                            </div>
+                            <button class="btn-submit-task">Przypisz zadanie</button>
+                        </div>
+
+                        <div class="tasks-list">
+                            <h3>Aktualne zadania</h3>
+                            <div class="tasks-container">
+                                <!-- Lista zadań będzie generowana dynamicznie -->
                             </div>
                         </div>
                     </section>

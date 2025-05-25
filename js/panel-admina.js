@@ -3,6 +3,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelectorAll('.admin-nav a');
     const sections = document.querySelectorAll('.dashboard-section');
 
+    // Funkcja do pokazywania sekcji
+    function showSection(sectionId) {
+        const targetSection = document.getElementById(sectionId);
+        if (!targetSection) {
+            console.error(`Nie znaleziono sekcji o ID: ${sectionId}`);
+            return;
+        }
+
+        // Ukryj wszystkie sekcje
+        sections.forEach(section => {
+            if (section) {
+                section.style.display = 'none';
+            }
+        });
+
+        // Pokaż wybraną sekcję
+        targetSection.style.display = 'block';
+    }
+
+    // Inicjalizacja - pokaż pierwszą sekcję
+    if (sections.length > 0) {
+        showSection('panel-glowny');
+    }
+
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
@@ -12,12 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Dodaj klasę active do klikniętego linku
             this.classList.add('active');
 
-            // Ukryj wszystkie sekcje
-            sections.forEach(section => section.style.display = 'none');
-
             // Pokaż wybraną sekcję
             const targetId = this.getAttribute('href').substring(1);
-            document.getElementById(targetId).style.display = 'block';
+            showSection(targetId);
         });
     });
 
@@ -175,6 +196,61 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Obsługa formularza zadań
+    const tasksForm = document.getElementById('tasksForm');
+    if (tasksForm) {
+        tasksForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            formData.append('action', 'add_task');
+
+            fetch('php/tasks.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Zadanie zostało dodane pomyślnie!');
+                    tasksForm.reset();
+                    location.reload(); // Odświeżenie strony po dodaniu zadania
+                } else {
+                    alert('Wystąpił błąd podczas dodawania zadania: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+                alert('Wystąpił błąd podczas dodawania zadania.');
+            });
+        });
+    }
+
+    // Funkcja do aktualizacji statusu zadania
+    window.updateTaskStatus = function(taskId, newStatus) {
+        const formData = new FormData();
+        formData.append('action', 'update_status');
+        formData.append('task_id', taskId);
+        formData.append('status', newStatus);
+
+        fetch('php/tasks.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload(); // Odświeżenie strony po aktualizacji statusu
+            } else {
+                alert('Wystąpił błąd podczas aktualizacji statusu: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Błąd:', error);
+            alert('Wystąpił błąd podczas aktualizacji statusu.');
+        });
+    };
 });
 
 // Funkcja do usuwania wiadomości

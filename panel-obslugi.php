@@ -47,15 +47,13 @@ try {
     $stmt = $conn->prepare("
         SELECT t.*, r.numer, r.typ, d.nazwa as oddzial
         FROM tasks t
-        JOIN rooms r ON t.numer_pomieszczenia = r.numer
-        JOIN departments d ON r.oddzial_id = d.id
-        WHERE t.pracownik_id = (
-            SELECT id FROM staff WHERE uzytkownik_id = :user_id
-        )
-        AND DATE(t.data_zadania) = CURDATE()
-        ORDER BY t.godzina_rozpoczecia ASC
+        JOIN staff s ON t.pracownik_id = s.id
+        JOIN users u ON s.uzytkownik_id = u.id
+        LEFT JOIN rooms r ON t.numer_pomieszczenia = r.numer
+        LEFT JOIN departments d ON r.oddzial_id = d.id
+        WHERE t.status IN ('do_wykonania', 'w_trakcie')
+        ORDER BY t.data_zadania ASC, t.godzina_rozpoczecia ASC
     ");
-    $stmt->bindParam(':user_id', $_SESSION['user_id']);
     $stmt->execute();
     $zadania = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -63,15 +61,13 @@ try {
     $stmt = $conn->prepare("
         SELECT t.*, r.numer, r.typ, d.nazwa as oddzial
         FROM tasks t
-        JOIN rooms r ON t.numer_pomieszczenia = r.numer
-        JOIN departments d ON r.oddzial_id = d.id
-        WHERE t.pracownik_id = (
-            SELECT id FROM staff WHERE uzytkownik_id = :user_id
-        )
-        AND t.status IN ('wykonane', 'anulowane')
+        JOIN staff s ON t.pracownik_id = s.id
+        JOIN users u ON s.uzytkownik_id = u.id
+        LEFT JOIN rooms r ON t.numer_pomieszczenia = r.numer
+        LEFT JOIN departments d ON r.oddzial_id = d.id
+        WHERE t.status IN ('wykonane', 'anulowane')
         ORDER BY t.data_zadania DESC, t.godzina_rozpoczecia DESC
     ");
-    $stmt->bindParam(':user_id', $_SESSION['user_id']);
     $stmt->execute();
     $historia_zadan = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -79,15 +75,13 @@ try {
     $stmt = $conn->prepare("
         SELECT t.*, r.numer, r.typ, d.nazwa as oddzial
         FROM tasks t
-        JOIN rooms r ON t.numer_pomieszczenia = r.numer
-        JOIN departments d ON r.oddzial_id = d.id
-        WHERE t.pracownik_id = (
-            SELECT id FROM staff WHERE uzytkownik_id = :user_id
-        )
-        AND t.status IN ('do_wykonania', 'w_trakcie')
+        JOIN staff s ON t.pracownik_id = s.id
+        JOIN users u ON s.uzytkownik_id = u.id
+        LEFT JOIN rooms r ON t.numer_pomieszczenia = r.numer
+        LEFT JOIN departments d ON r.oddzial_id = d.id
+        WHERE t.status IN ('do_wykonania', 'w_trakcie')
         ORDER BY t.data_zadania ASC, t.godzina_rozpoczecia ASC
     ");
-    $stmt->bindParam(':user_id', $_SESSION['user_id']);
     $stmt->execute();
     $aktualne_zadania = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
