@@ -53,6 +53,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     header("Location: panel-pacjenta.php");
                 } else if ($user['funkcja'] === 'administrator') {
                     header("Location: panel-admina.php");
+                } else if ($user['funkcja'] === 'obsluga') {
+                    header("Location: panel-obslugi.php");
                 } else if ($user['funkcja'] === 'wlasciciel') {
                     header("Location: panel-wlasciciela.php");
                 } else {
