@@ -42,7 +42,7 @@ try {
         // Zapisywanie opinii o szpitalu
         $stmt = $conn->prepare("
             INSERT INTO reviews (uzytkownik_id, ocena, tresc, data_utworzenia, status)
-            VALUES (:user_id, :ocena, :komentarz, NOW(), 'oczekujaca')
+            VALUES (:user_id, :ocena, :komentarz, NOW(), 'zatwierdzona')
         ");
         
         $stmt->bindParam(':user_id', $_SESSION['user_id']);
@@ -78,7 +78,7 @@ try {
         // Zapisywanie opinii o lekarzu
         $stmt = $conn->prepare("
             INSERT INTO doctor_reviews (uzytkownik_id, lekarz_id, ocena, tresc, data_utworzenia, status)
-            VALUES (:user_id, :lekarz_id, :ocena, :komentarz, NOW(), 'oczekujaca')
+            VALUES (:user_id, :lekarz_id, :ocena, :komentarz, NOW(), 'zatwierdzona')
         ");
         
         $stmt->bindParam(':user_id', $_SESSION['user_id']);
