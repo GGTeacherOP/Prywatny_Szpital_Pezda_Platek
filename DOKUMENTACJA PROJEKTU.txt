@@ -1,31 +1,285 @@
 PRZYGOTUJ PDFA 
 
-
 Strona 1 – Tytuł + imiona i nazwiska autorów
-Strona 2 – Spis treści (z linkami przenoszącymi do rozdziałów)
-DOKUMENTACJA PROJEKTU
+
+SPIS TREŚCI
 1. Wstęp
-1.1. Cel projektu
-1.2. Zakres projektu
-1.3. Użytkownicy systemu
+   1.1. Cel projektu
+   1.2. Zakres projektu
+   1.3. Użytkownicy systemu
 
 2. Opis ogólny
-2.1. Przeznaczenie witryny
-2.2. Główne funkcjonalności
-2.3. Wymagania techniczne (XAMPP, przeglądarka, MySQL itp.)
-2.4. Struktura katalogów i plików projektu
+   2.1. Przeznaczenie witryny
+   2.2. Główne funkcjonalności
+   2.3. Wymagania techniczne
+   2.4. Struktura katalogów i plików projektu
 
 3. Struktura strony internetowej
-3.1. Strona główna (index.html / index.php)
-3.2. Podstrona 1
-3.3. Podstrona 2
-3.4. Podstrona 3 itp
-3.5. Panel logowania i rejestracji (logowanie.php, admin.php)
+   3.1. Strona główna
+   3.2. Podstrona "O nas"
+   3.3. Podstrona "Dla pacjenta"
+   3.4. Podstrona "Aktualności"
+   3.5. Podstrona "Nasz Personel"
+   3.6. Panel logowania i rejestracji
+   3.7. Panele użytkowników
+   3.8. Pliki pomocnicze
+
+4. Elementy statyczne
+   4.1. HTML – struktura dokumentów
+   4.2. CSS – stylizacja
+   4.3. Biblioteki zewnętrzne
+   4.4. Grafika i multimedia
+   4.5. Responsywność
+
+5. JavaScript
+   5.1. Dynamiczne menu rozwijane
+   5.2. Slider z aktualnościami
+   5.3. Obsługa przycisków i efektów interaktywnych
+
+6. Elementy dynamiczne (PHP)
+   6.1. Obsługa logowania i rejestracji
+   6.2. Pobieranie danych z bazy
+   6.3. Obsługa formularza kontaktowego
+   6.4. Panel administracyjny
+
+7. Baza danych
+   7.1. Projekt struktury bazy danych
+   7.2. Opis tabel i pól
+   7.3. Relacje między tabelami
+   7.4. Przykładowe zapytania SQL
+
+8. Bezpieczeństwo
+   8.1. Walidacja danych wejściowych
+   8.2. Obsługa sesji i uwierzytelnianie
+
+9. Możliwości rozbudowy
+   9.1. Dodanie wyszukiwarki
+   9.2. System ocen i komentarzy
+   9.3. System rezerwacji online
+   9.4. Responsywność i aplikacja mobilna
+
+10. Załączniki
+    10.1. Fragmenty kodu źródłowego
+    10.2. Zrzuty ekranu działania systemu
+    10.3. Diagram bazy danych
+    10.4. Lista błędów/uwag i pomysłów na ulepszenia
+
+Główny katalog projektu zawiera:
+- Pliki PHP obsługujące logikę aplikacji:
+  * pliki paneli użytkowników (panel-admina.php, panel-lekarza.php, panel-pacjenta.php, panel-obslugi.php, panel-wlasciciela.php)
+  * pliki obsługi wizyt i wyników (save_visit.php, save_result.php, edytuj-wizyte.php, wyniki-pacjenta.php)
+  * pliki autoryzacji (logowanie.php, rejestracja.php, wyloguj.php)
+  * pliki aktualności (aktualnosci.php, aktualnosc.php, save_news.php)
+  * pliki pomocnicze (config.php, get_doctors.php, get_available_hours.php)
+
+- Pliki HTML/CSS:
+  * główne pliki HTML (index.html, o-nas.html, dla-pacjenta.html)
+  * pliki paneli (panel-pacjenta.html, panel-lekarza.html, panel-admina.html)
+  * pliki logowania i rejestracji (logowanie.html, rejestracja.html)
+
+- Katalogi:
+  * /css - zawiera pliki stylów dla poszczególnych sekcji (main.css, panel-*.css, o-nas.css, itp.)
+  * /js - zawiera skrypty JavaScript (main_animations.js, panel-*.js, tasks.js)
+  * /img - przechowuje obrazy i grafiki
+  * /uploads - katalog na pliki przesyłane przez użytkowników
+  * /php - dodatkowe pliki PHP
+
+- Pliki bazy danych:
+  * szpital.sql - pełna baza danych
+  * szpital_struktura.sql - struktura bazy danych
+
+3. Struktura strony internetowej
+3.1. Strona główna (index.html, main.css, main_animations.js)
+- Strona powitalna z dynamicznym sliderem aktualności
+- Menu nawigacyjne z dostępem do wszystkich sekcji
+- Sekcja "O nas" z podstawowymi informacjami o szpitalu
+- Sekcja z aktualnościami i wydarzeniami
+- Formularz kontaktowy
+- Informacje o lokalizacji i godzinach pracy
+- Sekcje na stronie głównej:
+  * Hero section z głównym obrazem i przyciskiem CTA
+  * Sekcja statystyk (obsłużonych pacjentów, wyników, lekarzy, oddziałów)
+  * Sekcja usług i specjalizacji
+  * Sekcja kontaktowa z mapą Google
+  * Sekcja opinii pacjentów z systemem slidera
+  * Sekcja cytatu
+  * Sekcja przygotowania do wizyty
+  * Stopka z informacjami kontaktowymi i szybkimi linkami
+
+3.2. Podstrona "O nas" (o-nas.html, o-nas.css, o-nas.js)
+- Historia szpitala
+- Misja i wartości
+- Informacje o kadrze medycznej
+- Galeria zdjęć
+- Certyfikaty i osiągnięcia
+- Interaktywna mapa lokalizacji
+
+3.3. Podstrona "Dla pacjenta" (dla-pacjenta.html, dla-pacjenta.css)
+- Informacje o rejestracji
+- Lista dostępnych usług medycznych
+- Cennik usług
+- Instrukcje przed wizytą
+- FAQ - najczęściej zadawane pytania
+- Dokumenty do pobrania
+
+3.4. Podstrona "Aktualności" (aktualnosci.php, aktualnosci.css)
+- Lista aktualności z możliwością filtrowania
+- Szczegółowe widoki pojedynczych aktualności (aktualnosc.php)
+- System komentarzy
+- Archiwum aktualności
+- Możliwość udostępniania w mediach społecznościowych
+
+3.5. Podstrona "Nasz Personel" (personel.php, personel.css, personel.js)
+- Lista lekarzy i specjalistów
+- Profile pracowników
+- Specjalizacje i usługi
+- Informacje o kwalifikacjach
+- System umawiania wizyt do konkretnych lekarzy (get_doctors.php, check_available_hours.php)
+
+3.6. Panel logowania i rejestracji
+- Formularz logowania (logowanie.html, logowanie.php, login.css)
+  * Logowanie dla pacjentów
+  * Logowanie dla personelu medycznego
+  * Logowanie dla administracji
+- Formularz rejestracji (rejestracja.html, rejestracja.php)
+  * Rejestracja nowych pacjentów
+  * Walidacja danych
+  * Weryfikacja email
+- System odzyskiwania hasła
+
+3.7. Panele użytkowników
+- Panel pacjenta (panel-pacjenta.html, panel-pacjenta.php, panel-pacjenta.css, panel-pacjenta.js)
+  * Historia wizyt (historia-pacjenta.php)
+  * Wyniki badań (wyniki-pacjenta.php, wyniki-badan.css)
+  * Umawianie wizyt (save_visit.php, get_available_hours.php)
+  * Profil pacjenta
+  * System ocen i opinii (save_opinion.php)
+
+- Panel lekarza (panel-lekarza.html, panel-lekarza.php, panel-lekarza.css, panel-lekarza.js)
+  * Harmonogram wizyt
+  * Historia pacjentów
+  * Wpisywanie wyników badań (save_result.php)
+  * System notatek medycznych
+  * Zarządzanie dokumentacją
+
+- Panel obsługi (panel-obslugi.php, panel-obslugi.css)
+  * Zarządzanie wizytami
+  * Obsługa rejestracji
+  * Komunikacja z pacjentami
+  * Raporty i statystyki (get_stats.php)
+
+- Panel administratora (panel-admina.html, panel-admina.php, panel-admina.css, panel-admina.js)
+  * Zarządzanie użytkownikami
+  * Zarządzanie aktualnościami (save_news.php, delete_news.php)
+  * Konfiguracja systemu
+  * Statystyki i raporty
+  * Zarządzanie bazą danych
+
+- Panel właściciela (panel-wlasciciela.php, panel-wlasciciela.css)
+  * Pełny dostęp do wszystkich funkcji
+  * Zarządzanie personelem
+  * Statystyki finansowe
+  * Raporty systemowe
+  * Konfiguracja globalna
+
+3.8. Pliki pomocnicze
+- Konfiguracja bazy danych (config.php)
+- Obsługa zadań (tasks.js)
+- Pobieranie wyników (pobierz-wynik.php)
+- Aktualizacja statusów (update_*.php)
+- Wylogowanie (wyloguj.php)
 
 4. Elementy statyczne
 4.1. HTML – struktura dokumentów
+- Wspólna struktura dla wszystkich stron:
+  * Nagłówek z logo i menu nawigacyjnym
+  * Sekcja główna z treścią
+  * Stopka z informacjami kontaktowymi
+- Elementy wspólne:
+  * Meta tagi dla SEO i responsywności
+  * Favicon i logo
+  * Przycisk powrotu do góry strony
+  * Menu nawigacyjne z podświetleniem aktywnej strony
+- Formularze:
+  * Logowanie i rejestracja
+  * Kontakt
+  * Umawianie wizyt
+  * Opinie i oceny
+
 4.2. CSS – stylizacja (style.css)
-4.3. Biblioteki zewnętrzne …
+- Zmienne CSS:
+  * Kolory główne i akcentowe
+  * Czcionki i rozmiary tekstu
+  * Breakpointy dla responsywności
+- Komponenty:
+  * Przyciski i formularze
+  * Karty i sekcje
+  * Animacje i przejścia
+  * Grid i flexbox layout
+- Media queries:
+  * Desktop (>1200px)
+  * Tablet (768px - 1199px)
+  * Mobile (<767px)
+- Efekty wizualne:
+  * Hover effects
+  * Transitions
+  * Shadows
+  * Gradients
+
+4.3. Biblioteki zewnętrzne
+- Swiper.js:
+  * Slider aktualności na stronie głównej
+  * Galeria zdjęć
+  * Slider opinii pacjentów
+- Font Awesome:
+  * Ikony w menu
+  * Ikony w stopce
+  * Ikony w formularzach
+- Google Maps API:
+  * Mapa lokalizacji szpitala
+  * Interaktywna nawigacja
+- Google Fonts:
+  * Czcionka główna: Roboto
+  * Czcionka nagłówków: Montserrat
+- Bootstrap (częściowo):
+  * Grid system
+  * Komponenty formularzy
+  * Utility classes
+
+4.4. Grafika i multimedia
+- Logo i branding:
+  * Logo główne (PNG, SVG)
+  * Favicon
+  * Ikony systemowe
+- Obrazy:
+  * Zdjęcia lekarzy i personelu
+  * Zdjęcia szpitala i oddziałów
+  * Ilustracje i ikony
+- Optymalizacja:
+  * Kompresja obrazów
+  * Lazy loading
+  * Responsive images
+- Formaty:
+  * JPG dla fotografii
+  * PNG dla grafik z przezroczystością
+  * SVG dla ikon i logo
+  * WebP dla nowszych przeglądarek
+
+4.5. Responsywność
+- Breakpointy:
+  * Mobile first design
+  * Tablet breakpoint: 768px
+  * Desktop breakpoint: 1200px
+- Adaptacje:
+  * Menu hamburger na mobile
+  * Zmiana układu grid na mobile
+  * Dostosowanie rozmiarów czcionek
+  * Optymalizacja obrazów
+- Testowanie:
+  * Chrome DevTools
+  * Różne urządzenia
+  * Różne przeglądarki
+  * Testy użyteczności
 
 5. JavaScript
 5.1. Dynamiczne menu rozwijane
