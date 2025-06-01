@@ -145,6 +145,222 @@ try {
         .task-card p strong {
             color: #333;
         }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .day-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .day-toggle input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .day-toggle label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .time-inputs input:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .search-container {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .search-select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .salaries-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .salary-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .employee-info {
+            margin-bottom: 15px;
+        }
+
+        .employee-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+
+        .employee-type {
+            color: #666;
+            margin: 0;
+        }
+
+        .salary-form {
+            margin-top: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .btn-update {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-update:hover {
+            background: #0056b3;
+        }
+
+        .prices-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .price-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .doctor-info {
+            margin-bottom: 15px;
+        }
+
+        .doctor-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+
+        .doctor-specialization {
+            color: #666;
+            margin: 0;
+        }
+
+        .prices-form {
+            margin-top: 15px;
+        }
+
+        .prices-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .prices-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .prices-form input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .hours-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .hours-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .time-inputs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time-inputs input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .time-inputs span {
+            color: #666;
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .day-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .day-toggle input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .day-toggle label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .time-inputs input:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
     </style>
     <script src='main.js'></script>
     <script src='js/panel-admina.js'></script>
@@ -219,6 +435,60 @@ try {
                     alert('Wystąpił błąd podczas aktualizacji statusu.');
                 });
             };
+
+            // Obsługa przełączników dni
+            const dayToggles = document.querySelectorAll('.day-toggle input[type="checkbox"]');
+            dayToggles.forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    const timeInputs = document.getElementById('time-inputs-' + this.id.replace('toggle-', ''));
+                    const inputs = timeInputs.querySelectorAll('input[type="time"]');
+                    
+                    inputs.forEach(input => {
+                        input.disabled = !this.checked;
+                        if (!this.checked) {
+                            input.value = '';
+                        }
+                    });
+                });
+            });
+
+            // Obsługa formularzy aktualizacji godzin
+            const hoursForms = document.querySelectorAll('.update-hours-form');
+            hoursForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const doctorId = this.dataset.doctorId;
+                    const formData = new FormData(this);
+                    formData.append('doctor_id', doctorId);
+
+                    // Dodanie informacji o włączonych/wyłączonych dniach
+                    const days = ['poniedzialek', 'wtorek', 'sroda', 'czwartek', 'piatek', 'sobota', 'niedziela'];
+                    days.forEach(day => {
+                        const toggle = this.querySelector(`input[name="hours[${day}][enabled]"]`);
+                        if (!toggle.checked) {
+                            formData.delete(`hours[${day}][start]`);
+                            formData.delete(`hours[${day}][end]`);
+                        }
+                    });
+
+                    fetch('php/update_doctor_hours.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Godziny przyjęć zostały zaktualizowane pomyślnie!');
+                        } else {
+                            alert('Wystąpił błąd podczas aktualizacji godzin: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Błąd:', error);
+                        alert('Wystąpił błąd podczas aktualizacji godzin.');
+                    });
+                });
+            });
         });
     </script>
 </head>
@@ -248,6 +518,9 @@ try {
             <li><a href="#zadania-obsługi">Zadania obsługi</a></li>
             <li><a href="#historia-wiadomosci">Historia wiadomości</a></li>
             <li><a href="#wyniki-badan">Wyniki badań</a></li>
+            <li><a href="#zarzadzanie-pensjami">Zarządzanie pensjami</a></li>
+            <li><a href="#zarzadzanie-cenami">Zarządzanie cenami wizyt</a></li>
+            <li><a href="#zarzadzanie-godzinami">Zarządzanie godzinami przyjęć</a></li>
         </ul>
     </nav>
 
@@ -625,6 +898,242 @@ try {
                     </div>
                 </div>
             </div>
+
+            <!-- Sekcja Zarządzanie Pensjami -->
+            <div id="zarzadzanie-pensjami" class="dashboard-section" style="display: none;">
+                <h2>Zarządzanie Pensjami</h2>
+                
+                <!-- Wyszukiwarka -->
+                <div class="search-container">
+                    <input type="text" id="searchEmployee" placeholder="Wyszukaj pracownika..." class="search-input">
+                    <select id="employeeType" class="search-select">
+                        <option value="all">Wszyscy pracownicy</option>
+                        <option value="lekarz">Lekarze</option>
+                        <option value="obsluga">Obsługa</option>
+                    </select>
+                </div>
+
+                <div class="salaries-container">
+                    <?php
+                    // Pobieranie wszystkich pracowników z ich pensjami
+                    $stmt = $conn->prepare("
+                        SELECT 
+                            u.id as user_id,
+                            u.imie,
+                            u.nazwisko,
+                            u.funkcja,
+                            COALESCE(sal.pensja, 0) as pensja
+                        FROM users u
+                        LEFT JOIN salaries sal ON u.id = sal.uzytkownik_id
+                        WHERE u.funkcja IN ('lekarz', 'obsluga')
+                        ORDER BY u.funkcja, u.nazwisko
+                    ");
+                    $stmt->execute();
+                    $pracownicy = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    foreach ($pracownicy as $pracownik):
+                    ?>
+                        <div class="salary-card" data-staff-id="<?php echo $pracownik['user_id']; ?>" data-type="<?php echo $pracownik['funkcja']; ?>">
+                            <div class="employee-info">
+                                <h4><?php echo htmlspecialchars($pracownik['imie'] . ' ' . $pracownik['nazwisko']); ?></h4>
+                                <p class="employee-type"><?php echo ucfirst($pracownik['funkcja']); ?></p>
+                            </div>
+                            <div class="salary-form">
+                                <form class="update-salary-form" data-staff-id="<?php echo $pracownik['user_id']; ?>">
+                                    <div class="form-group">
+                                        <label for="salary-<?php echo $pracownik['user_id']; ?>">Pensja (PLN):</label>
+                                        <input type="number" 
+                                               id="salary-<?php echo $pracownik['user_id']; ?>" 
+                                               name="salary" 
+                                               value="<?php echo $pracownik['pensja']; ?>" 
+                                               step="0.01" 
+                                               min="0" 
+                                               required>
+                                    </div>
+                                    <button type="submit" class="btn-update">Aktualizuj pensję</button>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <!-- Sekcja Zarządzanie Cenami Wizyt -->
+            <div id="zarzadzanie-cenami" class="dashboard-section" style="display: none;">
+                <h2>Zarządzanie Cenami Wizyt</h2>
+                
+                <!-- Wyszukiwarka -->
+                <div class="search-container">
+                    <input type="text" id="searchDoctor" placeholder="Wyszukaj lekarza..." class="search-input">
+                </div>
+
+                <div class="prices-container">
+                    <?php
+                    // Pobieranie wszystkich lekarzy z ich cenami wizyt
+                    $stmt = $conn->prepare("
+                        SELECT 
+                            d.id as doctor_id,
+                            u.imie,
+                            u.nazwisko,
+                            d.specjalizacja,
+                            dvp.typ_wizyty,
+                            dvp.cena
+                        FROM doctors d
+                        JOIN users u ON d.uzytkownik_id = u.id
+                        LEFT JOIN doctor_visit_prices dvp ON d.id = dvp.lekarz_id
+                        ORDER BY u.nazwisko, u.imie
+                    ");
+                    $stmt->execute();
+                    $lekarze = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    // Grupowanie cen według lekarza
+                    $lekarze_ceny = [];
+                    foreach ($lekarze as $lekarz) {
+                        if (!isset($lekarze_ceny[$lekarz['doctor_id']])) {
+                            $lekarze_ceny[$lekarz['doctor_id']] = [
+                                'imie' => $lekarz['imie'],
+                                'nazwisko' => $lekarz['nazwisko'],
+                                'specjalizacja' => $lekarz['specjalizacja'],
+                                'ceny' => []
+                            ];
+                        }
+                        if ($lekarz['typ_wizyty']) {
+                            $lekarze_ceny[$lekarz['doctor_id']]['ceny'][$lekarz['typ_wizyty']] = $lekarz['cena'];
+                        }
+                    }
+
+                    foreach ($lekarze_ceny as $doctor_id => $lekarz):
+                    ?>
+                        <div class="price-card" data-doctor-id="<?php echo $doctor_id; ?>">
+                            <div class="doctor-info">
+                                <h4><?php echo htmlspecialchars($lekarz['imie'] . ' ' . $lekarz['nazwisko']); ?></h4>
+                                <p class="doctor-specialization"><?php echo htmlspecialchars($lekarz['specjalizacja']); ?></p>
+                            </div>
+                            <div class="prices-form">
+                                <form class="update-prices-form" data-doctor-id="<?php echo $doctor_id; ?>">
+                                    <?php
+                                    $typy_wizyt = ['pierwsza', 'kontrolna', 'pogotowie', 'szczepienie', 'badanie'];
+                                    foreach ($typy_wizyt as $typ):
+                                        $cena = isset($lekarz['ceny'][$typ]) ? $lekarz['ceny'][$typ] : '';
+                                    ?>
+                                        <div class="form-group">
+                                            <label for="price-<?php echo $doctor_id; ?>-<?php echo $typ; ?>">
+                                                <?php echo ucfirst($typ); ?> wizyta (PLN):
+                                            </label>
+                                            <input type="number" 
+                                                   id="price-<?php echo $doctor_id; ?>-<?php echo $typ; ?>" 
+                                                   name="prices[<?php echo $typ; ?>]" 
+                                                   value="<?php echo $cena; ?>" 
+                                                   step="0.01" 
+                                                   min="0" 
+                                                   required>
+                                        </div>
+                                    <?php endforeach; ?>
+                                    <button type="submit" class="btn-update">Aktualizuj ceny</button>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <!-- Sekcja Zarządzanie Godzinami Przyjęć -->
+            <div id="zarzadzanie-godzinami" class="dashboard-section" style="display: none;">
+                <h2>Zarządzanie Godzinami Przyjęć</h2>
+                
+                <!-- Wyszukiwarka -->
+                <div class="search-container">
+                    <input type="text" id="searchDoctorHours" placeholder="Wyszukaj lekarza..." class="search-input">
+                </div>
+
+                <div class="hours-container">
+                    <?php
+                    // Pobieranie wszystkich lekarzy z ich godzinami przyjęć
+                    $stmt = $conn->prepare("
+                        SELECT 
+                            d.id as doctor_id,
+                            u.imie,
+                            u.nazwisko,
+                            d.specjalizacja,
+                            dh.dzien_tygodnia,
+                            dh.godzina_rozpoczecia,
+                            dh.godzina_zakonczenia
+                        FROM doctors d
+                        JOIN users u ON d.uzytkownik_id = u.id
+                        LEFT JOIN doctor_hours dh ON d.id = dh.lekarz_id
+                        ORDER BY u.nazwisko, u.imie, FIELD(dh.dzien_tygodnia, 'poniedzialek', 'wtorek', 'sroda', 'czwartek', 'piatek', 'sobota', 'niedziela')
+                    ");
+                    $stmt->execute();
+                    $lekarze_godziny = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    // Grupowanie godzin według lekarza
+                    $lekarze_godziny_grupowane = [];
+                    foreach ($lekarze_godziny as $godzina) {
+                        if (!isset($lekarze_godziny_grupowane[$godzina['doctor_id']])) {
+                            $lekarze_godziny_grupowane[$godzina['doctor_id']] = [
+                                'imie' => $godzina['imie'],
+                                'nazwisko' => $godzina['nazwisko'],
+                                'specjalizacja' => $godzina['specjalizacja'],
+                                'godziny' => []
+                            ];
+                        }
+                        if ($godzina['dzien_tygodnia']) {
+                            $lekarze_godziny_grupowane[$godzina['doctor_id']]['godziny'][$godzina['dzien_tygodnia']] = [
+                                'rozpoczecie' => $godzina['godzina_rozpoczecia'],
+                                'zakonczenie' => $godzina['godzina_zakonczenia']
+                            ];
+                        }
+                    }
+
+                    foreach ($lekarze_godziny_grupowane as $doctor_id => $lekarz):
+                    ?>
+                        <div class="hours-card" data-doctor-id="<?php echo $doctor_id; ?>">
+                            <div class="doctor-info">
+                                <h4><?php echo htmlspecialchars($lekarz['imie'] . ' ' . $lekarz['nazwisko']); ?></h4>
+                                <p class="doctor-specialization"><?php echo htmlspecialchars($lekarz['specjalizacja']); ?></p>
+                            </div>
+                            <div class="hours-form">
+                                <form class="update-hours-form" data-doctor-id="<?php echo $doctor_id; ?>">
+                                    <?php
+                                    $dni_tygodnia = ['poniedzialek', 'wtorek', 'sroda', 'czwartek', 'piatek', 'sobota', 'niedziela'];
+                                    foreach ($dni_tygodnia as $dzien):
+                                        $godziny = isset($lekarz['godziny'][$dzien]) ? $lekarz['godziny'][$dzien] : ['rozpoczecie' => '', 'zakonczenie' => ''];
+                                    ?>
+                                        <div class="form-group">
+                                            <div class="day-header">
+                                                <label for="hours-<?php echo $doctor_id; ?>-<?php echo $dzien; ?>">
+                                                    <?php echo ucfirst($dzien); ?>:
+                                                </label>
+                                                <div class="day-toggle">
+                                                    <input type="checkbox" 
+                                                           id="toggle-<?php echo $doctor_id; ?>-<?php echo $dzien; ?>" 
+                                                           name="hours[<?php echo $dzien; ?>][enabled]" 
+                                                           <?php echo (!empty($godziny['rozpoczecie']) && !empty($godziny['zakonczenie'])) ? 'checked' : ''; ?>>
+                                                    <label for="toggle-<?php echo $doctor_id; ?>-<?php echo $dzien; ?>">Przyjmuje</label>
+                                                </div>
+                                            </div>
+                                            <div class="time-inputs" id="time-inputs-<?php echo $doctor_id; ?>-<?php echo $dzien; ?>">
+                                                <input type="time" 
+                                                       id="hours-<?php echo $doctor_id; ?>-<?php echo $dzien; ?>-start" 
+                                                       name="hours[<?php echo $dzien; ?>][start]" 
+                                                       value="<?php echo $godziny['rozpoczecie']; ?>" 
+                                                       <?php echo (!empty($godziny['rozpoczecie']) && !empty($godziny['zakonczenie'])) ? '' : 'disabled'; ?>>
+                                                <span>do</span>
+                                                <input type="time" 
+                                                       id="hours-<?php echo $doctor_id; ?>-<?php echo $dzien; ?>-end" 
+                                                       name="hours[<?php echo $dzien; ?>][end]" 
+                                                       value="<?php echo $godziny['zakonczenie']; ?>" 
+                                                       <?php echo (!empty($godziny['rozpoczecie']) && !empty($godziny['zakonczenie'])) ? '' : 'disabled'; ?>>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                    <button type="submit" class="btn-update">Aktualizuj godziny</button>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -655,5 +1164,123 @@ try {
             <p>&copy; 2025 Prywatny Szpital im. Coinplex. Wszelkie prawa zastrzeżone.</p>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obsługa wyszukiwarki
+            const searchInput = document.getElementById('searchEmployee');
+            const employeeType = document.getElementById('employeeType');
+            const salaryCards = document.querySelectorAll('.salary-card');
+
+            function filterEmployees() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedType = employeeType.value;
+
+                salaryCards.forEach(card => {
+                    const employeeName = card.querySelector('h4').textContent.toLowerCase();
+                    const employeeType = card.dataset.type;
+                    const matchesSearch = employeeName.includes(searchTerm);
+                    const matchesType = selectedType === 'all' || employeeType === selectedType;
+
+                    card.style.display = matchesSearch && matchesType ? 'block' : 'none';
+                });
+            }
+
+            searchInput.addEventListener('input', filterEmployees);
+            employeeType.addEventListener('change', filterEmployees);
+
+            // Obsługa formularzy aktualizacji pensji
+            const salaryForms = document.querySelectorAll('.update-salary-form');
+            salaryForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const staffId = this.dataset.staffId;
+                    const salary = this.querySelector('input[name="salary"]').value;
+
+                    fetch('php/update_salary.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `staff_id=${staffId}&salary=${salary}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Pensja została zaktualizowana pomyślnie!');
+                        } else {
+                            alert('Wystąpił błąd podczas aktualizacji pensji: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Błąd:', error);
+                        alert('Wystąpił błąd podczas aktualizacji pensji.');
+                    });
+                });
+            });
+
+            // Obsługa wyszukiwarki
+            const searchDoctor = document.getElementById('searchDoctor');
+            const priceCards = document.querySelectorAll('.price-card');
+
+            function filterDoctors() {
+                const searchTerm = searchDoctor.value.toLowerCase();
+
+                priceCards.forEach(card => {
+                    const doctorName = card.querySelector('h4').textContent.toLowerCase();
+                    const matchesSearch = doctorName.includes(searchTerm);
+
+                    card.style.display = matchesSearch ? 'block' : 'none';
+                });
+            }
+
+            searchDoctor.addEventListener('input', filterDoctors);
+
+            // Obsługa formularzy aktualizacji cen
+            const priceForms = document.querySelectorAll('.update-prices-form');
+            priceForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const doctorId = this.dataset.doctorId;
+                    const formData = new FormData(this);
+                    formData.append('doctor_id', doctorId);
+
+                    fetch('php/update_visit_prices.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Ceny zostały zaktualizowane pomyślnie!');
+                        } else {
+                            alert('Wystąpił błąd podczas aktualizacji cen: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Błąd:', error);
+                        alert('Wystąpił błąd podczas aktualizacji cen.');
+                    });
+                });
+            });
+
+            // Obsługa wyszukiwarki godzin przyjęć
+            const searchDoctorHours = document.getElementById('searchDoctorHours');
+            const hoursCards = document.querySelectorAll('.hours-card');
+
+            function filterDoctorHours() {
+                const searchTerm = searchDoctorHours.value.toLowerCase();
+
+                hoursCards.forEach(card => {
+                    const doctorName = card.querySelector('h4').textContent.toLowerCase();
+                    const matchesSearch = doctorName.includes(searchTerm);
+
+                    card.style.display = matchesSearch ? 'block' : 'none';
+                });
+            }
+
+            searchDoctorHours.addEventListener('input', filterDoctorHours);
+        });
+    </script>
 </body>
 </html> 

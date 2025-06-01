@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Maj 25, 2025 at 06:39 PM
+-- Generation Time: Cze 01, 2025 at 07:37 PM
 -- Wersja serwera: 10.4.32-MariaDB
 -- Wersja PHP: 8.2.12
 
@@ -107,11 +107,12 @@ CREATE TABLE `doctor_hours` (
 --
 
 INSERT INTO `doctor_hours` (`id`, `lekarz_id`, `dzien_tygodnia`, `godzina_rozpoczecia`, `godzina_zakonczenia`) VALUES
-(1, 1, 'poniedzialek', '08:00:00', '16:00:00'),
-(2, 1, 'wtorek', '08:00:00', '16:00:00'),
 (3, 2, 'sroda', '08:00:00', '16:00:00'),
 (4, 2, 'czwartek', '08:00:00', '16:00:00'),
-(5, 3, 'piatek', '08:00:00', '16:00:00');
+(5, 3, 'piatek', '08:00:00', '16:00:00'),
+(6, 1, 'poniedzialek', '08:00:00', '16:00:00'),
+(7, 1, 'wtorek', '08:00:00', '16:00:00'),
+(8, 1, 'sroda', '17:00:00', '19:00:00');
 
 -- --------------------------------------------------------
 
@@ -158,7 +159,12 @@ INSERT INTO `doctor_visit_prices` (`id`, `lekarz_id`, `typ_wizyty`, `cena`) VALU
 (1, 1, 'pierwsza', 200.00),
 (2, 1, 'kontrolna', 150.00),
 (3, 2, 'pierwsza', 180.00),
-(4, 2, 'kontrolna', 130.00);
+(4, 2, 'kontrolna', 130.00),
+(10, 8, 'pierwsza', 100.00),
+(11, 8, 'kontrolna', 300.00),
+(12, 8, 'pogotowie', 300.00),
+(13, 8, 'szczepienie', 400.00),
+(14, 8, 'badanie', 500.00);
 
 -- --------------------------------------------------------
 
@@ -328,7 +334,7 @@ CREATE TABLE `results` (
 
 INSERT INTO `results` (`id`, `pacjent_id`, `lekarz_id`, `typ_badania`, `data_wystawienia`, `pin`, `plik_wyniku`, `status`) VALUES
 (3, 1, 1, 'Morfologia krwi', '2025-05-25 18:24:00', '918121', 0x77796e696b5f363833333434356536613166622e706466, 'gotowy'),
-(4, 2, 2, 'Rezonans magnetyczny', '2025-05-25 18:26:00', '360103', 0x77796e696b5f363833333434626464623037612e706466, 'oczekujący');
+(4, 2, 2, 'Rezonans magnetyczny', '2025-05-25 18:26:00', '360103', 0x77796e696b5f363833333434626464623037612e706466, 'gotowy');
 
 -- --------------------------------------------------------
 
@@ -351,7 +357,7 @@ CREATE TABLE `reviews` (
 
 INSERT INTO `reviews` (`id`, `uzytkownik_id`, `ocena`, `tresc`, `data_utworzenia`, `status`) VALUES
 (1, 17, 5, 'Świetna obsługa i profesjonalne podejście', '2025-05-25 18:05:32', 'zatwierdzona'),
-(2, 18, 4, 'Dobra opieka medyczna', '2025-05-25 18:05:32', 'zatwierdzona');
+(2, 18, 4, 'Dobra opieka medyczna', '2025-05-21 18:05:32', 'zatwierdzona');
 
 -- --------------------------------------------------------
 
@@ -382,6 +388,27 @@ INSERT INTO `rooms` (`id`, `numer`, `oddzial_id`, `typ`, `liczba_lozek`, `status
 (7, '401', 4, 'sala_chorych', 4, 'dostepna'),
 (8, '402', 4, 'gabinet', 1, 'dostepna'),
 (9, '501', 5, 'sala_chorych', 4, 'dostepna');
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `salaries`
+--
+
+CREATE TABLE `salaries` (
+  `id` int(11) NOT NULL,
+  `uzytkownik_id` int(11) NOT NULL,
+  `pensja` decimal(10,2) NOT NULL,
+  `data_aktualizacji` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+--
+-- Dumping data for table `salaries`
+--
+
+INSERT INTO `salaries` (`id`, `uzytkownik_id`, `pensja`, `data_aktualizacji`) VALUES
+(1, 8, 2137.00, '2025-06-01 12:54:28'),
+(2, 13, 100.00, '2025-06-01 12:55:12');
 
 -- --------------------------------------------------------
 
@@ -633,6 +660,13 @@ ALTER TABLE `rooms`
   ADD KEY `oddzial_id` (`oddzial_id`);
 
 --
+-- Indeksy dla tabeli `salaries`
+--
+ALTER TABLE `salaries`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `uzytkownik_id` (`uzytkownik_id`);
+
+--
 -- Indeksy dla tabeli `staff`
 --
 ALTER TABLE `staff`
@@ -684,7 +718,7 @@ ALTER TABLE `doctors`
 -- AUTO_INCREMENT for table `doctor_hours`
 --
 ALTER TABLE `doctor_hours`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `doctor_reviews`
@@ -696,7 +730,7 @@ ALTER TABLE `doctor_reviews`
 -- AUTO_INCREMENT for table `doctor_visit_prices`
 --
 ALTER TABLE `doctor_visit_prices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `hospitalizations`
@@ -745,6 +779,12 @@ ALTER TABLE `reviews`
 --
 ALTER TABLE `rooms`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `salaries`
+--
+ALTER TABLE `salaries`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `staff`
@@ -856,6 +896,12 @@ ALTER TABLE `reviews`
 --
 ALTER TABLE `rooms`
   ADD CONSTRAINT `rooms_ibfk_1` FOREIGN KEY (`oddzial_id`) REFERENCES `departments` (`id`);
+
+--
+-- Constraints for table `salaries`
+--
+ALTER TABLE `salaries`
+  ADD CONSTRAINT `salaries_ibfk_1` FOREIGN KEY (`uzytkownik_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `staff`

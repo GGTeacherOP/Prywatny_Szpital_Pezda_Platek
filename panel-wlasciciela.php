@@ -32,12 +32,45 @@ try {
     // Pobieranie statystyk finansowych
     $stmt = $conn->query("
         SELECT 
-            SUM(dvp.cena) as przychod_z_wizyt
+            SUM(dvp.cena) as przychod_z_wizyt,
+            (SELECT SUM(s.pensja) 
+             FROM salaries s 
+             JOIN users u ON s.uzytkownik_id = u.id 
+             WHERE u.funkcja IN ('lekarz', 'obsluga')) as koszty_pensji,
+            (SELECT SUM(dvp.cena) - 
+             (SELECT SUM(s.pensja) 
+              FROM salaries s 
+              JOIN users u ON s.uzytkownik_id = u.id 
+              WHERE u.funkcja IN ('lekarz', 'obsluga'))) as profit
         FROM visits v
         JOIN doctor_visit_prices dvp ON v.lekarz_id = dvp.lekarz_id AND v.typ_wizyty = dvp.typ_wizyty
         WHERE v.status = 'zakończona'
+        AND MONTH(v.data_wizyty) = MONTH(CURRENT_DATE())
+        AND YEAR(v.data_wizyty) = YEAR(CURRENT_DATE())
     ");
     $finanse = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Pobieranie listy wypłat lekarzy i obsługi
+    $stmt = $conn->query("
+        SELECT 
+            u.imie,
+            u.nazwisko,
+            u.funkcja,
+            d.specjalizacja,
+            COALESCE(s.pensja, 0) as pensja,
+            COUNT(DISTINCT v.id) as liczba_wizyt,
+            SUM(dvp.cena) as przychod_z_wizyt
+        FROM users u
+        LEFT JOIN doctors d ON d.uzytkownik_id = u.id
+        LEFT JOIN salaries s ON u.id = s.uzytkownik_id
+        LEFT JOIN visits v ON d.id = v.lekarz_id AND v.status = 'zakończona'
+        LEFT JOIN doctor_visit_prices dvp ON v.lekarz_id = dvp.lekarz_id AND v.typ_wizyty = dvp.typ_wizyty
+        WHERE u.funkcja IN ('lekarz', 'obsluga')
+        AND (v.data_wizyty IS NULL OR (MONTH(v.data_wizyty) = MONTH(CURRENT_DATE()) AND YEAR(v.data_wizyty) = YEAR(CURRENT_DATE())))
+        GROUP BY u.id, u.imie, u.nazwisko, u.funkcja, d.specjalizacja, s.pensja
+        ORDER BY u.funkcja, u.nazwisko, u.imie
+    ");
+    $wypaty_lekarzy = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Pobieranie statystyk kadrowych
     $stmt = $conn->query("
@@ -89,6 +122,117 @@ try {
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <link rel='stylesheet' type='text/css' media='screen' href='css/panel-wlasciciela.css'>
     <script src='main.js'></script>
+    <style>
+        .doctors-salaries {
+            margin-top: 30px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .doctors-salaries h3 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 20px;
+            font-weight: 600;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .salaries-table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .salaries-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 800px;
+            border: 1px solid #e9ecef;
+        }
+
+        .salaries-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            text-align: left;
+            padding: 16px;
+            border-bottom: 2px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .salaries-table th:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        .salaries-table th:last-child {
+            border-top-right-radius: 8px;
+            border-right: none;
+        }
+
+        .salaries-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e9ecef;
+            border-right: 1px solid #e9ecef;
+            color: #495057;
+            transition: all 0.3s ease;
+        }
+
+        .salaries-table td:last-child {
+            border-right: none;
+        }
+
+        .salaries-table tr:hover td {
+            background-color: #f8f9fa;
+            transform: scale(1.01);
+        }
+
+        .salaries-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .salaries-table td:nth-child(3),
+        .salaries-table td:nth-child(5) {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .salaries-table td:nth-child(4) {
+            text-align: center;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .doctors-salaries {
+                padding: 15px;
+                margin-top: 20px;
+            }
+
+            .doctors-salaries h3 {
+                font-size: 18px;
+                margin-bottom: 20px;
+            }
+
+            .salaries-table th,
+            .salaries-table td {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+
+        /* Style dla menu z podstronami */
+        .main-nav ul li a {
+            font-weight: 600;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -119,11 +263,51 @@ try {
             </div>
 
             <section class="stats-section">
-                <h2>Statystyki Finansowe</h2>
+                <h2>Statystyki Finansowe (<?php echo date('F Y'); ?>)</h2>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <h3>Przychód z wizyt</h3>
                         <p><?php echo number_format($finanse['przychod_z_wizyt'] ?? 0, 2); ?> PLN</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Koszty pensji</h3>
+                        <p><?php echo number_format($finanse['koszty_pensji'] ?? 0, 2); ?> PLN</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Profit</h3>
+                        <p class="<?php echo ($finanse['profit'] ?? 0) >= 0 ? 'profit-positive' : 'profit-negative'; ?>">
+                            <?php echo number_format($finanse['profit'] ?? 0, 2); ?> PLN
+                        </p>
+                    </div>
+                </div>
+
+                <div class="doctors-salaries">
+                    <h3>Wypłaty personelu (<?php echo date('F Y'); ?>)</h3>
+                    <div class="salaries-table-container">
+                        <table class="salaries-table">
+                            <thead>
+                                <tr>
+                                    <th>Pracownik</th>
+                                    <th>Stanowisko</th>
+                                    <th>Specjalizacja</th>
+                                    <th>Pensja</th>
+                                    <th>Liczba wizyt</th>
+                                    <th>Przychód z wizyt</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($wypaty_lekarzy as $pracownik): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($pracownik['imie'] . ' ' . $pracownik['nazwisko']); ?></td>
+                                    <td><?php echo ucfirst(htmlspecialchars($pracownik['funkcja'])); ?></td>
+                                    <td><?php echo $pracownik['funkcja'] === 'lekarz' ? htmlspecialchars($pracownik['specjalizacja']) : '-'; ?></td>
+                                    <td><?php echo number_format($pracownik['pensja'], 2); ?> PLN</td>
+                                    <td><?php echo $pracownik['liczba_wizyt']; ?></td>
+                                    <td><?php echo number_format($pracownik['przychod_z_wizyt'] ?? 0, 2); ?> PLN</td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>

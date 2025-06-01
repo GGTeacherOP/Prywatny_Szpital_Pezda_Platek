@@ -121,8 +121,8 @@ try {
                                 <?php endif; ?>
                                 <?php if (!empty($wynik['plik_wyniku'])): ?>
                                     <div class="result-actions">
-                                        <a href="data:application/pdf;base64,<?php echo base64_encode($wynik['plik_wyniku']); ?>" 
-                                           download="wynik_<?php echo htmlspecialchars($wynik['typ_badania']); ?>_<?php echo date('Y-m-d', strtotime($wynik['data_wystawienia'])); ?>.pdf" 
+                                        <a href="uploads/wyniki/<?php echo htmlspecialchars($wynik['plik_wyniku']); ?>" 
+                                           target="_blank" 
                                            class="btn-download">
                                             <i class="fas fa-download"></i> Pobierz wynik
                                         </a>
